@@ -15,23 +15,54 @@ type Message = {
   isOffline?: boolean;
 };
 
+type ProviderStatus = {
+  providers: { anthropic: boolean; ollama: boolean; offline: boolean };
+  activeProvider: 'anthropic' | 'ollama' | 'offline';
+} | null;
+
+const PROVIDER_LABEL: Record<string, string> = {
+  anthropic: '☁️ Cloud (Claude)',
+  ollama: '💻 Lokal (Ollama)',
+  offline: '⚡ Offline',
+};
+
+const PROVIDER_VARIANT: Record<string, 'success' | 'info' | 'warning'> = {
+  anthropic: 'success',
+  ollama: 'info',
+  offline: 'warning',
+};
+
 export default function TutorPage() {
   const { klasse } = useCurriculumStore();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
       role: 'assistant',
-      content: 'Hallo! Ich bin Finn, dein Mathe-Tutor 🦊 Welche Frage hast du?',
+      content: 'Hallo! Ich bin Finn, dein Mathe-Tutor 🦊 Stell mir eine Mathe-Frage — ich helfe dir gerne!',
     },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const [providerStatus, setProviderStatus] = useState<ProviderStatus>(null);
+  const [activeProvider, setActiveProvider] = useState<string>('offline');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Provider-Status beim Laden abfragen
+  useEffect(() => {
+    fetch('/api/tutor')
+      .then((r) => r.json())
+      .then((data: ProviderStatus) => {
+        if (data) {
+          setProviderStatus(data);
+          setActiveProvider(data.activeProvider);
+        }
+      })
+      .catch(() => {/* ignorieren */});
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -57,8 +88,8 @@ export default function TutorPage() {
         }),
       });
 
-      const data = await response.json() as { reply: string; isOffline?: boolean };
-      if (data.isOffline) setIsOfflineMode(true);
+      const data = await response.json() as { reply: string; isOffline?: boolean; provider?: string };
+      if (data.provider) setActiveProvider(data.provider);
 
       setMessages((prev) => [
         ...prev,
@@ -83,6 +114,8 @@ export default function TutorPage() {
     }
   };
 
+  const variant = PROVIDER_VARIANT[activeProvider] ?? 'warning';
+
   return (
     <PageWrapper>
       <div className="flex items-center justify-between mb-6">
@@ -90,10 +123,25 @@ export default function TutorPage() {
           <h1 className="text-2xl font-bold text-gray-900">🦊 Finn — Dein Mathe-Tutor</h1>
           <p className="text-gray-500 text-sm mt-1">Stell mir Fragen zu deinen Aufgaben!</p>
         </div>
-        {isOfflineMode && (
-          <Badge variant="warning">Offline-Modus</Badge>
-        )}
+        <Badge variant={variant}>
+          {PROVIDER_LABEL[activeProvider] ?? '⚡ Offline'}
+        </Badge>
       </div>
+
+      {/* Provider-Info wenn Ollama oder Offline */}
+      {activeProvider === 'ollama' && (
+        <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-sm text-blue-800">
+          💻 <strong>Ollama aktiv:</strong> Deine Fragen werden lokal verarbeitet — keine Daten verlassen dein Gerät.
+        </div>
+      )}
+      {activeProvider === 'offline' && providerStatus !== null && (
+        <div className="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+          ⚡ <strong>Offline-Modus:</strong> Kein KI-Provider verfügbar. Regelbasierte Antworten.
+          {!providerStatus.providers.ollama && (
+            <span className="block mt-1">Tipp: Installiere <strong>Ollama</strong> für lokale KI-Unterstützung.</span>
+          )}
+        </div>
+      )}
 
       {/* Chat Messages */}
       <Card padding="none" className="mb-4 overflow-hidden">
@@ -139,7 +187,7 @@ export default function TutorPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}
-            placeholder="Deine Frage an Finn..."
+            placeholder="Deine Mathe-Frage an Finn..."
             disabled={isLoading}
             aria-label="Nachricht an Tutor"
           />
@@ -155,9 +203,7 @@ export default function TutorPage() {
       </div>
 
       <p className="text-xs text-gray-400 mt-3 text-center">
-        {isOfflineMode
-          ? '⚡ Offline-Modus: Regelbasierte Antworten ohne KI'
-          : '🤖 KI-gestützte Antworten via Server'}
+        Finn beantwortet nur Mathe-Fragen 📐
       </p>
     </PageWrapper>
   );

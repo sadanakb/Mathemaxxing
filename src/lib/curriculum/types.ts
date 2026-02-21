@@ -227,6 +227,9 @@ export type TopicProgress = {
   postQuizScore?: number;
   masteredAt?: Date;
   stars?: 0 | 1 | 2 | 3;
+  testScore?: number;        // 0–1 (Anteil richtig)
+  testPassedAt?: Date;       // Zeitpunkt des Bestehs
+  testAttempts?: number;     // Anzahl Prüfungsversuche
 };
 
 export type Achievement = {
@@ -281,6 +284,10 @@ export type UserProgress = {
 
   // Settings
   dailyGoalMinutes: number;
+
+  // Aktivitäts-Tracking
+  activeDates: string[];          // ISO-Datum-Strings (YYYY-MM-DD), dedupliziert
+  todayMinutes: number;           // Heute gelernte Minuten (für GoalRing)
 };
 
 // ─── Session (ephemeral, never persisted) ────────────────────

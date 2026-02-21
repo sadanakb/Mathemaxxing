@@ -14,6 +14,7 @@ import { useProgressStore } from '@/store/progressStore';
 import { requiresKurstyp } from '@/data/curricula/schulformen';
 import type { Bundesland, Klassenstufe, Schulform, Kurstyp } from '@/lib/curriculum/types';
 import { applyTheme } from '@/lib/theme/theme-config';
+import { Logo } from '@/components/layout/Logo';
 
 type Step = 'bundesland' | 'klasse' | 'schulform' | 'kurs' | 'done';
 
@@ -108,9 +109,8 @@ function OnboardingContent() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-lg mx-auto">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl" aria-hidden="true">📐</span>
-            <span className="text-xl font-bold text-[var(--color-primary)]">MatheMeister</span>
+          <div className="mb-3">
+            <Logo size="md" showText={true} />
           </div>
           <Progress value={progress} label="Einrichtung" showLabel />
         </div>

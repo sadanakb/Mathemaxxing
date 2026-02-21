@@ -14,8 +14,11 @@ import { Progress } from '@/components/ui/Progress';
 import { Button } from '@/components/ui/Button';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { BundeslandWappen } from '@/components/wappen/BundeslandWappen';
+import { Logo } from '@/components/layout/Logo';
 import { GamificationOverlay } from '@/components/gamification/GamificationOverlay';
 import { StreakDisplay } from '@/components/gamification/StreakDisplay';
+import { StreakCalendar } from '@/components/gamification/StreakCalendar';
+import { GoalRing } from '@/components/gamification/GoalRing';
 import { Stars } from '@/components/gamification/Stars';
 import { Finn } from '@/components/gamification/Finn';
 import type { MasteryLevel } from '@/lib/curriculum/types';
@@ -66,7 +69,7 @@ export default function DashboardPage() {
       <PageWrapper>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="text-4xl mb-3 animate-bounce">📐</div>
+            <div className="mb-3 animate-pulse"><Logo size="lg" showText={false} /></div>
             <p className="text-gray-500">Lade deine Daten...</p>
           </div>
         </div>
@@ -121,6 +124,18 @@ export default function DashboardPage() {
             {Object.values(progress.topicProgress).filter((p) => p.masteryLevel === 'mastered').length}
           </div>
           <div className="text-xs text-gray-500 mt-1">Gemeistert</div>
+        </Card>
+      </div>
+
+      {/* Streak-Kalender + Tagesziel */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <Card padding="md">
+          <h3 className="font-bold text-gray-800 text-sm mb-3">🔥 Streak-Kalender</h3>
+          <StreakCalendar activeDates={progress.activeDates ?? []} mode="7d" />
+        </Card>
+        <Card padding="md" className="flex flex-col items-center justify-center">
+          <h3 className="font-bold text-gray-800 text-sm mb-3">🎯 Tagesziel</h3>
+          <GoalRing current={progress.todayMinutes ?? 0} goal={progress.dailyGoalMinutes} size={96} />
         </Card>
       </div>
 
@@ -184,46 +199,68 @@ export default function DashboardPage() {
           const accuracy = tp && tp.attemptsTotal > 0
             ? Math.round((tp.attemptsCorrect / tp.attemptsTotal) * 100)
             : null;
+          const canTest = mastery === 'practicing' || mastery === 'mastered';
+          const testPassed = tp?.testPassedAt != null;
 
           return (
-            <Link key={topic.id} href={`/learn/${topic.id}`}>
-              <Card
-                padding="md"
-                className={[
-                  'border-2 hover:shadow-md transition-all duration-200 cursor-pointer h-full',
-                  MASTERY_COLORS[mastery],
-                ].join(' ')}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-semibold text-gray-900 text-sm leading-snug">
-                    {topic.title}
-                  </h3>
-                  <Badge
-                    variant={mastery === 'mastered' ? 'success' : mastery === 'practicing' ? 'info' : 'default'}
-                  >
-                    {MASTERY_LABELS[mastery]}
-                  </Badge>
-                </div>
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">{topic.description}</p>
-                <div className="flex items-center justify-between">
-                  {tp && tp.attemptsTotal > 0 ? (
-                    <div className="flex-1 mr-2">
-                      <Progress
-                        value={accuracy ?? 0}
-                        max={100}
-                        size="sm"
-                        variant={mastery === 'mastered' ? 'success' : 'default'}
-                      />
+            <div key={topic.id} className="relative">
+              <Link href={`/learn/${topic.id}`}>
+                <Card
+                  padding="md"
+                  className={[
+                    'border-2 hover:shadow-md transition-all duration-200 cursor-pointer h-full',
+                    MASTERY_COLORS[mastery],
+                  ].join(' ')}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-gray-900 text-sm leading-snug">
+                      {topic.title}
+                    </h3>
+                    <div className="flex gap-1.5 flex-wrap justify-end">
+                      {testPassed && (
+                        <Badge variant="success">✓ Bestanden</Badge>
+                      )}
+                      <Badge
+                        variant={mastery === 'mastered' ? 'success' : mastery === 'practicing' ? 'info' : 'default'}
+                      >
+                        {MASTERY_LABELS[mastery]}
+                      </Badge>
                     </div>
-                  ) : (
-                    <div className="flex-1" />
-                  )}
-                  {tp?.stars != null && tp.stars > 0 && (
-                    <Stars count={tp.stars} size="sm" />
-                  )}
+                  </div>
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{topic.description}</p>
+                  <div className="flex items-center justify-between">
+                    {tp && tp.attemptsTotal > 0 ? (
+                      <div className="flex-1 mr-2">
+                        <Progress
+                          value={accuracy ?? 0}
+                          max={100}
+                          size="sm"
+                          variant={mastery === 'mastered' ? 'success' : 'default'}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex-1" />
+                    )}
+                    {tp?.stars != null && tp.stars > 0 && (
+                      <Stars count={tp.stars} size="sm" />
+                    )}
+                  </div>
+                </Card>
+              </Link>
+              {canTest && (
+                <div className="mt-1.5">
+                  <Link href={`/test/${topic.id}`}>
+                    <Button
+                      size="sm"
+                      variant={testPassed ? 'ghost' : 'secondary'}
+                      className="w-full text-xs"
+                    >
+                      {testPassed ? '🔄 Nochmal prüfen' : '📝 Test ablegen'}
+                    </Button>
+                  </Link>
                 </div>
-              </Card>
-            </Link>
+              )}
+            </div>
           );
         })}
       </div>

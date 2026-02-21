@@ -37,6 +37,8 @@ function createDefaultProgress(userId: string): UserProgress {
     achievements: [],
     badges: [],
     dailyGoalMinutes: 20,
+    activeDates: [],
+    todayMinutes: 0,
   };
 }
 
@@ -66,6 +68,12 @@ type ProgressActions = {
   // Export / Import
   exportData: () => Promise<void>;
   importFromFile: (file: File) => Promise<{ success: boolean; error?: string }>;
+
+  // Test
+  updateTestResult: (topicId: string, score: number, passed: boolean) => void;
+
+  // Aktivitäts-Tracking
+  addMinutesToday: (minutes: number) => void;
 
   // Settings
   updateDailyGoal: (minutes: number) => void;
@@ -184,11 +192,17 @@ export const useProgressStore = create<ProgressStore>()((set, get) => ({
         streakDays = 1; // streak broken
       }
 
+      const existing = state.progress.activeDates ?? [];
+      const activeDates = existing.includes(today) ? existing : [...existing, today];
+
       return {
         progress: {
           ...state.progress,
           streakDays,
           lastStreakDate: today,
+          activeDates,
+          // todayMinutes zurücksetzen wenn neuer Tag
+          todayMinutes: last !== today ? 0 : (state.progress.todayMinutes ?? 0),
         },
       };
     });
@@ -196,6 +210,19 @@ export const useProgressStore = create<ProgressStore>()((set, get) => ({
     if (newStreak > prevStreak) {
       useGamificationStore.getState().pushEvent({ type: 'streak', days: newStreak });
     }
+    get().persistToDB();
+  },
+
+  addMinutesToday: (minutes) => {
+    set((state) => {
+      if (!state.progress) return state;
+      return {
+        progress: {
+          ...state.progress,
+          todayMinutes: (state.progress.todayMinutes ?? 0) + minutes,
+        },
+      };
+    });
     get().persistToDB();
   },
 
@@ -423,6 +450,35 @@ export const useProgressStore = create<ProgressStore>()((set, get) => ({
     } catch (err) {
       return { success: false, error: String(err) };
     }
+  },
+
+  updateTestResult: (topicId, score, passed) => {
+    set((state) => {
+      if (!state.progress) return state;
+      const existing: TopicProgress = state.progress.topicProgress[topicId] ?? {
+        topicId,
+        masteryLevel: 'not-started',
+        xpEarned: 0,
+        attemptsTotal: 0,
+        attemptsCorrect: 0,
+      };
+      const prevAttempts = existing.testAttempts ?? 0;
+      return {
+        progress: {
+          ...state.progress,
+          topicProgress: {
+            ...state.progress.topicProgress,
+            [topicId]: {
+              ...existing,
+              testScore: score,
+              testAttempts: prevAttempts + 1,
+              ...(passed && !existing.testPassedAt ? { testPassedAt: new Date() } : {}),
+            },
+          },
+        },
+      };
+    });
+    get().persistToDB();
   },
 
   updateDailyGoal: (minutes) => {
