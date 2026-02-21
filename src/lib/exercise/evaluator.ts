@@ -93,9 +93,12 @@ export function evaluateAnswer(
       return numericEqual(userNum, parseFloat(normalisedCorrect));
     }
 
+    case 'true-false': {
+      return normalizeTrueFalse(normalised) === normalizeTrueFalse(correctStr);
+    }
+
     case 'text':
     case 'multiple-choice':
-    case 'true-false':
     case 'drag-drop':
     case 'matching': {
       return normalised === correctStr.toLowerCase();
@@ -130,6 +133,19 @@ export function safeEval(expression: string): number | null {
   }
 }
 
+// ─── True/False normalisation ─────────────────────────────────
+
+/**
+ * Normalises German/English true-false values to canonical 'true'/'false'.
+ * Maps 'wahr' → 'true', 'falsch' → 'false'.
+ */
+function normalizeTrueFalse(value: string): string {
+  const lower = value.trim().toLowerCase();
+  if (lower === 'wahr') return 'true';
+  if (lower === 'falsch') return 'false';
+  return lower;
+}
+
 // ─── Extended evaluator for all 23+ ExerciseTypes ────────────
 
 /**
@@ -150,8 +166,11 @@ export function evaluateExerciseAnswer(userAnswer: string, exercise: Exercise): 
     case 'multiple-choice':
       return evaluateAnswer(userAnswer, exercise.correctAnswer, 'multiple-choice');
 
-    case 'true-false':
-      return userAnswer.toLowerCase() === String(exercise.correctAnswer).toLowerCase();
+    case 'true-false': {
+      const normUser = normalizeTrueFalse(userAnswer);
+      const normCorrect = normalizeTrueFalse(String(exercise.correctAnswer));
+      return normUser === normCorrect;
+    }
 
     // --- Numeric with tolerance (estimation, angle) ---
     case 'estimation':
@@ -195,7 +214,7 @@ export function evaluateExerciseAnswer(userAnswer: string, exercise: Exercise): 
     case 'drag-into-gaps': {
       try {
         const userArr = JSON.parse(userAnswer) as string[];
-        const correctArr = exercise.items ?? [];
+        const correctArr = String(exercise.correctAnswer).split(',').map(s => s.trim());
         return JSON.stringify(userArr) === JSON.stringify(correctArr);
       } catch {
         return false;

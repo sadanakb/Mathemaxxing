@@ -152,7 +152,7 @@ export const template: ExerciseTemplate = {
       topicId: 'k5-winkel',
       question: `Stimmt diese Aussage? "${stmt.text}"`,
       answerType: 'true-false',
-      correctAnswer: stmt.correct ? 'true' : 'false',
+      correctAnswer: stmt.correct ? 'wahr' : 'falsch',
       hint: 'Erinnere dich an die Definitionen der Winkelarten.',
       explanation: stmt.correct
         ? `Ja, die Aussage ist richtig.`

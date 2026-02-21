@@ -35,7 +35,7 @@ type Phase = 'theory' | 'quiz' | 'results';
 export default function LearnTopicPage() {
   const { topicId } = useParams<{ topicId: string }>();
   const router = useRouter();
-  const { updateTopicProgress, addXP, updateStreak, updateLeitnerCard, leitnerCards, progress } = useProgressStore();
+  const { updateTopicProgress, addXP, updateStreak, updateLeitnerCard, leitnerCards, progress, addMinutesToday } = useProgressStore();
   const { startSession, recordExerciseCompleted, exercisesCompletedThisSession, xpEarnedThisSession, sessionStartTime } = useSessionStore();
 
   const topic = findTopicById(topicId);
@@ -63,6 +63,15 @@ export default function LearnTopicPage() {
       setRecentResults([]);
     }
   }, [phase, topicId, startSession]);
+
+  // Track minutes for daily goal during quiz
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+    const interval = setInterval(() => {
+      addMinutesToday(1);
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, [phase, addMinutesToday]);
 
   if (!topic) {
     return (

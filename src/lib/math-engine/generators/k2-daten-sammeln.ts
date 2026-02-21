@@ -59,7 +59,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k2-daten-sammeln',
         question: `${theme.title}: Was ist am beliebtesten?`,
         answerType: 'multiple-choice',
-        exerciseType: 'multiple-choice',
+        exerciseType: 'bar-chart-read',
         correctAnswer: maxItem.label,
         distractors: data.filter(d => d.label !== maxItem.label).map(d => d.label),
         options,

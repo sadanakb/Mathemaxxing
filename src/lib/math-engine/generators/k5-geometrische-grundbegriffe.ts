@@ -76,7 +76,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k5-geometrische-grundbegriffe',
         question: `Stimmt diese Aussage? "${stmt.text}"`,
         answerType: 'true-false',
-        correctAnswer: stmt.correct ? 'true' : 'false',
+        correctAnswer: stmt.correct ? 'wahr' : 'falsch',
         hint: 'Erinnere dich an die Definitionen von Punkt, Gerade, Strecke und Strahl.',
         explanation: stmt.correct ? 'Ja, die Aussage ist richtig.' : 'Nein, die Aussage ist falsch.',
         difficulty: d,

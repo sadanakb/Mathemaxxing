@@ -57,7 +57,7 @@ export const template: ExerciseTemplate = {
           topicId: 'k5-achsensymmetrie',
           question: `Ist ein ${fig.name} achsensymmetrisch?`,
           answerType: 'true-false',
-          correctAnswer: 'true',
+          correctAnswer: 'wahr',
           hint: 'Kann man die Figur so falten, dass beide Hälften genau übereinander liegen?',
           explanation: `Ja, ein ${fig.name} ist achsensymmetrisch${fig.achsen === -1 ? ' (unendlich viele Symmetrieachsen)' : ` (${fig.achsen} Symmetrieachse${fig.achsen > 1 ? 'n' : ''})`}.`,
           difficulty: d,
@@ -71,7 +71,7 @@ export const template: ExerciseTemplate = {
           topicId: 'k5-achsensymmetrie',
           question: `Ist ein ${fig} achsensymmetrisch?`,
           answerType: 'true-false',
-          correctAnswer: 'false',
+          correctAnswer: 'falsch',
           hint: 'Kann man die Figur so falten, dass beide Hälften genau übereinander liegen?',
           explanation: `Nein, ein ${fig} ist im Allgemeinen nicht achsensymmetrisch.`,
           difficulty: d,
@@ -112,7 +112,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k5-achsensymmetrie',
         question: `Ist der Großbuchstabe "${b.letter}" achsensymmetrisch?`,
         answerType: 'true-false',
-        correctAnswer: b.symmetric ? 'true' : 'false',
+        correctAnswer: b.symmetric ? 'wahr' : 'falsch',
         hint: 'Stell dir vor, du legst einen Spiegel auf den Buchstaben. Sieht er gleich aus?',
         explanation: b.symmetric
           ? `Ja, "${b.letter}" ist achsensymmetrisch (${b.achsen}).`

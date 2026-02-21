@@ -144,7 +144,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k5-rechengesetze',
         question: `Stimmt das? (${a} ${op} ${b}) ${op} ${c} = ${a} ${op} (${b} ${op} ${c})`,
         answerType: 'true-false',
-        correctAnswer: 'true',
+        correctAnswer: 'wahr',
         hint: `Das Assoziativgesetz gilt für ${isAdd ? 'Addition' : 'Multiplikation'}.`,
         explanation: `Ja, das stimmt. Das Assoziativgesetz erlaubt es, die Klammern zu verschieben bei ${isAdd ? 'Addition' : 'Multiplikation'}.`,
         difficulty: d,
@@ -167,7 +167,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k5-rechengesetze',
         question: `Stimmt das? ${statement}`,
         answerType: 'true-false',
-        correctAnswer: correct ? 'true' : 'false',
+        correctAnswer: correct ? 'wahr' : 'falsch',
         hint: `Das Assoziativgesetz gilt NICHT für ${sub ? 'Subtraktion' : 'Division'}.`,
         explanation: correct
           ? 'In diesem Sonderfall stimmt die Gleichung zufällig, aber allgemein gilt das Assoziativgesetz nicht für Subtraktion/Division.'

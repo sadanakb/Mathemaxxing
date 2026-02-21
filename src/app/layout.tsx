@@ -35,6 +35,11 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/npm/katex@0.16.15/dist/katex.min.css"
           crossOrigin="anonymous"
         />
+        <script
+          defer
+          src="https://cdn.jsdelivr.net/npm/katex@0.16.15/dist/katex.min.js"
+          crossOrigin="anonymous"
+        />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body>

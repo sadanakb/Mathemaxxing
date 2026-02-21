@@ -10,6 +10,13 @@ type WrongFeedbackProps = {
   onNext: () => void;
 };
 
+function displayAnswer(answer: string): string {
+  const lower = answer.toLowerCase();
+  if (lower === 'true' || lower === 'wahr') return 'Wahr';
+  if (lower === 'false' || lower === 'falsch') return 'Falsch';
+  return answer;
+}
+
 export function WrongFeedback({ correctAnswer, correctAnswerLatex, explanation, onNext }: WrongFeedbackProps) {
   return (
     <div
@@ -26,7 +33,7 @@ export function WrongFeedback({ correctAnswer, correctAnswerLatex, explanation, 
         {correctAnswerLatex ? (
           <MathFormula formula={correctAnswerLatex} className="text-red-900 font-bold" />
         ) : (
-          <strong className="text-red-900">{correctAnswer}</strong>
+          <strong className="text-red-900">{displayAnswer(correctAnswer)}</strong>
         )}
       </p>
       {explanation && (

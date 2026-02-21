@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 // We load KaTeX via CDN in layout.tsx
 // This component renders KaTeX formulas as HTML
@@ -12,25 +12,41 @@ type MathFormulaProps = {
 };
 
 export function MathFormula({ formula, display = false, className = '' }: MathFormulaProps) {
-  const html = useMemo(() => {
-    if (typeof window === 'undefined') {
-      // SSR: Return plain text fallback
-      return null;
-    }
-    try {
+  const [html, setHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    function tryRender(): boolean {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const katex = (window as any).katex;
       if (typeof katex !== 'undefined') {
-        return katex.renderToString(formula, {
-          throwOnError: false,
-          displayMode: display,
-          output: 'htmlAndMathml', // MathML for screen readers
-        }) as string;
+        try {
+          const rendered = katex.renderToString(formula, {
+            throwOnError: false,
+            displayMode: display,
+            output: 'htmlAndMathml', // MathML for screen readers
+          }) as string;
+          setHtml(rendered);
+          return true;
+        } catch {
+          // Fallback to plain text
+        }
       }
-    } catch {
-      // Fallback to plain text
+      return false;
     }
-    return null;
+
+    // Try immediately
+    if (tryRender()) return;
+
+    // Retry every 100ms until KaTeX is loaded (max 5s)
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (tryRender() || attempts >= 50) {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
   }, [formula, display]);
 
   if (!html) {

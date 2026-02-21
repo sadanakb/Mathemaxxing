@@ -28,7 +28,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k5-primzahlen-teilbarkeit',
         question: `Ist ${num} eine Primzahl?`,
         answerType: 'true-false',
-        correctAnswer: prime ? 'true' : 'false',
+        correctAnswer: prime ? 'wahr' : 'falsch',
         hint: 'Eine Primzahl ist nur durch 1 und sich selbst teilbar.',
         explanation: prime
           ? `Ja, ${num} ist eine Primzahl.`
@@ -77,7 +77,7 @@ export const template: ExerciseTemplate = {
         topicId: 'k5-primzahlen-teilbarkeit',
         question: `Ist ${num} durch ${d} teilbar?`,
         answerType: 'true-false',
-        correctAnswer: (num % d === 0) ? 'true' : 'false',
+        correctAnswer: (num % d === 0) ? 'wahr' : 'falsch',
         hint: `${d}er-Regel: ${d === 2 ? 'Endet auf 0, 2, 4, 6 oder 8?' : d === 3 ? 'Quersumme durch 3 teilbar?' : d === 5 ? 'Endet auf 0 oder 5?' : 'Durch 7 teilen.'}`,
         explanation: `${num} ÷ ${d} = ${Math.floor(num / d)} Rest ${num % d}. ${num % d === 0 ? 'Ja, teilbar.' : 'Nein, nicht teilbar.'}`,
         difficulty,

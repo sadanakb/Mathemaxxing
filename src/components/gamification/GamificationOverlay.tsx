@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useGamificationStore } from '@/store/gamificationStore';
 import { XPPopup } from './XPPopup';
 import { LevelUpOverlay } from './LevelUpOverlay';
@@ -13,6 +14,13 @@ import { AchievementUnlockModal } from './AchievementUnlockModal';
  */
 export function GamificationOverlay() {
   const { currentEvent, consumeEvent } = useGamificationStore();
+
+  // Consume streak events in an effect instead of during render
+  useEffect(() => {
+    if (currentEvent?.type === 'streak') {
+      consumeEvent();
+    }
+  }, [currentEvent, consumeEvent]);
 
   if (!currentEvent) return null;
 
@@ -44,9 +52,7 @@ export function GamificationOverlay() {
       );
 
     case 'streak':
-      // Streak events are shown inline on dashboard, not as overlay
-      // Consume immediately so the queue moves on
-      consumeEvent();
+      // Streak events are consumed via useEffect above
       return null;
 
     default:

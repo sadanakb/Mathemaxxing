@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import type { Exercise } from '@/lib/curriculum/types';
@@ -14,6 +14,7 @@ type BarChartReadProps = {
 export function BarChartRead({ exercise, onSubmit, disabled }: BarChartReadProps) {
   const chartData = exercise.chartData ?? [];
   const [answer, setAnswer] = useState('');
+  const isMC = exercise.answerType === 'multiple-choice';
 
   const handleSubmit = () => {
     onSubmit(answer);
@@ -24,6 +25,13 @@ export function BarChartRead({ exercise, onSubmit, disabled }: BarChartReadProps
       handleSubmit();
     }
   };
+
+  // Build MC options from distractors + correctAnswer (stable across re-renders)
+  const mcOptions = useMemo(() => {
+    if (!isMC) return [];
+    return [String(exercise.correctAnswer), ...(exercise.distractors ?? [])].sort(() => Math.random() - 0.5);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercise.id]);
 
   // Chart dimensions
   const barWidth = 50;
@@ -51,7 +59,7 @@ export function BarChartRead({ exercise, onSubmit, disabled }: BarChartReadProps
         {exercise.question}
       </p>
       <p className="text-sm text-gray-500 mb-4">
-        Lies den Wert aus dem Diagramm ab und gib ihn ein.
+        {isMC ? 'Schau dir das Diagramm an und wähle die richtige Antwort.' : 'Lies den Wert aus dem Diagramm ab und gib ihn ein.'}
       </p>
 
       <div className="flex justify-center mb-6 overflow-x-auto">
@@ -153,24 +161,46 @@ export function BarChartRead({ exercise, onSubmit, disabled }: BarChartReadProps
         </svg>
       </div>
 
-      {/* Answer input */}
-      <div className="flex justify-center gap-3 mb-4">
-        <input
-          type="number"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          placeholder="Wert eingeben"
-          className={[
-            'w-40 text-center text-xl font-bold p-3 rounded-xl border-2 transition-colors',
-            'focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/30',
-            'disabled:bg-gray-100 disabled:cursor-not-allowed',
-            'border-gray-300',
-          ].join(' ')}
-          aria-label="Abgelesenen Wert eingeben"
-        />
-      </div>
+      {/* Answer area */}
+      {isMC ? (
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {mcOptions.map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => !disabled && setAnswer(option)}
+              disabled={disabled}
+              className={[
+                'p-3 rounded-xl border-2 font-semibold text-sm transition-all duration-150 min-h-[44px]',
+                answer === option
+                  ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/30'
+                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400',
+                disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+              ].join(' ')}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="flex justify-center gap-3 mb-4">
+          <input
+            type="number"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            placeholder="Wert eingeben"
+            className={[
+              'w-40 text-center text-xl font-bold p-3 rounded-xl border-2 transition-colors',
+              'focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/30',
+              'disabled:bg-gray-100 disabled:cursor-not-allowed',
+              'border-gray-300',
+            ].join(' ')}
+            aria-label="Abgelesenen Wert eingeben"
+          />
+        </div>
+      )}
 
       <Button onClick={handleSubmit} disabled={disabled || answer === ''} fullWidth size="lg">
         Prüfen

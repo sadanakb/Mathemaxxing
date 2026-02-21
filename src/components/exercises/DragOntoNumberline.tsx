@@ -147,7 +147,7 @@ export function DragOntoNumberline({ exercise, onSubmit, disabled }: DragOntoNum
           disabled={disabled || placements.every((p) => p === null)}
           size="lg"
         >
-          Zuruecksetzen
+          Zurücksetzen
         </Button>
         <Button
           onClick={handleSubmit}
