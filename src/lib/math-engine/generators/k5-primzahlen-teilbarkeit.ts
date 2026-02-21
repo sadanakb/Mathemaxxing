@@ -39,6 +39,9 @@ export const template: ExerciseTemplate = {
       };
     } else if (difficulty === 2) {
       // Multiple choice: all primes up to 20
+      const numbersUpTo20 = Array.from({ length: 19 }, (_, i) => i + 2);
+      const primes20 = numbersUpTo20.filter(isPrime);
+      const nonPrimes20 = numbersUpTo20.filter(n => !isPrime(n));
       return {
         id: genId('k5-prim'),
         topicId: 'k5-primzahlen-teilbarkeit',
@@ -46,6 +49,16 @@ export const template: ExerciseTemplate = {
         answerType: 'multiple-choice',
         correctAnswer: '13',
         distractors: ['9', '15', '21'],
+        visualConfig: {
+          type: 'set-diagram',
+          props: {
+            sets: [
+              { label: 'Primzahlen', elements: primes20 },
+              { label: 'Nicht-Primzahlen', elements: nonPrimes20 },
+            ],
+            intersection: [],
+          },
+        },
         hint: 'Prüfe: Ist die Zahl nur durch 1 und sich selbst teilbar?',
         explanation: '13 ist eine Primzahl. 9 = 3×3, 15 = 3×5, 21 = 3×7.',
         difficulty,

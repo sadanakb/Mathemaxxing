@@ -21,6 +21,7 @@ import { StreakCalendar } from '@/components/gamification/StreakCalendar';
 import { GoalRing } from '@/components/gamification/GoalRing';
 import { Stars } from '@/components/gamification/Stars';
 import { Finn } from '@/components/gamification/Finn';
+import DailyChallenges from '@/components/gamification/DailyChallenges';
 import type { MasteryLevel } from '@/lib/curriculum/types';
 
 const MASTERY_COLORS: Record<MasteryLevel, string> = {
@@ -111,13 +112,17 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-4 gap-3 mb-6">
         <Card padding="sm" className="text-center">
           <div className="text-2xl font-bold text-[var(--color-primary)]">{progress.xpTotal}</div>
           <div className="text-xs text-gray-500 mt-1">XP</div>
         </Card>
         <Card padding="sm" className="text-center">
           <StreakDisplay days={progress.streakDays} isActive={isStreakActive} />
+        </Card>
+        <Card padding="sm" className="text-center">
+          <div className="text-2xl font-bold text-amber-500">{progress.coins ?? 0}</div>
+          <div className="text-xs text-gray-500 mt-1">Münzen</div>
         </Card>
         <Card padding="sm" className="text-center">
           <div className="text-2xl font-bold text-emerald-600">
@@ -186,6 +191,11 @@ export default function DashboardPage() {
         </Card>
       )}
 
+      {/* Daily Challenges */}
+      <Card className="mb-6">
+        <DailyChallenges />
+      </Card>
+
       {/* Topic Grid */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-[var(--heading-weight)] text-gray-900">Deine Themen</h2>
@@ -241,9 +251,18 @@ export default function DashboardPage() {
                     ) : (
                       <div className="flex-1" />
                     )}
-                    {tp?.stars != null && tp.stars > 0 && (
-                      <Stars count={tp.stars} size="sm" />
-                    )}
+                    <div className="flex items-center gap-2">
+                      {tp?.testScore != null && (
+                        <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${
+                          tp.testScore >= 0.8 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {Math.round(tp.testScore * 100)}%
+                        </span>
+                      )}
+                      {tp?.stars != null && tp.stars > 0 && (
+                        <Stars count={tp.stars} size="sm" />
+                      )}
+                    </div>
                   </div>
                 </Card>
               </Link>

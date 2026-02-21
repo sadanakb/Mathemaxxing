@@ -105,3 +105,25 @@ body {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+/* WCAG: Minimum touch target 44x44px on mobile */
+@media (pointer: coarse) {
+  button, a, [role="button"], input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* WCAG: Minimum 16px font on mobile to prevent zoom */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .min-h-screen {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

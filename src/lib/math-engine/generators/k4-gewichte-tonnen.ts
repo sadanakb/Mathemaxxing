@@ -47,6 +47,10 @@ export const template: ExerciseTemplate = {
           difficulty,
           category: 'Abstrakt',
           estimatedSeconds: 15,
+          visualConfig: {
+            type: 'scale' as const,
+            props: { leftWeight: kg, rightWeight: g },
+          },
         };
       }
 
@@ -65,6 +69,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 15,
+        visualConfig: {
+          type: 'scale' as const,
+          props: { leftWeight: g, rightWeight: kg },
+        },
       };
     }
 
@@ -91,6 +99,10 @@ export const template: ExerciseTemplate = {
             difficulty,
             category: 'Abstrakt',
             estimatedSeconds: 15,
+            visualConfig: {
+              type: 'scale' as const,
+              props: { leftWeight: t, rightWeight: kg },
+            },
           };
         }
 
@@ -109,6 +121,10 @@ export const template: ExerciseTemplate = {
           difficulty,
           category: 'Abstrakt',
           estimatedSeconds: 15,
+          visualConfig: {
+            type: 'scale' as const,
+            props: { leftWeight: kg, rightWeight: t },
+          },
         };
       }
 

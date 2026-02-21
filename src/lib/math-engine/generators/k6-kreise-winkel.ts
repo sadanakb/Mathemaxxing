@@ -36,6 +36,10 @@ function generateKreisumfang(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 25 : 40,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'geometric-shape' as const,
+      props: { shape: 'circle' as const, radius: r, showDimensions: true },
+    },
   };
 }
 
@@ -67,6 +71,10 @@ function generateKreisflaeche(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 30 : 45,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'geometric-shape' as const,
+      props: { shape: 'circle' as const, radius: r, showDimensions: true },
+    },
   };
 }
 
@@ -148,6 +156,10 @@ function generateWinkelartMC(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: 15,
     exerciseType: 'multiple-choice',
+    visualConfig: winkel <= 180 ? {
+      type: 'protractor' as const,
+      props: { angle: winkel, showLabels: true },
+    } : undefined,
   };
 }
 

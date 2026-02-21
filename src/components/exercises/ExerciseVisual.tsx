@@ -14,6 +14,9 @@ import { TallyChart } from '@/components/visualizations/TallyChart';
 import { DiceVisual } from '@/components/visualizations/DiceVisual';
 import { Protractor } from '@/components/visualizations/Protractor';
 import { Cuboid3D } from '@/components/visualizations/Cuboid3D';
+import { NumberlineSVG } from '@/components/visualizations/NumberlineSVG';
+import { CoordinateSystemSVG } from '@/components/visualizations/CoordinateSystemSVG';
+import { SetDiagramSVG } from '@/components/visualizations/SetDiagramSVG';
 
 type ExerciseVisualProps = {
   config: VisualConfig;
@@ -37,6 +40,9 @@ export function ExerciseVisual({ config }: ExerciseVisualProps) {
       {type === 'dice' && <DiceVisual {...(props as React.ComponentProps<typeof DiceVisual>)} />}
       {type === 'protractor' && <Protractor {...(props as React.ComponentProps<typeof Protractor>)} />}
       {type === 'cuboid-3d' && <Cuboid3D {...(props as React.ComponentProps<typeof Cuboid3D>)} />}
+      {type === 'numberline' && <NumberlineSVG {...(props as React.ComponentProps<typeof NumberlineSVG>)} />}
+      {type === 'coordinate-system' && <CoordinateSystemSVG {...(props as React.ComponentProps<typeof CoordinateSystemSVG>)} />}
+      {type === 'set-diagram' && <SetDiagramSVG {...(props as React.ComponentProps<typeof SetDiagramSVG>)} />}
     </div>
   );
 }

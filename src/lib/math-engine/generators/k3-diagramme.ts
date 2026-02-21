@@ -67,6 +67,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Repräsentational',
         estimatedSeconds: 30,
+        visualConfig: { type: 'pie-chart' as const, props: { segments: data.map(d => ({ label: d.label, value: d.value })), showLabels: true, showPercentages: true } },
       };
     }
 

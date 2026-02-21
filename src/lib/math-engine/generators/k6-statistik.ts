@@ -222,6 +222,7 @@ function generateDiagrammAblesen(difficulty: 1 | 2 | 3): Exercise {
       estimatedSeconds: 15,
       exerciseType: 'multiple-choice',
       chartData,
+      visualConfig: { type: 'pie-chart' as const, props: { segments: chartData.map(d => ({ label: d.label, value: d.value })), showLabels: true, showPercentages: true } },
     };
   } else if (frageTyp === 1) {
     // Summe aller Werte

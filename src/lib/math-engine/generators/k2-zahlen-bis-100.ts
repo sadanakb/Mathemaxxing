@@ -40,6 +40,7 @@ export const template: ExerciseTemplate = {
           difficulty,
           category: 'Repräsentational',
           estimatedSeconds: 15,
+          visualConfig: { type: 'base10-blocks' as const, props: { tens: zehner, ones: einer } },
         };
       }
 
@@ -173,6 +174,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Repräsentational',
         estimatedSeconds: 15,
+        visualConfig: { type: 'base10-blocks' as const, props: { tens: zehner, ones: einer } },
       };
     }
 

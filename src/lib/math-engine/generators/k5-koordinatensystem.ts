@@ -42,6 +42,17 @@ export const template: ExerciseTemplate = {
       answerType: 'multiple-choice',
       correctAnswer: correct,
       distractors,
+      visualConfig: {
+        type: 'coordinate-system',
+        props: {
+          xMin: allowNegative ? -maxCoord : 0,
+          xMax: maxCoord,
+          yMin: allowNegative ? -maxCoord : 0,
+          yMax: maxCoord,
+          points,
+          showGrid: true,
+        },
+      },
       hint: `Gehe auf der x-Achse zu ${target.x}, dann auf der y-Achse zu ${target.y}.`,
       explanation: `Punkt ${correct} liegt bei (${target.x}|${target.y}).`,
       difficulty,

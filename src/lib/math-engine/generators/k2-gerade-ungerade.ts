@@ -53,6 +53,16 @@ export const template: ExerciseTemplate = {
           'ungerade': ungerade.map(String),
         },
         items: numbers.map(String),
+        visualConfig: {
+          type: 'set-diagram',
+          props: {
+            sets: [
+              { label: 'Gerade', elements: gerade },
+              { label: 'Ungerade', elements: ungerade },
+            ],
+            intersection: [],
+          },
+        },
         hint: 'Gerade Zahlen enden auf 0, 2, 4, 6 oder 8. Ungerade auf 1, 3, 5, 7 oder 9.',
         explanation: `Gerade: ${gerade.join(', ')}. Ungerade: ${ungerade.join(', ')}.`,
         difficulty,

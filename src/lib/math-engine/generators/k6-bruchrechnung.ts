@@ -41,6 +41,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 30,
+        visualConfig: {
+          type: 'fraction-circle' as const,
+          props: { numerator: n1, denominator: d },
+        },
       };
     } else if (difficulty === 2) {
       // Add different denominators (LCM needed)
@@ -65,6 +69,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 50,
+        visualConfig: {
+          type: 'fraction-bar' as const,
+          props: { numerator: n1, denominator: d1, showLabels: true },
+        },
       };
     } else {
       // Multiply fractions
@@ -88,6 +96,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 60,
+        visualConfig: {
+          type: 'fraction-circle' as const,
+          props: { numerator: n1, denominator: d1 },
+        },
       };
     }
   },

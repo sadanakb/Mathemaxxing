@@ -28,6 +28,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 20,
+        visualConfig: { type: 'thermometer' as const, props: { temperature: a, min: -20, max: 20 } },
       };
     } else if (difficulty === 2) {
       // Various operations with negatives
@@ -47,6 +48,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 25,
+        visualConfig: { type: 'thermometer' as const, props: { temperature: a, min: -20, max: 20 } },
       };
     } else {
       // Negative × negative or negative × positive

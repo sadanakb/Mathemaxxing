@@ -272,6 +272,7 @@ export const template: ExerciseTemplate = {
       difficulty,
       category: 'Abstrakt',
       estimatedSeconds: 15,
+      visualConfig: { type: 'dice' as const, props: { values: [Math.min(augenzahl, 6)] } },
     };
   },
 };

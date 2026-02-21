@@ -55,6 +55,10 @@ function generateBruchZuDezimal(difficulty: 1 | 2 | 3): Exercise {
       category: 'Abstrakt',
       estimatedSeconds: 25,
       exerciseType: 'text-input',
+      visualConfig: {
+        type: 'fraction-bar' as const,
+        props: { numerator: n, denominator: d, showLabels: true },
+      },
     };
   } else if (difficulty === 2) {
     // Nenner 8, 20, 25, 50
@@ -78,6 +82,10 @@ function generateBruchZuDezimal(difficulty: 1 | 2 | 3): Exercise {
       category: 'Abstrakt',
       estimatedSeconds: 40,
       exerciseType: 'text-input',
+      visualConfig: {
+        type: 'fraction-bar' as const,
+        props: { numerator: n, denominator: d, showLabels: true },
+      },
     };
   } else {
     // Periodische Dezimalbrüche erkennen
@@ -117,6 +125,7 @@ function generateDezimalZuBruch(difficulty: 1 | 2 | 3): Exercise {
       ['0,8', '4/5'], ['0,9', '9/10'],
     ];
     const [dec, frac] = pick(pairs);
+    const fracParts = frac.split('/');
     return {
       id: genId('k6-dez'),
       topicId: 'k6-dezimalbrueche',
@@ -129,6 +138,10 @@ function generateDezimalZuBruch(difficulty: 1 | 2 | 3): Exercise {
       category: 'Abstrakt',
       estimatedSeconds: 25,
       exerciseType: 'text-input',
+      visualConfig: {
+        type: 'fraction-circle' as const,
+        props: { numerator: parseInt(fracParts[0]), denominator: parseInt(fracParts[1]) },
+      },
     };
   } else {
     const pairs: [string, string][] = [

@@ -81,6 +81,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 25,
+        visualConfig: {
+          type: 'coins' as const,
+          props: { values: [items[0].cents, items[1].cents] },
+        },
       };
     }
 
@@ -131,6 +135,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 35,
+        visualConfig: {
+          type: 'coins' as const,
+          props: { values: [items[0].cents, items[1].cents] },
+        },
       };
     }
 

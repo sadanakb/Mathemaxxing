@@ -24,9 +24,12 @@ export function Navbar() {
 
   const navItems = [
     { href: '/dashboard', label: 'Übersicht', icon: '🏠' },
+    { href: '/map', label: 'Lernpfad', icon: '🗺️' },
     { href: '/review', label: 'Wiederholen', icon: '🔄' },
-    { href: '/daily-mix', label: 'Tagesmix', icon: '✨' },
-    { href: '/tutor', label: 'Tutor', icon: '🤖' },
+    { href: '/daily-mix', label: 'Tagesmix', icon: '\u2728' },
+    { href: '/leaderboard', label: 'Liga', icon: '\u{1F3C6}' },
+    { href: '/shop', label: 'Shop', icon: '\u{1F6D2}' },
+    { href: '/tutor', label: 'Tutor', icon: '\u{1F916}' },
     { href: '/settings', label: 'Einstellungen', icon: '⚙️' },
   ];
 

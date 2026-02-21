@@ -173,4 +173,15 @@ export const KLASSE5_TOPICS: CurriculumTopic[] = [
     estimatedMinutes: 150,
     description: 'Volumen und Oberfläche von Quadern und Würfeln berechnen.',
   },
+  {
+    id: 'k5-ggt-kgv',
+    title: 'ggT und kgV',
+    lernbereich: 'Arithmetik',
+    klasse: 5,
+    schulformen: SEKUNDARSTUFE,
+    kmkStandard: true,
+    prerequisites: ['k5-primzahlen-teilbarkeit'],
+    estimatedMinutes: 180,
+    description: 'Größter gemeinsamer Teiler (ggT) und kleinstes gemeinsames Vielfaches (kgV). Primfaktorzerlegung anwenden.',
+  },
 ];

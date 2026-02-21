@@ -56,6 +56,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 35,
+        visualConfig: { type: 'dice' as const, props: { values: [1, 2, 3, 4, 5, 6] } },
       };
     } else {
       // Colored balls in a bag

@@ -179,4 +179,15 @@ export const KLASSE6_TOPICS: CurriculumTopic[] = [
     estimatedMinutes: 150,
     description: 'Nebenwinkel, Scheitelwinkel, Stufenwinkel und Wechselwinkel berechnen.',
   },
+  {
+    id: 'k6-prozentrechnung-einfuehrung',
+    title: 'Prozentrechnung (Einführung)',
+    lernbereich: 'Arithmetik',
+    klasse: 6,
+    schulformen: MIT_GRUNDSCHULE,
+    kmkStandard: true,
+    prerequisites: ['k6-bruchrechnung', 'k6-dezimalbrueche'],
+    estimatedMinutes: 210,
+    description: 'Grundlagen der Prozentrechnung: Prozentwert, Grundwert und Prozentsatz berechnen.',
+  },
 ];

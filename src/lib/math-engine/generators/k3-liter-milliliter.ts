@@ -39,6 +39,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Konkret',
         estimatedSeconds: 15,
+        visualConfig: {
+          type: 'ruler' as const,
+          props: { length: liter, unit: 'cm' as const, highlights: [liter] },
+        },
       };
     }
 
@@ -143,6 +147,10 @@ export const template: ExerciseTemplate = {
       difficulty,
       category: 'Konkret',
       estimatedSeconds: 35,
+      visualConfig: {
+        type: 'scale' as const,
+        props: { leftWeight: l1 * 1000 + ml1, rightWeight: l2 * 1000 + ml2 },
+      },
     };
   },
 };

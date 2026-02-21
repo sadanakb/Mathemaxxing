@@ -61,6 +61,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Repräsentational',
         estimatedSeconds: 20,
+        visualConfig: {
+          type: 'geometric-shape' as const,
+          props: { shape: 'rectangle' as const, width: 4, height: 4, showDimensions: false },
+        },
       };
     }
 
@@ -105,6 +109,13 @@ export const template: ExerciseTemplate = {
       difficulty,
       category: 'Repräsentational',
       estimatedSeconds: 25,
+      visualConfig: koerper.name === 'Würfel' || koerper.name === 'Quader' ? {
+        type: 'cuboid-3d' as const,
+        props: { width: 4, height: 4, depth: koerper.name === 'Würfel' ? 4 : 6, showDimensions: true },
+      } : {
+        type: 'geometric-shape' as const,
+        props: { shape: 'rectangle' as const, width: 4, height: 4, showDimensions: false },
+      },
     };
   },
 };

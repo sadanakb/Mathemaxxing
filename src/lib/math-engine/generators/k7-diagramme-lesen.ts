@@ -34,6 +34,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Repräsentational',
         estimatedSeconds: 30,
+        visualConfig: { type: 'pie-chart' as const, props: { segments: values.map(v => ({ label: v.cat, value: v.val })), showLabels: true } },
       };
     } else if (difficulty === 2) {
       // Find total or difference
@@ -73,6 +74,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Repräsentational',
         estimatedSeconds: 55,
+        visualConfig: { type: 'pie-chart' as const, props: { segments: vals.map(v => ({ label: v.m, value: v.v })), showLabels: true, showPercentages: true } },
       };
     }
   },

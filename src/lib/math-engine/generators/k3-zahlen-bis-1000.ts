@@ -58,6 +58,7 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 20,
+        visualConfig: { type: 'base10-blocks' as const, props: { hundreds: h, tens: z, ones: e } },
       };
     }
 
@@ -177,6 +178,7 @@ export const template: ExerciseTemplate = {
       difficulty,
       category: 'Abstrakt',
       estimatedSeconds: 25,
+      visualConfig: { type: 'base10-blocks' as const, props: { hundreds: h, tens: z, ones: e } },
     };
   },
 };

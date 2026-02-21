@@ -31,6 +31,10 @@ export const template: ExerciseTemplate = {
         exerciseType: 'number-input',
         correctAnswer: askX ? x : y,
         gridConfig: { width: gridW, height: gridH, points: [{ x, y, label: 'A' }] },
+        visualConfig: {
+          type: 'coordinate-system',
+          props: { xMin: 0, xMax: gridW, yMin: 0, yMax: gridH, points: [{ x, y, label: 'A' }], showGrid: true },
+        },
         hint: `Der ${askX ? 'x-Wert' : 'y-Wert'} gibt an, wie weit der Punkt ${askX ? 'nach rechts' : 'nach oben'} liegt.`,
         explanation: `Punkt A liegt bei (${x} | ${y}). Der ${askX ? 'x-Wert' : 'y-Wert'} ist ${askX ? x : y}.`,
         difficulty,
@@ -52,6 +56,10 @@ export const template: ExerciseTemplate = {
         exerciseType: 'drag-onto-grid',
         correctAnswer: `(${x}|${y})`,
         gridConfig: { width: gridW, height: gridH, points: [{ x, y, label: 'B' }] },
+        visualConfig: {
+          type: 'coordinate-system',
+          props: { xMin: 0, xMax: gridW, yMin: 0, yMax: gridH, points: [], showGrid: true },
+        },
         hint: `Gehe ${x} Schritte nach rechts und ${y} Schritte nach oben.`,
         explanation: `Punkt B liegt bei (${x} | ${y}): ${x} nach rechts, ${y} nach oben.`,
         difficulty,

@@ -27,6 +27,10 @@ function generateNebenwinkel(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 10 : 15,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'protractor' as const,
+      props: { angle: alpha, showLabels: true },
+    },
   };
 }
 
@@ -49,6 +53,10 @@ function generateScheitelwinkel(difficulty: 1 | 2 | 3): Exercise {
       category: 'Abstrakt',
       estimatedSeconds: 10,
       exerciseType: 'number-input',
+      visualConfig: {
+        type: 'protractor' as const,
+        props: { angle: alpha, showLabels: true },
+      },
     };
   } else {
     // Alle vier Winkel an einer Kreuzung
@@ -88,6 +96,10 @@ function generateStufenwinkel(difficulty: 1 | 2 | 3): Exercise {
       category: 'Abstrakt',
       estimatedSeconds: 15,
       exerciseType: 'number-input',
+      visualConfig: {
+        type: 'protractor' as const,
+        props: { angle: alpha, showLabels: true },
+      },
     };
   } else {
     // Kombination: Stufenwinkel + Nebenwinkel

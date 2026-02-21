@@ -177,4 +177,15 @@ export const KLASSE3_TOPICS: CurriculumTopic[] = [
     estimatedMinutes: 130,
     description: 'Balkendiagramme und einfache Tabellen lesen, Daten entnehmen und darstellen.',
   },
+  {
+    id: 'k3-vielfache-teiler',
+    title: 'Vielfache und Teiler',
+    lernbereich: 'Arithmetik',
+    klasse: 3,
+    schulformen: ['Grundschule'],
+    kmkStandard: true,
+    prerequisites: ['k3-einmaleins-vertiefen'],
+    estimatedMinutes: 160,
+    description: 'Vielfache und Teiler bestimmen. Teilbarkeitsregeln für 2, 3, 5, 9, 10 kennen und anwenden.',
+  },
 ];

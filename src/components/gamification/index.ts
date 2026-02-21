@@ -6,3 +6,5 @@ export { GamificationOverlay } from './GamificationOverlay';
 export { Stars } from './Stars';
 export { Finn } from './Finn';
 export { StreakDisplay } from './StreakDisplay';
+export { default as WeeklyRecap } from './WeeklyRecap';
+export { default as DailyChallenges } from './DailyChallenges';

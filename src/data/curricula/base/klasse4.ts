@@ -180,4 +180,15 @@ export const KLASSE4_TOPICS: CurriculumTopic[] = [
     estimatedMinutes: 90,
     description: 'Ereignisse als sicher, möglich oder unmöglich einordnen. Einfache Zufallsversuche (Würfel, Münze, Glücksrad) beschreiben.',
   },
+  {
+    id: 'k4-bruchvergleich',
+    title: 'Brüche vergleichen und ordnen',
+    lernbereich: 'Arithmetik',
+    klasse: 4,
+    schulformen: ['Grundschule'],
+    kmkStandard: true,
+    prerequisites: ['k4-brueche-als-anteil'],
+    estimatedMinutes: 150,
+    description: 'Brüche vergleichen und der Größe nach ordnen. Hauptnenner finden und gleichnamig machen.',
+  },
 ];

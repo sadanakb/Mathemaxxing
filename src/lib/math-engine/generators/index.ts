@@ -55,6 +55,7 @@ import { template as geometrischeKoerper } from './k3-geometrische-koerper';
 import { template as flaecheUmfangEinfach } from './k3-flaeche-umfang-einfach';
 import { template as spiegelnVerschieben } from './k3-spiegeln-verschieben';
 import { template as diagrammeK3 } from './k3-diagramme';
+import { template as vielfacheTeiler } from './k3-vielfache-teiler';
 
 // ── Klasse 4 ──────────────────────────────────────────────
 import { template as zahlenBis1Million } from './k4-zahlen-bis-1million';
@@ -73,6 +74,7 @@ import { template as symmetrie } from './k4-symmetrie';
 import { template as koordinatenGitternetz } from './k4-koordinaten-gitternetz';
 import { template as tabellenDiagramme } from './k4-tabellen-diagramme';
 import { template as wahrscheinlichkeitEinfuehrung } from './k4-wahrscheinlichkeit-einfuehrung';
+import { template as bruchvergleich } from './k4-bruchvergleich';
 
 // ── Klasse 5 ──────────────────────────────────────────────
 import { template as primzahlen } from './k5-primzahlen-teilbarkeit';
@@ -90,6 +92,7 @@ import { template as datenZufall } from './k5-daten-zufall';
 import { template as dezimalzahlenRechnen } from './k5-dezimalzahlen-rechnen';
 import { template as geometrischeGrundbegriffe } from './k5-geometrische-grundbegriffe';
 import { template as quaderVolumen } from './k5-quader-volumen';
+import { template as ggtKgv } from './k5-ggt-kgv';
 
 // ── Klasse 6 ──────────────────────────────────────────────
 import { template as bruchrechnung } from './k6-bruchrechnung';
@@ -107,6 +110,7 @@ import { template as termeUmformen } from './k6-terme-umformen';
 import { template as gleichungenEinfuehrung } from './k6-gleichungen-einfuehrung';
 import { template as volumenOberflaeche } from './k6-volumen-oberflaeche';
 import { template as winkelberechnung } from './k6-winkelberechnung';
+import { template as prozentrechnungEinfuehrung } from './k6-prozentrechnung-einfuehrung';
 
 // ── Klasse 7 ──────────────────────────────────────────────
 import { template as prozentGym } from './k7-prozentrechnung-gym';
@@ -130,6 +134,9 @@ import { template as grundrechenartenFestigen } from './k7-grundrechenarten-fest
 import { template as masstab } from './k7-masstab';
 import { template as sachaufgabenGeld } from './k7-sachaufgaben-geld';
 import { template as geometrieGrundlagen } from './k7-geometrie-grundlagen';
+import { template as aehnlichkeit } from './k7-aehnlichkeit';
+import { template as funktionenEinfuehrung } from './k7-funktionen-einfuehrung';
+import { template as potenzen } from './k7-potenzen';
 
 const GENERATORS: Record<string, ExerciseTemplate> = {
   // ── Klasse 1 ──
@@ -187,6 +194,7 @@ const GENERATORS: Record<string, ExerciseTemplate> = {
   'k3-flaeche-umfang-einfach': flaecheUmfangEinfach,
   'k3-spiegeln-verschieben': spiegelnVerschieben,
   'k3-diagramme': diagrammeK3,
+  'k3-vielfache-teiler': vielfacheTeiler,
 
   // ── Klasse 4 ──
   'k4-zahlen-bis-1million': zahlenBis1Million,
@@ -205,6 +213,7 @@ const GENERATORS: Record<string, ExerciseTemplate> = {
   'k4-koordinaten-gitternetz': koordinatenGitternetz,
   'k4-tabellen-diagramme': tabellenDiagramme,
   'k4-wahrscheinlichkeit-einfuehrung': wahrscheinlichkeitEinfuehrung,
+  'k4-bruchvergleich': bruchvergleich,
 
   // ── Klasse 5 ──
   'k5-primzahlen-teilbarkeit': primzahlen,
@@ -222,6 +231,7 @@ const GENERATORS: Record<string, ExerciseTemplate> = {
   'k5-dezimalzahlen-rechnen': dezimalzahlenRechnen,
   'k5-geometrische-grundbegriffe': geometrischeGrundbegriffe,
   'k5-quader-volumen': quaderVolumen,
+  'k5-ggt-kgv': ggtKgv,
 
   // ── Klasse 6 ──
   'k6-bruchrechnung': bruchrechnung,
@@ -239,6 +249,7 @@ const GENERATORS: Record<string, ExerciseTemplate> = {
   'k6-gleichungen-einfuehrung': gleichungenEinfuehrung,
   'k6-volumen-oberflaeche': volumenOberflaeche,
   'k6-winkelberechnung': winkelberechnung,
+  'k6-prozentrechnung-einfuehrung': prozentrechnungEinfuehrung,
 
   // ── Klasse 7 ──
   'k7-prozentrechnung-gym': prozentGym,
@@ -262,6 +273,9 @@ const GENERATORS: Record<string, ExerciseTemplate> = {
   'k7-masstab': masstab,
   'k7-sachaufgaben-geld': sachaufgabenGeld,
   'k7-geometrie-grundlagen': geometrieGrundlagen,
+  'k7-aehnlichkeit': aehnlichkeit,
+  'k7-funktionen-einfuehrung': funktionenEinfuehrung,
+  'k7-potenzen': potenzen,
 };
 
 export function getGenerator(topicId: string): ExerciseTemplate | null {

@@ -36,6 +36,8 @@ function createDefaultProgress(userId: string): UserProgress {
     lastStreakDate: null,
     achievements: [],
     badges: [],
+    coins: 0,
+    totalCoinsEarned: 0,
     dailyGoalMinutes: 20,
     activeDates: [],
     todayMinutes: 0,
@@ -61,6 +63,10 @@ type ProgressActions = {
   addXP: (amount: number) => void;
   checkAndUnlockAchievements: () => void;
   updateStreak: () => void;
+
+  // Coins
+  earnCoins: (amount: number, reason: string) => void;
+  spendCoins: (amount: number) => boolean;
 
   // Leitner
   updateLeitnerCard: (card: LeitnerCard) => void;
@@ -211,6 +217,37 @@ export const useProgressStore = create<ProgressStore>()((set, get) => ({
       useGamificationStore.getState().pushEvent({ type: 'streak', days: newStreak });
     }
     get().persistToDB();
+  },
+
+  earnCoins: (amount, _reason) => {
+    set((state) => {
+      if (!state.progress) return state;
+      return {
+        progress: {
+          ...state.progress,
+          coins: state.progress.coins + amount,
+          totalCoinsEarned: state.progress.totalCoinsEarned + amount,
+        },
+      };
+    });
+    useGamificationStore.getState().pushEvent({ type: 'xp', amount }); // reuse xp animation for coins
+    get().persistToDB();
+  },
+
+  spendCoins: (amount) => {
+    const { progress } = get();
+    if (!progress || progress.coins < amount) return false;
+    set((state) => {
+      if (!state.progress) return state;
+      return {
+        progress: {
+          ...state.progress,
+          coins: state.progress.coins - amount,
+        },
+      };
+    });
+    get().persistToDB();
+    return true;
   },
 
   addMinutesToday: (minutes) => {

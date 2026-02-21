@@ -1,6 +1,13 @@
 import type { TheoryBlock } from './types';
+import { K1_K3_THEORY } from './k1-k3-theory';
+import { K4_K5_THEORY } from './k4-k5-theory';
+import { K6_K7_THEORY } from './k6-k7-theory';
 
 export const THEORY_CONTENT: Record<string, TheoryBlock> = {
+  // Merge all external theory files (new topics take precedence)
+  ...K1_K3_THEORY,
+  ...K4_K5_THEORY,
+  ...K6_K7_THEORY,
   // ═══════════════════════════════════════════════════════════════
   // KLASSE 1
   // ═══════════════════════════════════════════════════════════════

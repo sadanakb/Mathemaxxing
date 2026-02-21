@@ -24,6 +24,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 30,
+        visualConfig: {
+          type: 'geometric-shape' as const,
+          props: { shape: 'triangle' as const, sideA: base, height: height, showDimensions: true },
+        },
       };
     } else if (difficulty === 2) {
       // Parallelogram: A = base * height
@@ -42,6 +46,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 30,
+        visualConfig: {
+          type: 'geometric-shape' as const,
+          props: { shape: 'parallelogram' as const, width: base, height: height, showDimensions: true },
+        },
       };
     } else {
       // Trapezoid: A = (a + c) / 2 * h
@@ -61,6 +69,10 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 50,
+        visualConfig: {
+          type: 'geometric-shape' as const,
+          props: { shape: 'trapezoid' as const, sideA: a, sideB: c, height: h, showDimensions: true },
+        },
       };
     }
   },

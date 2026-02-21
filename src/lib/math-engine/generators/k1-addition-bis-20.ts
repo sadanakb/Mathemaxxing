@@ -42,6 +42,7 @@ export const template: ExerciseTemplate = {
       difficulty,
       category: 'Abstrakt',
       estimatedSeconds: 15,
+      visualConfig: { type: 'base10-blocks' as const, props: { tens: Math.floor(a / 10), ones: a % 10 } },
     };
   },
 };

@@ -37,6 +37,10 @@ function generateRechteckFlaeche(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 15 : 25,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'geometric-shape' as const,
+      props: { shape: 'rectangle' as const, width: a, height: b, showDimensions: true },
+    },
   };
 }
 
@@ -57,6 +61,10 @@ function generateUmfangQuadrat(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 10 : 20,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'geometric-shape' as const,
+      props: { shape: 'rectangle' as const, width: a, height: a, showDimensions: true },
+    },
   };
 }
 
@@ -128,6 +136,10 @@ function generateDreieckFlaeche(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: 30,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'geometric-shape' as const,
+      props: { shape: 'triangle' as const, sideA: base, height: h, showDimensions: true },
+    },
   };
 }
 

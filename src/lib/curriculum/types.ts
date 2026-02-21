@@ -134,7 +134,10 @@ export type VisualType =
   | 'tally'
   | 'dice'
   | 'protractor'
-  | 'cuboid-3d';
+  | 'cuboid-3d'
+  | 'numberline'
+  | 'coordinate-system'
+  | 'set-diagram';
 
 export type VisualConfig = {
   type: VisualType;
@@ -281,6 +284,10 @@ export type UserProgress = {
   lastStreakDate: string | null;     // ISO date string (YYYY-MM-DD)
   achievements: Achievement[];
   badges: Badge[];
+
+  // Münz-Economy
+  coins: number;
+  totalCoinsEarned: number;
 
   // Settings
   dailyGoalMinutes: number;

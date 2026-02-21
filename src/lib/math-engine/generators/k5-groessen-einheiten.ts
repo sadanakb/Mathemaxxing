@@ -56,6 +56,10 @@ function generateLaengenUmrechnung(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 15 : difficulty === 2 ? 25 : 35,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'ruler' as const,
+      props: { length: Math.min(wert, 30), unit: conv.von === 'mm' || conv.nach === 'mm' ? 'mm' as const : 'cm' as const, highlights: [wert] },
+    },
   };
 }
 
@@ -96,6 +100,10 @@ function generateGewichtUmrechnung(difficulty: 1 | 2 | 3): Exercise {
     category: 'Abstrakt',
     estimatedSeconds: difficulty === 1 ? 15 : 25,
     exerciseType: 'number-input',
+    visualConfig: {
+      type: 'scale' as const,
+      props: { leftWeight: wert, rightWeight: antwort },
+    },
   };
 }
 

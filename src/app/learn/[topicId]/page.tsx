@@ -25,6 +25,7 @@ import { Stars } from '@/components/gamification/Stars';
 import { Finn } from '@/components/gamification/Finn';
 import { Confetti } from '@/components/gamification/Confetti';
 import { ExerciseVisual } from '@/components/exercises/ExerciseVisual';
+import { useSessionStore } from '@/store/sessionStore';
 import type { Exercise } from '@/lib/curriculum/types';
 
 const QUIZ_SIZE = 10;
@@ -35,6 +36,7 @@ export default function LearnTopicPage() {
   const { topicId } = useParams<{ topicId: string }>();
   const router = useRouter();
   const { updateTopicProgress, addXP, updateStreak, updateLeitnerCard, leitnerCards, progress } = useProgressStore();
+  const { startSession, recordExerciseCompleted, exercisesCompletedThisSession, xpEarnedThisSession, sessionStartTime } = useSessionStore();
 
   const topic = findTopicById(topicId);
   const theme = useCurrentTheme();
@@ -52,6 +54,7 @@ export default function LearnTopicPage() {
 
   useEffect(() => {
     if (phase === 'quiz') {
+      startSession(topicId);
       const first = generateExercise(topicId, 1);
       setExercises(first ? [first] : []);
       setCurrentIndex(0);
@@ -59,7 +62,7 @@ export default function LearnTopicPage() {
       setDifficulty(1);
       setRecentResults([]);
     }
-  }, [phase, topicId]);
+  }, [phase, topicId, startSession]);
 
   if (!topic) {
     return (
@@ -98,6 +101,7 @@ export default function LearnTopicPage() {
     });
 
     if (xp > 0) addXP(xp);
+    recordExerciseCompleted(xp);
 
     // Update Leitner card
     const existingCard = leitnerCards.find((c) => c.topicId === topicId);
@@ -276,7 +280,7 @@ export default function LearnTopicPage() {
             <Stars count={resultStars} size="lg" showEmpty />
           </div>
 
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-4">
             Du hast <strong>{score.correct} von {QUIZ_SIZE}</strong> Aufgaben richtig beantwortet.
           </p>
 
@@ -287,6 +291,24 @@ export default function LearnTopicPage() {
             variant={passed ? 'success' : 'warning'}
             size="lg"
           />
+
+          {/* Session-Statistik */}
+          <div className="grid grid-cols-3 gap-3 mt-6">
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <div className="text-lg font-bold text-[var(--color-primary)]">{exercisesCompletedThisSession}</div>
+              <div className="text-xs text-gray-500">Aufgaben</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <div className="text-lg font-bold text-amber-500">+{xpEarnedThisSession}</div>
+              <div className="text-xs text-gray-500">XP verdient</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <div className="text-lg font-bold text-emerald-600">
+                {sessionStartTime ? Math.round((Date.now() - new Date(sessionStartTime).getTime()) / 60000) : 0} min
+              </div>
+              <div className="text-xs text-gray-500">Dauer</div>
+            </div>
+          </div>
 
           <div className="flex gap-3 mt-8">
             <Button variant="ghost" fullWidth onClick={() => setPhase('quiz')}>
