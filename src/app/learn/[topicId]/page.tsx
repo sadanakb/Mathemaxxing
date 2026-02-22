@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { findTopicById } from '@/lib/curriculum/merge';
 import { generateExercise } from '@/lib/math-engine/generators';
 import { evaluateExerciseAnswer } from '@/lib/exercise/evaluator';
@@ -15,8 +16,10 @@ import { calculateStars } from '@/lib/gamification/stars';
 import { getTheory } from '@/data/theory';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { Progress } from '@/components/ui/Progress';
 import { PageWrapper } from '@/components/layout/PageWrapper';
+import { PageTransition } from '@/components/layout/PageTransition';
 import { ExerciseRouter } from '@/components/exercises/ExerciseRouter';
 import { CorrectFeedback } from '@/components/feedback/CorrectFeedback';
 import { WrongFeedback } from '@/components/feedback/WrongFeedback';
@@ -31,6 +34,50 @@ import type { Exercise } from '@/lib/curriculum/types';
 const QUIZ_SIZE = 10;
 
 type Phase = 'theory' | 'quiz' | 'results';
+
+/** Animated counter for results */
+function AnimatedNumber({ value, duration = 1 }: { value: number; duration?: number }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const increment = value / (duration * 60);
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= value) {
+        setDisplay(value);
+        clearInterval(timer);
+      } else {
+        setDisplay(Math.floor(start));
+      }
+    }, 1000 / 60);
+    return () => clearInterval(timer);
+  }, [value, duration]);
+
+  return <>{display}</>;
+}
+
+/** Segmented quiz progress bar */
+function QuizProgressBar({ current, total, results }: { current: number; total: number; results: boolean[] }) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: total }).map((_, i) => {
+        let color = 'bg-gray-200';
+        if (i < results.length) {
+          color = results[i] ? 'bg-emerald-500' : 'bg-red-400';
+        } else if (i === current) {
+          color = 'bg-[var(--color-primary)]';
+        }
+        return (
+          <div
+            key={i}
+            className={`flex-1 h-2 rounded-full transition-colors duration-300 ${color}`}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 export default function LearnTopicPage() {
   const { topicId } = useParams<{ topicId: string }>();
@@ -51,6 +98,7 @@ export default function LearnTopicPage() {
   const [showHint, setShowHint] = useState(false);
   const [difficulty, setDifficulty] = useState<1 | 2 | 3>(1);
   const [recentResults, setRecentResults] = useState<boolean[]>([]);
+  const [quizResults, setQuizResults] = useState<boolean[]>([]);
 
   useEffect(() => {
     if (phase === 'quiz') {
@@ -61,10 +109,10 @@ export default function LearnTopicPage() {
       setScore({ correct: 0, total: 0 });
       setDifficulty(1);
       setRecentResults([]);
+      setQuizResults([]);
     }
   }, [phase, topicId, startSession]);
 
-  // Track minutes for daily goal during quiz
   useEffect(() => {
     if (phase !== 'quiz') return;
     const interval = setInterval(() => {
@@ -79,7 +127,7 @@ export default function LearnTopicPage() {
         <div className="text-center py-20">
           <p className="text-gray-500">Thema nicht gefunden.</p>
           <Link href="/dashboard" className="text-[var(--color-primary)] mt-4 inline-block">
-            ← Zurück zur Übersicht
+            <Icon name="chevron-left" size={16} className="inline" /> Zurück zur Übersicht
           </Link>
         </div>
       </PageWrapper>
@@ -93,6 +141,7 @@ export default function LearnTopicPage() {
 
     const isCorrect = evaluateExerciseAnswer(answer, currentExercise);
     setFeedback(isCorrect ? 'correct' : 'wrong');
+    setQuizResults((prev) => [...prev, isCorrect]);
 
     const xp = calculateXP({
       isCorrect,
@@ -102,7 +151,6 @@ export default function LearnTopicPage() {
       isFirstAttempt: hintsUsed === 0,
     });
 
-    // Update progress
     const tp = progress?.topicProgress[topicId];
     updateTopicProgress(topicId, {
       attemptsTotal: (tp?.attemptsTotal ?? 0) + 1,
@@ -112,7 +160,6 @@ export default function LearnTopicPage() {
     if (xp > 0) addXP(xp);
     recordExerciseCompleted(xp);
 
-    // Update Leitner card
     const existingCard = leitnerCards.find((c) => c.topicId === topicId);
     const card = existingCard ?? createCard(topicId);
     updateLeitnerCard(isCorrect ? advanceCard(card) : resetCard(card));
@@ -122,7 +169,6 @@ export default function LearnTopicPage() {
       total: s.total + 1,
     }));
 
-    // Track recent results for adaptive difficulty (last 5)
     setRecentResults((prev) => [...prev.slice(-4), isCorrect]);
   };
 
@@ -133,33 +179,22 @@ export default function LearnTopicPage() {
     setHintsUsed(0);
 
     if (currentIndex + 1 >= QUIZ_SIZE) {
-      // Quiz complete
       const finalScore = score.correct / QUIZ_SIZE;
       const stars = calculateStars(finalScore);
       if (finalScore >= 0.8) {
-        updateTopicProgress(topicId, {
-          masteryLevel: 'mastered',
-          postQuizScore: finalScore,
-          stars,
-        });
+        updateTopicProgress(topicId, { masteryLevel: 'mastered', postQuizScore: finalScore, stars });
       } else {
-        updateTopicProgress(topicId, {
-          masteryLevel: 'practicing',
-          postQuizScore: finalScore,
-          stars,
-        });
+        updateTopicProgress(topicId, { masteryLevel: 'practicing', postQuizScore: finalScore, stars });
       }
       updateStreak();
       setPhase('results');
     } else {
-      // Adapt difficulty based on recent performance
       const recentRate = recentResults.length > 0
         ? recentResults.filter(Boolean).length / recentResults.length
         : 0.5;
       const nextDifficulty = adaptDifficulty(difficulty, recentRate);
       setDifficulty(nextDifficulty);
 
-      // Generate next exercise with adapted difficulty
       const next = generateExercise(topicId, nextDifficulty);
       if (next) {
         setExercises((prev) => [...prev, next]);
@@ -174,85 +209,108 @@ export default function LearnTopicPage() {
 
     return (
       <PageWrapper>
-        <div className="mb-4">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-700">
-            ← Zurück
-          </Link>
-        </div>
+        <PageTransition>
+          <div className="mb-4">
+            <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+              <Icon name="chevron-left" size={16} />
+              Zurück
+            </Link>
+          </div>
 
-        <Card className="mb-4">
-          <h1 className="text-2xl font-[var(--heading-weight)] text-gray-900 mb-2">{topic.title}</h1>
-          <p className="text-gray-600 mb-2">{topic.description}</p>
-          <p className="text-sm text-gray-500">
-            Lernbereich: <strong>{topic.lernbereich}</strong> ·
-            Geschätzte Zeit: <strong>~{topic.estimatedMinutes} Minuten</strong>
-          </p>
-        </Card>
+          <Card className="mb-4">
+            <h1 className="text-2xl font-[family-name:var(--font-heading)] font-extrabold text-gray-900 mb-2">
+              {topic.title}
+            </h1>
+            <p className="text-gray-600 mb-2">{topic.description}</p>
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              <Icon name="book" size={14} className="text-gray-400" />
+              {topic.lernbereich}
+              <span className="text-gray-300">·</span>
+              <Icon name="clock" size={14} className="text-gray-400" />
+              ~{topic.estimatedMinutes} Min
+            </p>
+          </Card>
 
-        {theory ? (
-          <>
-            {/* Concepts */}
-            <Card className="mb-4">
-              <h2 className="font-[var(--heading-weight)] text-gray-900 mb-3">📚 Das Wichtigste</h2>
-              <ul className="space-y-2">
-                {theory.concepts.map((c, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-gray-700">
-                    <span className="text-[var(--color-primary)] font-bold mt-0.5">•</span>
-                    <span>{c}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-
-            {/* Worked Example */}
-            {theory.example && (
-              <Card className="mb-4 bg-[var(--primary-lighter)] border border-[var(--color-primary)]/15">
-                <h2 className="font-[var(--heading-weight)] text-gray-900 mb-3">✏️ Beispielaufgabe</h2>
-                <p className="font-semibold text-gray-800 mb-3">{theory.example.question}</p>
-                <ol className="space-y-2 mb-3">
-                  {theory.example.steps.map((step, i) => (
+          {theory ? (
+            <>
+              <Card className="mb-4">
+                <h2 className="font-[family-name:var(--font-heading)] font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <Icon name="book" size={18} className="text-[var(--color-primary)]" />
+                  Das Wichtigste
+                </h2>
+                <ul className="space-y-2">
+                  {theory.concepts.map((c, i) => (
                     <li key={i} className="flex gap-2 text-sm text-gray-700">
-                      <span className="bg-[var(--color-primary)] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shrink-0">{i + 1}</span>
-                      <span>{step}</span>
+                      <span className="text-[var(--color-primary)] font-bold mt-0.5">•</span>
+                      <span>{c}</span>
                     </li>
                   ))}
-                </ol>
-                <div className="bg-[var(--color-surface)] rounded-[var(--btn-radius)] p-3 border border-[var(--color-primary)]/20">
-                  <p className="font-semibold text-[var(--color-primary)]">{theory.example.answer}</p>
-                </div>
+                </ul>
               </Card>
-            )}
 
-            {/* Tips & Pitfalls */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              {theory.tips && theory.tips.length > 0 && (
-                <Card className="bg-emerald-50 border border-emerald-200">
-                  <h3 className="font-semibold text-emerald-800 mb-2">💡 Tipps</h3>
-                  {theory.tips.map((tip, i) => (
-                    <p key={i} className="text-sm text-emerald-700">{tip}</p>
-                  ))}
+              {theory.example && (
+                <Card variant="gradient" className="mb-4">
+                  <h2 className="font-[family-name:var(--font-heading)] font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <Icon name="lightning" size={18} className="text-[var(--color-secondary)]" />
+                    Beispielaufgabe
+                  </h2>
+                  <p className="font-semibold text-gray-800 mb-3">{theory.example.question}</p>
+                  <ol className="space-y-2 mb-3">
+                    {theory.example.steps.map((step, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-gray-700">
+                        <span className="bg-[var(--color-primary)] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shrink-0">
+                          {i + 1}
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  <div className="bg-[var(--color-surface)] rounded-[var(--btn-radius)] p-3 border border-[var(--color-primary)]/20">
+                    <p className="font-semibold text-[var(--color-primary)]">{theory.example.answer}</p>
+                  </div>
                 </Card>
               )}
-              {theory.pitfalls && theory.pitfalls.length > 0 && (
-                <Card className="bg-amber-50 border border-amber-200">
-                  <h3 className="font-semibold text-amber-800 mb-2">⚠️ Typische Fehler</h3>
-                  {theory.pitfalls.map((p, i) => (
-                    <p key={i} className="text-sm text-amber-700">{p}</p>
-                  ))}
-                </Card>
-              )}
-            </div>
-          </>
-        ) : (
-          <Card className="mb-4 bg-[var(--primary-lighter)] border border-[var(--color-primary)]/15">
-            <h2 className="font-semibold text-[var(--color-primary)] mb-2">📚 Was lernst du hier?</h2>
-            <p className="text-gray-700 text-sm">{topic.description}</p>
-          </Card>
-        )}
 
-        <Button fullWidth onClick={() => setPhase('quiz')} size="lg">
-          Quiz starten (10 Fragen) 🎯
-        </Button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                {theory.tips && theory.tips.length > 0 && (
+                  <Card className="bg-emerald-50 border border-emerald-200">
+                    <h3 className="font-semibold text-emerald-800 mb-2 flex items-center gap-2">
+                      <Icon name="sparkle" size={16} className="text-emerald-500" />
+                      Tipps
+                    </h3>
+                    {theory.tips.map((tip, i) => (
+                      <p key={i} className="text-sm text-emerald-700">{tip}</p>
+                    ))}
+                  </Card>
+                )}
+                {theory.pitfalls && theory.pitfalls.length > 0 && (
+                  <Card className="bg-amber-50 border border-amber-200">
+                    <h3 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+                      <Icon name="shield" size={16} className="text-amber-500" />
+                      Typische Fehler
+                    </h3>
+                    {theory.pitfalls.map((p, i) => (
+                      <p key={i} className="text-sm text-amber-700">{p}</p>
+                    ))}
+                  </Card>
+                )}
+              </div>
+            </>
+          ) : (
+            <Card variant="gradient" className="mb-4">
+              <h2 className="font-semibold text-[var(--color-primary)] mb-2 flex items-center gap-2">
+                <Icon name="book" size={18} />
+                Was lernst du hier?
+              </h2>
+              <p className="text-gray-700 text-sm">{topic.description}</p>
+            </Card>
+          )}
+
+          <Button fullWidth onClick={() => setPhase('quiz')} size="lg">
+            <Icon name="target" size={20} />
+            Quiz starten (10 Fragen)
+          </Button>
+        </PageTransition>
       </PageWrapper>
     );
   }
@@ -267,67 +325,97 @@ export default function LearnTopicPage() {
       <PageWrapper>
         <GamificationOverlay />
         <Confetti active={passed} duration={4000} />
+        <PageTransition>
+          <Card className="text-center relative overflow-hidden">
+            {/* Background gradient accent */}
+            <div
+              className="absolute inset-0 opacity-5"
+              style={{ background: passed ? 'var(--gradient-hero)' : 'linear-gradient(135deg, #F59E0B, #EF4444)' }}
+            />
+            <div className="relative z-10">
+              {showMascot && (
+                <div className="flex justify-center mb-4">
+                  <Finn
+                    mood={passed ? 'celebrating' : resultStars >= 1 ? 'encouraging' : 'sad'}
+                    size="lg"
+                    message={passed ? 'Super gemacht!' : resultStars >= 1 ? 'Weiter so!' : 'Versuch es nochmal!'}
+                  />
+                </div>
+              )}
 
-        <Card className="text-center relative">
-          {/* Finn Mascot (Grundschule only) */}
-          {showMascot && (
-            <div className="flex justify-center mb-4">
-              <Finn
-                mood={passed ? 'celebrating' : resultStars >= 1 ? 'encouraging' : 'sad'}
-                size="lg"
-                message={passed ? 'Super gemacht!' : resultStars >= 1 ? 'Weiter so!' : 'Versuch es nochmal!'}
-              />
-            </div>
-          )}
+              <h1 className="text-2xl font-[family-name:var(--font-heading)] font-extrabold text-gray-900 mb-2">
+                {passed ? 'Gemeistert!' : 'Weiter üben!'}
+              </h1>
 
-          <h1 className="text-2xl font-[var(--heading-weight)] text-gray-900 mb-2">
-            {passed ? 'Gemeistert!' : 'Weiter üben!'}
-          </h1>
-
-          {/* Stars */}
-          <div className="flex justify-center mb-4">
-            <Stars count={resultStars} size="lg" showEmpty />
-          </div>
-
-          <p className="text-gray-600 mb-4">
-            Du hast <strong>{score.correct} von {QUIZ_SIZE}</strong> Aufgaben richtig beantwortet.
-          </p>
-
-          <Progress
-            value={pct}
-            label="Quiz-Ergebnis"
-            showLabel
-            variant={passed ? 'success' : 'warning'}
-            size="lg"
-          />
-
-          {/* Session-Statistik */}
-          <div className="grid grid-cols-3 gap-3 mt-6">
-            <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <div className="text-lg font-bold text-[var(--color-primary)]">{exercisesCompletedThisSession}</div>
-              <div className="text-xs text-gray-500">Aufgaben</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <div className="text-lg font-bold text-amber-500">+{xpEarnedThisSession}</div>
-              <div className="text-xs text-gray-500">XP verdient</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <div className="text-lg font-bold text-emerald-600">
-                {sessionStartTime ? Math.round((Date.now() - new Date(sessionStartTime).getTime()) / 60000) : 0} min
+              {/* Stars with staggered entrance */}
+              <div className="flex justify-center mb-4">
+                {[1, 2, 3].map((star) => (
+                  <motion.div
+                    key={star}
+                    initial={{ opacity: 0, scale: 0, rotate: -30 }}
+                    animate={{
+                      opacity: star <= resultStars ? 1 : 0.2,
+                      scale: 1,
+                      rotate: 0,
+                    }}
+                    transition={{ delay: star * 0.2, type: 'spring', stiffness: 300 }}
+                  >
+                    <Icon
+                      name="star"
+                      size={40}
+                      className={star <= resultStars ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}
+                    />
+                  </motion.div>
+                ))}
               </div>
-              <div className="text-xs text-gray-500">Dauer</div>
-            </div>
-          </div>
 
-          <div className="flex gap-3 mt-8">
-            <Button variant="ghost" fullWidth onClick={() => setPhase('quiz')}>
-              Nochmal üben
-            </Button>
-            <Button fullWidth onClick={() => router.push('/dashboard')}>
-              Zur Übersicht
-            </Button>
-          </div>
-        </Card>
+              <p className="text-gray-600 mb-4">
+                Du hast <strong>{score.correct} von {QUIZ_SIZE}</strong> Aufgaben richtig beantwortet.
+              </p>
+
+              <Progress
+                value={pct}
+                label="Quiz-Ergebnis"
+                showLabel
+                variant={passed ? 'success' : 'warning'}
+                size="lg"
+              />
+
+              {/* Animated session stats */}
+              <div className="grid grid-cols-3 gap-3 mt-6">
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-lg font-bold text-[var(--color-primary)]">
+                    <AnimatedNumber value={exercisesCompletedThisSession} />
+                  </div>
+                  <div className="text-xs text-gray-500">Aufgaben</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-lg font-bold text-amber-500">
+                    +<AnimatedNumber value={xpEarnedThisSession} />
+                  </div>
+                  <div className="text-xs text-gray-500">XP verdient</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-lg font-bold text-emerald-600">
+                    <AnimatedNumber value={sessionStartTime ? Math.round((Date.now() - new Date(sessionStartTime).getTime()) / 60000) : 0} /> min
+                  </div>
+                  <div className="text-xs text-gray-500">Dauer</div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <Button variant="ghost" fullWidth onClick={() => setPhase('quiz')}>
+                  <Icon name="refresh" size={16} />
+                  Nochmal üben
+                </Button>
+                <Button fullWidth onClick={() => router.push('/dashboard')}>
+                  <Icon name="home" size={16} />
+                  Zur Übersicht
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </PageTransition>
       </PageWrapper>
     );
   }
@@ -337,41 +425,47 @@ export default function LearnTopicPage() {
     <PageWrapper>
       <GamificationOverlay />
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500 font-medium">
-            {topic.title} — Frage {currentIndex + 1} / {QUIZ_SIZE}
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-gray-500 font-medium font-[family-name:var(--font-heading)]">
+            {topic.title} — Frage {currentIndex + 1}/{QUIZ_SIZE}
           </span>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-400">
-              {'⬟'.repeat(difficulty)}{'⬡'.repeat(3 - difficulty)}
+            <span className="text-xs text-gray-400 flex gap-0.5">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`w-2 h-2 rounded-full ${i < difficulty ? 'bg-[var(--color-primary)]' : 'bg-gray-200'}`}
+                />
+              ))}
             </span>
-            <span className="text-sm font-semibold text-emerald-600">
-              ✓ {score.correct} richtig
+            <span className="text-sm font-semibold text-emerald-600 flex items-center gap-1">
+              <Icon name="check" size={14} />
+              {score.correct}
             </span>
           </div>
         </div>
-        <Progress value={currentIndex} max={QUIZ_SIZE} size="sm" />
+        <QuizProgressBar current={currentIndex} total={QUIZ_SIZE} results={quizResults} />
       </div>
 
       {currentExercise && (
         <div>
-          {/* Visual (if configured) */}
-          {currentExercise.visualConfig && (
-            <ExerciseVisual config={currentExercise.visualConfig} />
-          )}
+          {/* Exercise container with colored left border */}
+          <Card className="border-l-4 border-l-[var(--color-primary)] mb-2">
+            {currentExercise.visualConfig && (
+              <ExerciseVisual config={currentExercise.visualConfig} />
+            )}
 
-          {/* Exercise Card */}
-          <ExerciseRouter
-            exercise={currentExercise}
-            userAnswer={userAnswer}
-            onAnswerChange={setUserAnswer}
-            onSubmit={handleSubmit}
-            disabled={!!feedback}
-            showHint={showHint}
-            onShowHint={() => { setShowHint(true); setHintsUsed((h) => h + 1); }}
-          />
+            <ExerciseRouter
+              exercise={currentExercise}
+              userAnswer={userAnswer}
+              onAnswerChange={setUserAnswer}
+              onSubmit={handleSubmit}
+              disabled={!!feedback}
+              showHint={showHint}
+              onShowHint={() => { setShowHint(true); setHintsUsed((h) => h + 1); }}
+            />
+          </Card>
 
-          {/* Feedback */}
           {feedback === 'correct' && (
             <CorrectFeedback
               explanation={currentExercise.explanation}

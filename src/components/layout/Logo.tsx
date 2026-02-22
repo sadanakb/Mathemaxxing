@@ -26,23 +26,36 @@ export function Logo({ size = 'md', showText = true }: LogoProps) {
         aria-hidden="true"
         role="img"
       >
-        {/* Hintergrund-Kreis */}
-        <circle cx="24" cy="24" r="22" fill="var(--color-primary)" opacity="0.12" />
+        {/* Gradient Definitions — Brand-unabhängig (Sunset Pink → Gold) */}
+        <defs>
+          <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FF6B6B" />
+            <stop offset="50%" stopColor="#FF8E53" />
+            <stop offset="100%" stopColor="#FFD93D" />
+          </linearGradient>
+          <linearGradient id="logo-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD93D" />
+            <stop offset="100%" stopColor="#FF6B6B" />
+          </linearGradient>
+        </defs>
 
-        {/* Sigma-Symbol als Dreieck (Summe) */}
+        {/* Hintergrund-Kreis mit Gradient */}
+        <circle cx="24" cy="24" r="22" fill="url(#logo-grad)" opacity="0.12" />
+
+        {/* Sigma-Symbol */}
         <path
           d="M14 10 L34 10 L24 24 L34 38 L14 38"
-          stroke="var(--color-primary)"
+          stroke="url(#logo-grad)"
           strokeWidth="3.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
         />
 
-        {/* Kleiner Blitz / Aufwärtspfeil rechts */}
+        {/* Blitz / Aufwärtspfeil */}
         <path
           d="M30 19 L36 24 L30 29"
-          stroke="var(--color-secondary)"
+          stroke="url(#logo-accent)"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -52,9 +65,14 @@ export function Logo({ size = 'md', showText = true }: LogoProps) {
 
       {showText && (
         <span
-          className={`font-extrabold tracking-tight text-[var(--color-primary)] ${textSizes[size]}`}
+          className={`font-[family-name:var(--font-heading)] font-extrabold tracking-tight ${textSizes[size]}`}
         >
-          Mathe<span className="text-[var(--color-secondary)]" style={{ color: 'var(--color-secondary)' }}>maxxing</span>
+          <span className="bg-gradient-to-r from-[#FF6B6B] via-[#FF8E53] to-[#FFD93D] bg-clip-text text-transparent">
+            Mathe
+          </span>
+          <span className="bg-gradient-to-r from-[#FFD93D] to-[#FF6B6B] bg-clip-text text-transparent">
+            maxxing
+          </span>
         </span>
       )}
     </span>

@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { BUNDESLAENDER } from '@/data/bundeslaender';
 import type { Bundesland } from '@/lib/curriculum/types';
 import { BundeslandWappen } from '@/components/wappen/BundeslandWappen';
@@ -12,28 +13,44 @@ type BundeslandPickerProps = {
 export function BundeslandPicker({ selected, onSelect }: BundeslandPickerProps) {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">In welchem Bundesland gehst du zur Schule?</h2>
+      <h2 className="text-2xl font-[family-name:var(--font-heading)] font-extrabold text-gray-900 mb-2">
+        In welchem Bundesland gehst du zur Schule?
+      </h2>
       <p className="text-gray-500 mb-6">Wir passen die Aufgaben an deinen Lehrplan an.</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Bundesland auswählen">
-        {BUNDESLAENDER.map((bl) => (
-          <button
+        {BUNDESLAENDER.map((bl, i) => (
+          <motion.button
             key={bl.id}
             role="radio"
             aria-checked={selected === bl.id}
             onClick={() => onSelect(bl.id)}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.02 }}
+            whileTap={{ scale: 0.97 }}
             className={[
-              'flex items-center gap-2 p-3 rounded-xl border-2 text-left transition-all duration-150',
+              'flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all duration-150',
               'hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2',
               selected === bl.id
-                ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 font-semibold'
+                ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 shadow-md'
                 : 'border-gray-200 bg-white',
             ].join(' ')}
           >
-            <BundeslandWappen bundesland={bl.id} size="sm" />
-            <span className="text-sm font-medium text-gray-900">{bl.id}</span>
-          </button>
+            <div className={[
+              'flex-shrink-0 transition-transform duration-200',
+              selected === bl.id ? 'scale-110' : '',
+            ].join(' ')}>
+              <BundeslandWappen bundesland={bl.id} size="md" />
+            </div>
+            <span className={[
+              'text-sm font-medium',
+              selected === bl.id ? 'text-[var(--color-primary)] font-bold' : 'text-gray-900',
+            ].join(' ')}>
+              {bl.id}
+            </span>
+          </motion.button>
         ))}
       </div>
     </div>

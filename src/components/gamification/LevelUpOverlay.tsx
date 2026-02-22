@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Confetti } from './Confetti';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 
 type LevelUpOverlayProps = {
   level: number;
@@ -35,78 +37,63 @@ export function LevelUpOverlay({ level, visible, onClose }: LevelUpOverlayProps)
     return () => clearTimeout(timer);
   }, [visible, onClose]);
 
-  if (!show) return null;
-
   return (
-    <>
-      <style>{`
-        @keyframes level-up-entrance {
-          0% {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.5);
-          }
-          60% {
-            transform: translate(-50%, -50%) scale(1.05);
-          }
-          100% {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-          }
-        }
-        @keyframes level-glow {
-          0%, 100% {
-            text-shadow:
-              0 0 20px rgba(255, 215, 0, 0.6),
-              0 0 40px rgba(255, 215, 0, 0.3);
-          }
-          50% {
-            text-shadow:
-              0 0 30px rgba(255, 215, 0, 0.9),
-              0 0 60px rgba(255, 215, 0, 0.5),
-              0 0 80px rgba(255, 215, 0, 0.2);
-          }
-        }
-        .level-up-card {
-          animation: level-up-entrance 0.5s ease-out forwards;
-        }
-        .level-number-glow {
-          animation: level-glow 2s ease-in-out infinite;
-        }
-      `}</style>
-
-      <Confetti active={confettiActive} duration={AUTO_DISMISS_MS} />
-
-      <div
-        className="fixed inset-0 z-50 bg-black/60"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Level Up"
-      >
-        <div
-          className="level-up-card fixed top-1/2 left-1/2 w-[90vw] max-w-sm rounded-2xl bg-white p-8 text-center shadow-2xl"
-          style={{ transform: 'translate(-50%, -50%)' }}
-        >
-          <h2
-            className="mb-2 text-sm font-semibold uppercase tracking-widest text-emerald-500"
+    <AnimatePresence>
+      {show && (
+        <>
+          <Confetti active={confettiActive} duration={AUTO_DISMISS_MS} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Level Up"
           >
-            Level Up!
-          </h2>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="fixed top-1/2 left-1/2 w-[90vw] max-w-sm rounded-[var(--card-radius)] bg-white p-8 text-center shadow-2xl"
+              style={{ transform: 'translate(-50%, -50%)' }}
+            >
+              <div className="flex justify-center mb-2">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                  <Icon name="arrow-up" size={24} color="white" />
+                </div>
+              </div>
 
-          <div
-            className="level-number-glow my-6 text-7xl font-black text-yellow-400"
-          >
-            {level}
-          </div>
+              <h2 className="mb-2 text-sm font-[family-name:var(--font-heading)] font-bold uppercase tracking-widest text-[var(--color-primary)]">
+                Level Up!
+              </h2>
 
-          <p className="mb-6 text-lg font-medium text-gray-700">
-            Du bist jetzt Level {level}!
-          </p>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                className="my-6 text-7xl font-black"
+                style={{
+                  background: 'var(--gradient-levelup)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                {level}
+              </motion.div>
 
-          <Button variant="primary" onClick={onClose} size="md">
-            Weiter
-          </Button>
-        </div>
-      </div>
-    </>
+              <p className="mb-6 text-lg font-medium text-gray-700">
+                Du bist jetzt Level {level}!
+              </p>
+
+              <Button variant="primary" onClick={onClose} size="md" fullWidth>
+                Weiter
+              </Button>
+            </motion.div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

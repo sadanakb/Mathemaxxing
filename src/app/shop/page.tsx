@@ -1,35 +1,36 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PageWrapper } from '@/components/layout/PageWrapper';
+import { PageTransition } from '@/components/layout/PageTransition';
 import { useProgressStore } from '@/store/progressStore';
 import { useAvatarStore } from '@/store/avatarStore';
 import Avatar from '@/components/gamification/Avatar';
+import { Icon, type IconName } from '@/components/ui/Icon';
+import { ShopItemCard } from '@/components/shop/ShopItemCard';
 import {
-  SHOP_ITEMS,
   getItemsByCategory,
   type ShopCategory,
   type ShopItem,
 } from '@/lib/gamification/shop-items';
-import { createPowerUpMultiplier } from '@/lib/gamification/xp-multiplier';
 
-type TabConfig = { key: ShopCategory; label: string; icon: string };
+type TabConfig = { key: ShopCategory; label: string; icon: IconName };
 
 const TABS: TabConfig[] = [
-  { key: 'power-up', label: 'Power-Ups', icon: '⚡' },
-  { key: 'outfit', label: 'Outfits', icon: '👕' },
-  { key: 'hair', label: 'Frisuren', icon: '💇' },
-  { key: 'accessory', label: 'Accessoires', icon: '🎩' },
-  { key: 'pet', label: 'Begleiter', icon: '🐾' },
+  { key: 'hair', label: 'Frisuren', icon: 'sparkle' },
+  { key: 'outfit', label: 'Outfits', icon: 'user' },
+  { key: 'accessory', label: 'Accessoires', icon: 'crown' },
+  { key: 'pet', label: 'Begleiter', icon: 'heart' },
+  { key: 'power-up', label: 'Power-Ups', icon: 'lightning' },
 ];
 
 export default function ShopPage() {
-  const [activeTab, setActiveTab] = useState<ShopCategory>('power-up');
+  const [activeTab, setActiveTab] = useState<ShopCategory>('hair');
   const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
 
   const progress = useProgressStore((s) => s.progress);
   const spendCoins = useProgressStore((s) => s.spendCoins);
-  const earnCoins = useProgressStore((s) => s.earnCoins);
   const { addOwnedItem, isOwned, equipItem, hairStyle, outfit, accessory, pet } = useAvatarStore();
 
   const coins = progress?.coins ?? 0;
@@ -46,14 +47,12 @@ export default function ShopPage() {
     if (!success) return;
 
     if (item.consumable) {
-      // Power-up: apply effect
       setPurchaseMessage(`${item.name} aktiviert!`);
     } else {
-      // Avatar item: add to owned + equip
       addOwnedItem(item.id);
       const cat = item.category as 'hair' | 'outfit' | 'accessory' | 'pet';
       equipItem(cat, item.id);
-      setPurchaseMessage(`${item.name} freigeschaltet und ausgerüstet!`);
+      setPurchaseMessage(`${item.name} freigeschaltet!`);
     }
     setTimeout(() => setPurchaseMessage(null), 2500);
   }
@@ -62,7 +61,6 @@ export default function ShopPage() {
     const cat = item.category as 'hair' | 'outfit' | 'accessory' | 'pet';
     const currentEquipped = { hair: hairStyle, outfit, accessory, pet }[cat];
     if (currentEquipped === item.id) {
-      // Unequip
       useAvatarStore.getState().unequipItem(cat);
     } else {
       equipItem(cat, item.id);
@@ -76,102 +74,100 @@ export default function ShopPage() {
 
   return (
     <PageWrapper>
-      <div className="max-w-lg mx-auto space-y-6">
-        {/* Header with avatar and coins */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">Shop</h1>
-            <p className="text-sm text-gray-500">Gib deine Münzen aus!</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Avatar size="md" />
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-center">
-              <div className="text-lg font-bold text-amber-600">{coins}</div>
-              <div className="text-xs text-amber-500">Münzen</div>
-            </div>
-          </div>
-        </div>
+      <PageTransition>
+        <div className="max-w-lg mx-auto space-y-6">
 
-        {/* Purchase feedback */}
-        {purchaseMessage && (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium rounded-xl px-4 py-2 text-center">
-            {purchaseMessage}
-          </div>
-        )}
-
-        {/* Category tabs */}
-        <div className="flex gap-1 overflow-x-auto pb-1">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tab.key
-                  ? 'bg-[var(--color-primary)] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <span aria-hidden="true">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Items grid */}
-        <div className="grid grid-cols-2 gap-3">
-          {items.map((item) => {
-            const owned = isOwned(item.id);
-            const equipped = !item.consumable && owned && isEquipped(item);
-            const canBuy = coins >= item.cost;
-
-            return (
-              <div
-                key={item.id}
-                className={`rounded-xl border p-3 space-y-2 transition ${
-                  equipped
-                    ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
-                    : owned
-                      ? 'border-emerald-200 bg-emerald-50'
-                      : 'border-gray-200 bg-white'
-                }`}
-              >
-                <div className="text-center">
-                  <span className="text-3xl">{item.icon}</span>
+          {/* ── Header: Avatar Preview + Coins ──────────────── */}
+          <div className="relative rounded-[var(--card-radius)] overflow-hidden"
+            style={{ background: 'var(--gradient-hero)' }}
+          >
+            <div className="relative z-10 p-6 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 rounded-2xl p-2 backdrop-blur-sm">
+                  <Avatar size="lg" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-800">{item.name}</h3>
-                  <p className="text-xs text-gray-500">{item.description}</p>
+                  <h1 className="text-2xl font-[family-name:var(--font-heading)] font-extrabold text-white">
+                    Shop
+                  </h1>
+                  <p className="text-white/70 text-sm mt-0.5">
+                    Style deinen Avatar!
+                  </p>
                 </div>
-
-                {owned && !item.consumable ? (
-                  <button
-                    onClick={() => handleEquip(item)}
-                    className={`w-full py-1.5 text-xs font-semibold rounded-lg transition ${
-                      equipped
-                        ? 'bg-gray-200 text-gray-600'
-                        : 'bg-[var(--color-primary)] text-white'
-                    }`}
-                  >
-                    {equipped ? 'Ablegen' : 'Anziehen'}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handlePurchase(item)}
-                    disabled={!canBuy}
-                    className={`w-full py-1.5 text-xs font-semibold rounded-lg transition ${
-                      canBuy
-                        ? 'bg-amber-500 text-white hover:bg-amber-600'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {item.cost} Münzen
-                  </button>
-                )}
               </div>
-            );
-          })}
+              <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-3 text-center">
+                <div className="flex items-center gap-1.5">
+                  <Icon name="coin" size={20} className="text-amber-300" />
+                  <span className="text-xl font-extrabold text-white">{coins}</span>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10" />
+            <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10" />
+          </div>
+
+          {/* ── Purchase Feedback ────────────────────────────── */}
+          <AnimatePresence>
+            {purchaseMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold rounded-xl px-4 py-3 text-center flex items-center justify-center gap-2"
+              >
+                <Icon name="check" size={16} />
+                {purchaseMessage}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* ── Category Tabs ───────────────────────────────── */}
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={[
+                  'flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-150',
+                  activeTab === tab.key
+                    ? 'bg-[var(--color-primary)] text-white shadow-md'
+                    : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-200',
+                ].join(' ')}
+              >
+                <Icon name={tab.icon} size={16} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* ── Items Grid ──────────────────────────────────── */}
+          <div className="grid grid-cols-2 gap-3">
+            {items.map((item, i) => {
+              const owned = isOwned(item.id);
+              const equipped = !item.consumable && owned && isEquipped(item);
+              const canBuy = coins >= item.cost;
+
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <ShopItemCard
+                    item={item}
+                    owned={owned}
+                    equipped={equipped}
+                    canBuy={canBuy}
+                    onPurchase={() => handlePurchase(item)}
+                    onEquip={() => handleEquip(item)}
+                  />
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </PageTransition>
     </PageWrapper>
   );
 }

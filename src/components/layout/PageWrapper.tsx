@@ -18,7 +18,11 @@ export function PageWrapper({ children, showNav = true, className = '' }: PageWr
       </a>
       {showNav && <Navbar />}
       <main
-        className={['max-w-4xl mx-auto px-4 py-6', className].join(' ')}
+        className={[
+          'max-w-4xl mx-auto px-4 py-6',
+          showNav ? 'md:ml-60 pb-24 md:pb-6' : '',
+          className,
+        ].join(' ')}
         id="main-content"
         tabIndex={-1}
       >

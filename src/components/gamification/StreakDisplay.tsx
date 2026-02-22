@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+
 type StreakDisplayProps = {
   days: number;
   isActive: boolean;
@@ -10,14 +12,15 @@ type StreakTier = {
   gradient: [string, string];
   glow: boolean;
   animated: boolean;
+  particles: boolean;
 };
 
 function getStreakTier(days: number): StreakTier {
-  if (days >= 30) return { scale: 1.3, gradient: ['#9333EA', '#FFD700'], glow: true, animated: true };
-  if (days >= 14) return { scale: 1.2, gradient: ['#DC2626', '#9333EA'], glow: true, animated: false };
-  if (days >= 7) return { scale: 1.1, gradient: ['#DC2626', '#DC2626'], glow: false, animated: false };
-  if (days >= 3) return { scale: 1.0, gradient: ['#F97316', '#DC2626'], glow: false, animated: false };
-  return { scale: 0.85, gradient: ['#F97316', '#F97316'], glow: false, animated: false };
+  if (days >= 30) return { scale: 1.3, gradient: ['#9333EA', '#FFD700'], glow: true, animated: true, particles: true };
+  if (days >= 14) return { scale: 1.2, gradient: ['#DC2626', '#9333EA'], glow: true, animated: false, particles: true };
+  if (days >= 7) return { scale: 1.1, gradient: ['#DC2626', '#DC2626'], glow: false, animated: false, particles: true };
+  if (days >= 3) return { scale: 1.0, gradient: ['#F97316', '#DC2626'], glow: false, animated: false, particles: false };
+  return { scale: 0.85, gradient: ['#F97316', '#F97316'], glow: false, animated: false, particles: false };
 }
 
 function getMotivation(days: number): string {
@@ -100,6 +103,48 @@ function FlameIcon({
   );
 }
 
+/** Floating particles that appear for streak >= 7 */
+function StreakParticles({ tier }: { tier: StreakTier }) {
+  const particles = [
+    { x: -12, delay: 0, dur: 1.8, size: 3 },
+    { x: 8, delay: 0.3, dur: 2.0, size: 2 },
+    { x: -6, delay: 0.7, dur: 1.6, size: 2.5 },
+    { x: 14, delay: 1.0, dur: 2.2, size: 2 },
+    { x: -16, delay: 0.5, dur: 1.9, size: 3 },
+    { x: 4, delay: 1.2, dur: 1.7, size: 2 },
+  ];
+
+  return (
+    <>
+      {particles.map((p, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: p.size,
+            height: p.size,
+            background: i % 2 === 0 ? tier.gradient[0] : tier.gradient[1],
+            left: `calc(50% + ${p.x}px)`,
+            bottom: '50%',
+          }}
+          animate={{
+            y: [-8, -32 - Math.random() * 16],
+            x: [0, p.x * 0.5],
+            opacity: [0.8, 0],
+            scale: [1, 0.3],
+          }}
+          transition={{
+            duration: p.dur,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: 'easeOut',
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
 export function StreakDisplay({ days, isActive }: StreakDisplayProps) {
   const tier = getStreakTier(days);
   const motivation = getMotivation(days);
@@ -107,10 +152,12 @@ export function StreakDisplay({ days, isActive }: StreakDisplayProps) {
   return (
     <div className="flex flex-col items-center gap-1">
       <div className="relative flex items-center justify-center">
+        {/* Particle effects for streak >= 7 */}
+        {isActive && tier.particles && <StreakParticles tier={tier} />}
         <FlameIcon tier={tier} inactive={!isActive} />
       </div>
       <span
-        className="text-lg font-bold tabular-nums"
+        className="text-lg font-bold font-[family-name:var(--font-heading)] tabular-nums"
         style={{ color: isActive ? tier.gradient[0] : '#9CA3AF' }}
       >
         {days} {days === 1 ? 'Tag' : 'Tage'}

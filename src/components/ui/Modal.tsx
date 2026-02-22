@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Icon } from './Icon';
 
 type ModalProps = {
   isOpen: boolean;
@@ -37,33 +39,44 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     return () => dialog.removeEventListener('close', handleClose);
   }, [onClose]);
 
-  if (!isOpen) return null;
-
   return (
-    <dialog
-      ref={dialogRef}
-      className={[
-        'w-full rounded-[var(--card-radius)] p-6 shadow-2xl backdrop:bg-black/40',
-        'open:animate-in',
-        sizeClasses[size],
-      ].join(' ')}
-      aria-labelledby="modal-title"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <h2 id="modal-title" className="text-xl font-bold text-gray-900">
-          {title}
-        </h2>
-        <button
-          onClick={onClose}
-          className="p-1 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-          aria-label="Schließen"
+    <AnimatePresence>
+      {isOpen && (
+        <dialog
+          ref={dialogRef}
+          className={[
+            'w-full rounded-[var(--card-radius)] p-0 shadow-2xl',
+            'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
+            sizeClasses[size],
+          ].join(' ')}
+          aria-labelledby="modal-title"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      {children}
-    </dialog>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="p-6"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2
+                id="modal-title"
+                className="text-xl font-bold text-gray-900 font-[family-name:var(--font-heading)]"
+              >
+                {title}
+              </h2>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                aria-label="Schließen"
+              >
+                <Icon name="x" size={20} />
+              </button>
+            </div>
+            {children}
+          </motion.div>
+        </dialog>
+      )}
+    </AnimatePresence>
   );
 }

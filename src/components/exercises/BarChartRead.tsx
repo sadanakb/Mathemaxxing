@@ -168,7 +168,7 @@ export function BarChartRead({ exercise, onSubmit, disabled }: BarChartReadProps
             <button
               key={option}
               type="button"
-              onClick={() => !disabled && setAnswer(option)}
+              onClick={() => !disabled && setAnswer(String(option))}
               disabled={disabled}
               className={[
                 'p-3 rounded-xl border-2 font-semibold text-sm transition-all duration-150 min-h-[44px]',

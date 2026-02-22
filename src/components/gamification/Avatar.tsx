@@ -1,7 +1,11 @@
 'use client';
 
 import { useAvatarStore } from '@/store/avatarStore';
-import { getShopItem } from '@/lib/gamification/shop-items';
+import { AvatarFace } from './avatar/AvatarFace';
+import { AvatarHair, type HairStyleId } from './avatar/AvatarHair';
+import { AvatarOutfit, type OutfitId } from './avatar/AvatarOutfit';
+import { AvatarAccessory, type AccessoryId } from './avatar/AvatarAccessory';
+import { PetCompanion, type PetId } from './avatar/PetCompanion';
 
 type AvatarProps = {
   size?: 'sm' | 'md' | 'lg';
@@ -9,43 +13,105 @@ type AvatarProps = {
 };
 
 const SIZE_MAP = {
-  sm: 'w-10 h-10 text-xl',
-  md: 'w-16 h-16 text-3xl',
-  lg: 'w-24 h-24 text-5xl',
+  sm: 40,
+  md: 64,
+  lg: 96,
+};
+
+const PET_SIZE_MAP = {
+  sm: 20,
+  md: 32,
+  lg: 40,
+};
+
+/** Map shop item IDs to SVG component IDs */
+const HAIR_MAP: Record<string, HairStyleId> = {
+  'hair-spiky': 'spiky',
+  'hair-long': 'long',
+  'hair-curly': 'curly',
+  'hair-bob': 'bob',
+  'hair-mohawk': 'mohawk',
+};
+
+const OUTFIT_MAP: Record<string, OutfitId> = {
+  'outfit-wizard': 'wizard',
+  'outfit-superhero': 'superhero',
+  'outfit-astronaut': 'astronaut',
+  'outfit-pirate': 'pirate',
+  'outfit-scientist': 'scientist',
+  'outfit-ninja': 'ninja',
+};
+
+const ACCESSORY_MAP: Record<string, AccessoryId> = {
+  'acc-glasses': 'glasses',
+  'acc-crown': 'crown',
+  'acc-headphones': 'headphones',
+  'acc-hat': 'hat',
+  'acc-scarf': 'scarf',
+};
+
+const PET_MAP: Record<string, PetId> = {
+  'pet-cat': 'cat',
+  'pet-owl': 'owl',
+  'pet-dragon': 'dragon',
+  'pet-bunny': 'bunny',
 };
 
 export default function Avatar({ size = 'md', showPet = true }: AvatarProps) {
-  const { hairStyle, outfit, accessory, pet } = useAvatarStore();
+  const { hairStyle, outfit, accessory, pet, skinColor, faceExpression } = useAvatarStore();
 
-  const outfitItem = outfit ? getShopItem(outfit) : null;
-  const accessoryItem = accessory ? getShopItem(accessory) : null;
-  const petItem = pet ? getShopItem(pet) : null;
-
-  const mainIcon = outfitItem?.icon ?? '🧒';
+  const px = SIZE_MAP[size];
+  const hairId = hairStyle ? HAIR_MAP[hairStyle] : undefined;
+  const outfitId = outfit ? OUTFIT_MAP[outfit] : undefined;
+  const accessoryId = accessory ? ACCESSORY_MAP[accessory] : undefined;
+  const petId = pet ? PET_MAP[pet] : undefined;
 
   return (
     <div className="inline-flex items-end gap-1" aria-label="Dein Avatar">
-      <div className="relative">
-        {/* Accessory (top) */}
-        {accessoryItem && (
-          <span className="absolute -top-2 -right-1 text-sm" aria-hidden="true">
-            {accessoryItem.icon}
-          </span>
-        )}
+      <svg
+        width={px}
+        height={px}
+        viewBox="0 0 120 120"
+        fill="none"
+        className="flex-shrink-0"
+      >
+        {/* Background circle */}
+        <circle
+          cx="60"
+          cy="60"
+          r="58"
+          fill="url(#avatar-bg)"
+          stroke="white"
+          strokeWidth="2"
+        />
+        <defs>
+          <linearGradient id="avatar-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="var(--color-secondary)" stopOpacity="0.15" />
+          </linearGradient>
+          <clipPath id="avatar-clip">
+            <circle cx="60" cy="60" r="56" />
+          </clipPath>
+        </defs>
 
-        {/* Main avatar body */}
-        <div
-          className={`${SIZE_MAP[size]} rounded-full bg-gradient-to-br from-[var(--color-primary)]/20 to-[var(--color-accent)]/20 flex items-center justify-center`}
-        >
-          <span aria-hidden="true">{mainIcon}</span>
-        </div>
-      </div>
+        <g clipPath="url(#avatar-clip)">
+          {/* Outfit (behind face) */}
+          {outfitId && <AvatarOutfit outfit={outfitId} />}
 
-      {/* Pet (beside) */}
-      {showPet && petItem && (
-        <span className="text-lg" aria-hidden="true">
-          {petItem.icon}
-        </span>
+          {/* Face */}
+          <AvatarFace expression={faceExpression} skinColor={skinColor} />
+
+          {/* Hair (on top of face) */}
+          {hairId && <AvatarHair style={hairId} />}
+
+          {/* Accessory (topmost layer) */}
+          {accessoryId && <AvatarAccessory accessory={accessoryId} />}
+        </g>
+      </svg>
+
+      {/* Pet companion */}
+      {showPet && petId && (
+        <PetCompanion pet={petId} size={PET_SIZE_MAP[size]} />
       )}
     </div>
   );

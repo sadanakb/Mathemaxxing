@@ -1,8 +1,23 @@
 import type { Metadata, Viewport } from 'next';
+import { Plus_Jakarta_Sans, Source_Sans_3 } from 'next/font/google';
 import { DragDropInit } from '@/components/layout/DragDropInit';
 import { ServiceWorkerRegistration } from '@/components/layout/ServiceWorkerRegistration';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import './globals.css';
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-heading',
+  display: 'swap',
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-body',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'MatheMeister — Lerne Mathe nach deinem Lehrplan',
@@ -42,7 +57,7 @@ export default function RootLayout({
         />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body>
+      <body className={`${plusJakarta.variable} ${sourceSans.variable}`}>
         <ThemeProvider>
           <DragDropInit />
           <ServiceWorkerRegistration />

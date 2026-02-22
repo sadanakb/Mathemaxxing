@@ -1,3 +1,5 @@
+import { type ReactNode } from 'react';
+
 export type BadgeVariant =
   | 'default'
   | 'success'
@@ -12,7 +14,8 @@ export type BadgeVariant =
 
 type BadgeProps = {
   variant?: BadgeVariant;
-  children: React.ReactNode;
+  children: ReactNode;
+  icon?: ReactNode;
   className?: string;
 };
 
@@ -29,15 +32,16 @@ const variantClasses: Record<BadgeVariant, string> = {
   grundschule: 'bg-orange-100 text-orange-700 font-semibold',
 };
 
-export function Badge({ variant = 'default', children, className = '' }: BadgeProps) {
+export function Badge({ variant = 'default', children, icon, className = '' }: BadgeProps) {
   return (
     <span
       className={[
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+        'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium',
         variantClasses[variant],
         className,
       ].join(' ')}
     >
+      {icon && <span className="flex-shrink-0">{icon}</span>}
       {children}
     </span>
   );
