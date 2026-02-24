@@ -8,7 +8,7 @@ Ich gebe seit 2019 Nachhilfe in Mathe. Dabei habe ich gemerkt: Die meisten Lern-
 
 ## Features
 
-- 27+ Themen mit dynamischen Aufgaben-Generatoren
+- 120+ Themen mit dynamischen Aufgaben-Generatoren (Klasse 1-7)
 - Adaptiver Schwierigkeitsgrad basierend auf Leitner-System
 - Gamification mit XP, Streaks und Raengen
 - Alle 16 Bundeslaender + Schulformen
@@ -85,9 +85,9 @@ Alle Stores haben `version: 1` mit `migrate()`-Funktion -- niemals weglassen!
 - **Bayern**: Mittelschule statt Hauptschule
 - **Gesamtschule/Gemeinschaftsschule**: Kurstyp-Auswahl (G/E) noetig
 
-## 27 Demo-Themen (vollstaendig implementiert)
+## 120+ Themen (Klasse 1-7)
 
-Klassen 1-7, alle Schulformen, generatorbasiert (mindestens 15 dynamische Aufgaben pro Thema).
+Alle Schulformen, generatorbasiert (mindestens 15 dynamische Aufgaben pro Thema). Themen decken den deutschen Lehrplan von Grundrechenarten bis Bruchrechnung und Geometrie ab.
 
 ## Leitner-System
 
