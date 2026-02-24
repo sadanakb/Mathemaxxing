@@ -4,7 +4,7 @@ Adaptive Mathe-Lernapp fuer Klassen 1-7 -- angepasst an alle 16 deutschen Bundes
 
 ## Warum Mathemaxxing?
 
-Ich gebe seit 2019 Nachhilfe in Mathe -- erst ehrenamtlich bei der Stadt Dreieich, dann professionell. Dabei habe ich gemerkt: Die meisten Lern-Apps sind entweder zu simpel, nicht an deutsche Lehrplaene angepasst, oder machen keinen Spass. Mathemaxxing soll das aendern.
+Ich gebe seit 2019 Nachhilfe in Mathe. Dabei habe ich gemerkt: Die meisten Lern-Apps sind entweder zu simpel, nicht an deutsche Lehrplaene angepasst, oder machen keinen Spass. Mathemaxxing soll das aendern.
 
 ## Features
 
