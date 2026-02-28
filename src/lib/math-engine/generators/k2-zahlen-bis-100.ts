@@ -88,7 +88,59 @@ export const template: ExerciseTemplate = {
 
     if (difficulty === 2) {
       // Medium: numbers up to 100
-      const variant = randInt(0, 2);
+      const variant = randInt(0, 4);
+
+      if (variant === 3) {
+        // estimation: is this number closer to 50 or 100?
+        const num = randInt(11, 99);
+        const distTo50 = Math.abs(num - 50);
+        const distTo100 = Math.abs(num - 100);
+        const closer = distTo50 <= distTo100 ? 50 : 100;
+        const distractors = [closer === 50 ? 100 : 50];
+        return {
+          id: genId(),
+          topicId: 'k2-zahlen-bis-100',
+          question: `Liegt ${num} näher an 50 oder näher an 100?`,
+          answerType: 'multiple-choice',
+          exerciseType: 'estimation',
+          correctAnswer: closer,
+          distractors,
+          options: ['50', '100'],
+          correctOptions: [String(closer)],
+          hint: `${num} − 50 = ${distTo50}. 100 − ${num} = ${distTo100}. Die kleinere Differenz zeigt die nächste Zahl.`,
+          explanation: `${num} liegt ${distTo50} von 50 entfernt und ${distTo100} von 100. Daher liegt es näher an ${closer}.`,
+          difficulty,
+          category: 'Abstrakt',
+          estimatedSeconds: 15,
+        };
+      }
+
+      if (variant === 4) {
+        // number-machine: input → +10 → output
+        const input = randInt(5, 89);
+        const operation = '+10';
+        const output = input + 10;
+        const hidden: 'input' | 'operation' | 'output' = randInt(0, 1) === 0 ? 'input' : 'output';
+        const question = hidden === 'output'
+          ? `Die Zahlenmaschine addiert 10. Eingabe: ${input}. Was kommt heraus?`
+          : `Die Zahlenmaschine addiert 10. Ergebnis: ${output}. Was war die Eingabe?`;
+        const correctAns = hidden === 'output' ? output : input;
+        return {
+          id: genId(),
+          topicId: 'k2-zahlen-bis-100',
+          question,
+          answerType: 'number',
+          exerciseType: 'number-machine',
+          correctAnswer: correctAns,
+          machineConfig: { input, operation, output, hidden },
+          distractors: [correctAns + 1, correctAns - 1, correctAns + 10].filter(d => d !== correctAns && d > 0 && d <= 100),
+          hint: 'Die Maschine addiert immer 10 zur Eingabe.',
+          explanation: `${input} + 10 = ${output}.`,
+          difficulty,
+          category: 'Abstrakt',
+          estimatedSeconds: 15,
+        };
+      }
 
       if (variant === 0) {
         // Stellenwert: "Wie viele Zehner hat die Zahl 74?"

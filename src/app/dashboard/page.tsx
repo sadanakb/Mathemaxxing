@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useCurriculumStore, useCurrentTheme } from '@/store/curriculumStore';
+import { useCurriculumStore, useCurrentTheme, useCurrentWorld } from '@/store/curriculumStore';
 import { THEMES } from '@/lib/theme/theme-config';
+import { WORLDS } from '@/lib/theme/worlds';
+import { WorldBackground } from '@/components/world/WorldBackground';
 import { useProgressStore } from '@/store/progressStore';
 import { getCurriculum } from '@/lib/curriculum/merge';
 import { buildReviewSession } from '@/lib/spaced-repetition/scheduler';
@@ -49,6 +51,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { bundesland, klasse, schulform, kurstyp } = useCurriculumStore();
   const theme = useCurrentTheme();
+  const world = useCurrentWorld();
   const showMascot = THEMES[theme].mascot;
   const { progress, leitnerCards, isLoaded, initFromDB } = useProgressStore();
 
@@ -94,6 +97,7 @@ export default function DashboardPage() {
 
   return (
     <PageWrapper>
+      <WorldBackground worldId={world} />
       <GamificationOverlay />
       <PageTransition>
         {/* ── Hero Section ────────────────────────────────── */}
@@ -105,6 +109,7 @@ export default function DashboardPage() {
               <Finn
                 mood={isStreakActive ? 'happy' : 'encouraging'}
                 size="md"
+                outfit={world ? WORLDS[world].finnOutfit : undefined}
               />
             )}
             <div className="flex-1">
@@ -113,6 +118,7 @@ export default function DashboardPage() {
               </h1>
               <p className="text-white/80 text-sm mt-1">
                 Klasse {klasse} · {schulform}
+                {world && WORLDS[world] ? ` · ${WORLDS[world].label}` : ''}
               </p>
               {/* XP Bar inside hero */}
               <div className="mt-3">

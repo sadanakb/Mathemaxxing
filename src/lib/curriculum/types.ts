@@ -168,7 +168,11 @@ export type Exercise = {
   items?: string[];
   slots?: string[];
   pairs?: [string, string][];
+  steps?: string[];                   // For step-by-step exercise type
   categories?: Record<string, string[]>;
+  classifyItems?: string[];           // Items to be sorted in classify exercises
+  classifyCategories?: string[];      // Category labels for classify exercises
+  classifyCorrect?: Record<string, string[]>; // Correct mapping: category → items
   numberlineConfig?: { min: number; max: number; step: number; targets: number[] };
   gridConfig?: { width: number; height: number; points?: { x: number; y: number; label?: string }[] };
   tableConfig?: { headers: string[]; rows: (string | null)[][]; correctRows: string[][] };
@@ -295,7 +299,15 @@ export type UserProgress = {
   // Aktivitäts-Tracking
   activeDates: string[];          // ISO-Datum-Strings (YYYY-MM-DD), dedupliziert
   todayMinutes: number;           // Heute gelernte Minuten (für GoalRing)
+
+  // Story progression
+  storyProgress?: import('@/lib/story/types').StoryProgress;
 };
+
+// ─── World & Story ───────────────────────────────────────────
+
+export type { WorldId } from '@/lib/theme/worlds';
+export type { StoryProgress, StoryBeat } from '@/lib/story/types';
 
 // ─── Session (ephemeral, never persisted) ────────────────────
 

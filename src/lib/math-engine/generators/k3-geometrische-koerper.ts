@@ -89,7 +89,60 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Difficulty 3: Eigenschaften abfragen
+    // Difficulty 3: variant 0 = Eigenschaften abfragen (multiple-choice), 1 = classify by Kanten/Flächen, 2 = drag-match name→shape description
+    const variant3 = randInt(0, 2);
+
+    if (variant3 === 1) {
+      // classify: sort Körper into groups based on whether they have edges (Kanten) or not
+      const mitKanten = koerperDaten.filter(k => k.kanten > 0).map(k => k.name);
+      const ohneKanten = koerperDaten.filter(k => k.kanten === 0).map(k => k.name);
+      const allNames = shuffle([...mitKanten, ...ohneKanten]);
+      return {
+        id: genId('k3-gkoe'),
+        topicId: 'k3-geometrische-koerper',
+        question: 'Sortiere die Körper: Welche haben Kanten, welche haben keine Kanten?',
+        answerType: 'drag-drop',
+        exerciseType: 'classify',
+        correctAnswer: JSON.stringify({ 'Hat Kanten': mitKanten.sort(), 'Hat keine Kanten': ohneKanten.sort() }),
+        classifyItems: allNames,
+        classifyCategories: ['Hat Kanten', 'Hat keine Kanten'],
+        classifyCorrect: {
+          'Hat Kanten': mitKanten,
+          'Hat keine Kanten': ohneKanten,
+        },
+        hint: 'Kugel und Zylinder — denke genau nach, welche Kanten (Kanten = gerade Linien zwischen Flächen) sie haben.',
+        explanation: `Mit Kanten: ${mitKanten.join(', ')}. Ohne Kanten: ${ohneKanten.join(', ')}.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 35,
+      };
+    }
+
+    if (variant3 === 2) {
+      // drag-match: match Körper name to a short property fact
+      const facts: [string, string][] = koerperDaten.map(k => [
+        k.name,
+        k.kanten === 0 && k.flaechen === 0
+          ? 'keine Ecken, keine Kanten'
+          : `${k.flaechen} Fläche${k.flaechen !== 1 ? 'n' : ''}, ${k.kanten} Kante${k.kanten !== 1 ? 'n' : ''}`,
+      ]);
+      const selected = shuffle(facts).slice(0, 3) as [string, string][];
+      return {
+        id: genId('k3-gkoe'),
+        topicId: 'k3-geometrische-koerper',
+        question: 'Ordne jedem Körper die passende Eigenschaft zu.',
+        answerType: 'matching',
+        exerciseType: 'drag-match',
+        correctAnswer: selected.map(p => `${p[0]}→${p[1]}`).join('; '),
+        pairs: selected,
+        hint: 'Überlege, wie viele Flächen und Kanten jeder Körper hat.',
+        explanation: selected.map(p => `${p[0]}: ${p[1]}`).join(' | '),
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 40,
+      };
+    }
+
     const idx = randInt(0, koerperDaten.length - 1);
     const koerper = koerperDaten[idx];
     const eigenschaft = (['Flächen', 'Kanten', 'Ecken'] as const)[randInt(0, 2)];

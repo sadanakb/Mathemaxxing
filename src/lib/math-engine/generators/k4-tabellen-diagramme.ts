@@ -31,57 +31,113 @@ export const template: ExerciseTemplate = {
     }));
 
     if (difficulty === 1) {
-      // Säulendiagramm ablesen: Wie viele Schüler wählten X?
-      const targetIdx = randInt(0, data.length - 1);
-      const target = data[targetIdx];
+      // Mix: bar-chart-read or fill-table (simple, 4 categories)
+      const useBarChart = randInt(0, 1) === 0;
 
-      return {
-        id: genId('k4-diag'),
-        topicId: 'k4-tabellen-diagramme',
-        question: `Das Säulendiagramm zeigt die ${thema.kontext}. Wie viele Stimmen hat „${target.label}"?`,
-        answerType: 'number',
-        exerciseType: 'bar-chart-read',
-        chartData: data,
-        correctAnswer: target.value,
-        hint: 'Lies den Wert am oberen Ende der Säule ab.',
-        explanation: `Die Säule für „${target.label}" zeigt ${target.value}.`,
-        difficulty,
-        category: 'Repräsentational',
-        estimatedSeconds: 15,
-      };
-    }
+      if (useBarChart) {
+        // Säulendiagramm ablesen: Wie viele Schüler wählten X?
+        const targetIdx = randInt(0, data.length - 1);
+        const target = data[targetIdx];
 
-    if (difficulty === 2) {
-      // Tabelle ausfüllen: Eine Zelle fehlt
-      const gesamt = data.reduce((sum, d) => sum + d.value, 0);
+        return {
+          id: genId('k4-diag'),
+          topicId: 'k4-tabellen-diagramme',
+          question: `Das Säulendiagramm zeigt die ${thema.kontext}. Wie viele Stimmen hat „${target.label}"?`,
+          answerType: 'number',
+          exerciseType: 'bar-chart-read',
+          chartData: data,
+          correctAnswer: target.value,
+          hint: 'Lies den Wert am oberen Ende der Säule ab.',
+          explanation: `Die Säule für „${target.label}" zeigt ${target.value}.`,
+          difficulty,
+          category: 'Repräsentational',
+          estimatedSeconds: 15,
+        };
+      }
+
+      // fill-table: eine Zelle fehlt (einfache Version, kein Gesamt)
       const hideIdx = randInt(0, data.length - 1);
       const hiddenValue = data[hideIdx].value;
-
-      // Build table rows with one null (the hidden value)
       const headers = ['Kategorie', 'Anzahl'];
       const rows: (string | null)[][] = data.map((d, i) => [
         d.label,
         i === hideIdx ? null : String(d.value),
       ]);
-      // Add total row
-      rows.push(['Gesamt', String(gesamt)]);
-
       const correctRows: string[][] = data.map(d => [d.label, String(d.value)]);
-      correctRows.push(['Gesamt', String(gesamt)]);
 
       return {
         id: genId('k4-diag'),
         topicId: 'k4-tabellen-diagramme',
-        question: `Die Tabelle zeigt die ${thema.kontext}. Die Gesamtzahl ist ${gesamt}. Welche Zahl fehlt bei „${data[hideIdx].label}"?`,
+        question: `Die Tabelle zeigt die ${thema.kontext}. Welche Zahl fehlt bei „${data[hideIdx].label}"?`,
         answerType: 'number',
         exerciseType: 'fill-table',
         tableConfig: { headers, rows, correctRows },
         correctAnswer: hiddenValue,
-        hint: `Addiere alle bekannten Werte und ziehe sie von ${gesamt} ab.`,
-        explanation: `Bekannte Werte: ${data.filter((_, i) => i !== hideIdx).map(d => d.value).join(' + ')} = ${gesamt - hiddenValue}. Fehlender Wert: ${gesamt} − ${gesamt - hiddenValue} = ${hiddenValue}.`,
+        hint: `Schau in das Diagramm und lies den Wert für „${data[hideIdx].label}" ab.`,
+        explanation: `Der Wert für „${data[hideIdx].label}" ist ${hiddenValue}.`,
         difficulty,
         category: 'Repräsentational',
-        estimatedSeconds: 35,
+        estimatedSeconds: 20,
+      };
+    }
+
+    if (difficulty === 2) {
+      // Mix: fill-table (with total) or bar-chart-read (compare two)
+      const useFillTable = randInt(0, 1) === 0;
+
+      if (useFillTable) {
+        // Tabelle ausfüllen: Eine Zelle fehlt, Gesamtsumme gegeben
+        const gesamt = data.reduce((sum, d) => sum + d.value, 0);
+        const hideIdx = randInt(0, data.length - 1);
+        const hiddenValue = data[hideIdx].value;
+
+        const headers = ['Kategorie', 'Anzahl'];
+        const rows: (string | null)[][] = data.map((d, i) => [
+          d.label,
+          i === hideIdx ? null : String(d.value),
+        ]);
+        rows.push(['Gesamt', String(gesamt)]);
+
+        const correctRows: string[][] = data.map(d => [d.label, String(d.value)]);
+        correctRows.push(['Gesamt', String(gesamt)]);
+
+        return {
+          id: genId('k4-diag'),
+          topicId: 'k4-tabellen-diagramme',
+          question: `Die Tabelle zeigt die ${thema.kontext}. Die Gesamtzahl ist ${gesamt}. Welche Zahl fehlt bei „${data[hideIdx].label}"?`,
+          answerType: 'number',
+          exerciseType: 'fill-table',
+          tableConfig: { headers, rows, correctRows },
+          correctAnswer: hiddenValue,
+          hint: `Addiere alle bekannten Werte und ziehe sie von ${gesamt} ab.`,
+          explanation: `Bekannte Werte: ${data.filter((_, i) => i !== hideIdx).map(d => d.value).join(' + ')} = ${gesamt - hiddenValue}. Fehlender Wert: ${gesamt} − ${gesamt - hiddenValue} = ${hiddenValue}.`,
+          difficulty,
+          category: 'Repräsentational',
+          estimatedSeconds: 35,
+        };
+      }
+
+      // bar-chart-read: Vergleich zweier Kategorien
+      const idxA = randInt(0, data.length - 1);
+      let idxB = idxA;
+      while (idxB === idxA) idxB = randInt(0, data.length - 1);
+      const catA = data[idxA];
+      const catB = data[idxB];
+      const diffAB = Math.abs(catA.value - catB.value);
+
+      return {
+        id: genId('k4-diag'),
+        topicId: 'k4-tabellen-diagramme',
+        question: `Das Diagramm zeigt die ${thema.kontext}. Wie viel mehr Stimmen hat „${catA.value >= catB.value ? catA.label : catB.label}" als „${catA.value >= catB.value ? catB.label : catA.label}"?`,
+        answerType: 'number',
+        exerciseType: 'bar-chart-read',
+        chartData: data,
+        correctAnswer: diffAB,
+        hint: 'Lies beide Säulen ab und bilde die Differenz.',
+        explanation: `${Math.max(catA.value, catB.value)} − ${Math.min(catA.value, catB.value)} = ${diffAB}.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 25,
       };
     }
 

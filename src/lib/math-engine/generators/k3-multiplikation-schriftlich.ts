@@ -150,6 +150,57 @@ export const template: ExerciseTemplate = {
     const tens = Math.floor((a % 100) / 10);
     const hundreds = Math.floor(a / 100);
 
+    // Variant selector for difficulty 3: 0 = number-input, 1 = step-by-step, 2 = estimation
+    const variant = randInt(0, 2);
+
+    if (variant === 1) {
+      // step-by-step: Einer → Zehner → Hunderter multiplication
+      const onesResult = ones * factor;
+      const onesCarry = Math.floor(onesResult / 10);
+      const tensResult = tens * factor + onesCarry;
+      const tensCarry = Math.floor(tensResult / 10);
+      const hundredsResult = hundreds * factor + tensCarry;
+      return {
+        id: genId('k3-smul'),
+        topicId: 'k3-multiplikation-schriftlich',
+        question: `Berechne schriftlich Schritt für Schritt: ${a} × ${factor} = ?`,
+        answerType: 'number',
+        exerciseType: 'step-by-step',
+        correctAnswer: answer,
+        steps: [
+          `Einer: ${ones} × ${factor} = ${onesResult}${onesCarry > 0 ? ` → schreibe ${onesResult % 10}, Übertrag ${onesCarry}` : ''}`,
+          `Zehner: ${tens} × ${factor}${onesCarry > 0 ? ` + ${onesCarry} (Übertrag)` : ''} = ${tensResult}${tensCarry > 0 ? ` → schreibe ${tensResult % 10}, Übertrag ${tensCarry}` : ''}`,
+          `Hunderter: ${hundreds} × ${factor}${tensCarry > 0 ? ` + ${tensCarry} (Übertrag)` : ''} = ${hundredsResult}`,
+          `Ergebnis: ${answer}`,
+        ],
+        hint: 'Multipliziere jede Stelle einzeln und addiere die Überträge.',
+        explanation: `${ones}×${factor}=${onesResult}, ${tens}×${factor}+${onesCarry}=${tensResult}, ${hundreds}×${factor}+${tensCarry}=${hundredsResult}. Gesamt: ${answer}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 70,
+      };
+    }
+
+    if (variant === 2) {
+      // estimation: is product > 1000?
+      const threshold = 1000;
+      const isGreater = answer > threshold;
+      return {
+        id: genId('k3-smul'),
+        topicId: 'k3-multiplikation-schriftlich',
+        question: `Ist das Produkt von ${a} × ${factor} größer als ${threshold}?`,
+        answerType: 'true-false',
+        exerciseType: 'estimation',
+        correctAnswer: isGreater ? 'Ja' : 'Nein',
+        distractors: isGreater ? ['Nein'] : ['Ja'],
+        hint: `Schätze: ${hundreds} Hunderter mal ${factor} ≈ ${hundreds * factor * 100}`,
+        explanation: `${a} × ${factor} = ${answer}. ${answer} ist ${isGreater ? 'größer' : 'nicht größer'} als ${threshold}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 20,
+      };
+    }
+
     return {
       id: genId('k3-smul'),
       topicId: 'k3-multiplikation-schriftlich',

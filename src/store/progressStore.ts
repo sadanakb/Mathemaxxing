@@ -12,6 +12,8 @@ import type {
   Schulform,
   Kurstyp,
 } from '@/lib/curriculum/types';
+import type { StoryProgress } from '@/lib/story/types';
+import { createDefaultStoryProgress } from '@/lib/story/types';
 import { saveProgress, loadProgress, saveLeitnerCard, loadAllLeitnerCards } from '@/lib/storage/dexie';
 import { downloadExport, parseImport, readFileAsText } from '@/lib/storage/export-import';
 import { useGamificationStore } from './gamificationStore';
@@ -41,6 +43,7 @@ function createDefaultProgress(userId: string): UserProgress {
     dailyGoalMinutes: 20,
     activeDates: [],
     todayMinutes: 0,
+    storyProgress: createDefaultStoryProgress(),
   };
 }
 
@@ -84,6 +87,9 @@ type ProgressActions = {
   // Settings
   updateDailyGoal: (minutes: number) => void;
   resetProgress: () => Promise<void>;
+
+  // Story
+  markStoryBeatSeen: (beatId: string) => void;
 
   // Setup
   setCurriculumContext: (bl: Bundesland, k: Klassenstufe, sf: Schulform, kt: Kurstyp) => void;
@@ -537,6 +543,24 @@ export const useProgressStore = create<ProgressStore>()((set, get) => ({
     fresh.kurstyp = progress.kurstyp;
     await saveProgress(fresh);
     set({ progress: fresh, leitnerCards: [] });
+  },
+
+  markStoryBeatSeen: (beatId) => {
+    set((state) => {
+      if (!state.progress) return state;
+      const story = state.progress.storyProgress ?? createDefaultStoryProgress();
+      if (story.seenBeats.includes(beatId)) return state;
+      return {
+        progress: {
+          ...state.progress,
+          storyProgress: {
+            seenBeats: [...story.seenBeats, beatId],
+            lastBeatId: beatId,
+          },
+        },
+      };
+    });
+    get().persistToDB();
   },
 
   setCurriculumContext: (bl, k, sf, kt) => {

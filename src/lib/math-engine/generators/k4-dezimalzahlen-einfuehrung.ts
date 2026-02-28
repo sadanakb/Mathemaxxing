@@ -105,8 +105,8 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // difficulty === 3: true-false Vergleiche
-    const variant = randInt(0, 1);
+    // difficulty === 3: true-false Vergleiche + drag-onto-numberline
+    const variant = randInt(0, 2);
 
     if (variant === 0) {
       // Ist 0,5 > 0,35? — true/false
@@ -131,7 +131,38 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Längenumrechnung: cm → m als Dezimalzahl
+    // ── Variant 2: drag-onto-numberline (place decimal on number line) ────
+    if (variant === 1) {
+      // Zahlenstrahl von 0 bis 2 in Zehntelschritten, Zielwert ist ein Zehntel
+      const lineMin = 0;
+      const lineMax = 2;
+      const tickStep = 0.1;
+      const tickIdx = randInt(1, 19); // 0.1 to 1.9
+      const target = parseFloat((lineMin + tickIdx * tickStep).toFixed(1));
+
+      return {
+        id: genId('k4-dez'),
+        topicId: 'k4-dezimalzahlen-einfuehrung',
+        question: `Lege die Dezimalzahl ${dezDE(target)} auf den Zahlenstrahl. Der Strahl geht von ${dezDE(lineMin)} bis ${dezDE(lineMax)}.`,
+        answerType: 'number',
+        exerciseType: 'drag-onto-numberline',
+        numberlineConfig: {
+          min: lineMin,
+          max: lineMax,
+          step: tickStep,
+          targets: [target],
+        },
+        correctAnswer: target,
+        tolerance: 0.05,
+        hint: `Jeder Abschnitt auf dem Zahlenstrahl entspricht 0,1. Zähle ${tickIdx} Schritte von ${dezDE(lineMin)} an.`,
+        explanation: `${dezDE(target)} liegt nach ${tickIdx} Zehntelsschritten ab ${dezDE(lineMin)}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 25,
+      };
+    }
+
+    // variant === 2: Längenumrechnung: cm → m als Dezimalzahl
     const cm = randInt(10, 250);
     const m = cm / 100;
 

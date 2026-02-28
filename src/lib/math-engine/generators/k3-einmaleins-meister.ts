@@ -62,13 +62,46 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Difficulty 3: gemischt Multiplikation und Division
+    // Difficulty 3: variant 0 = speed-quiz Multiplikation, 1 = speed-quiz Division, 2 = memory-pairs
     const a = randInt(2, 10);
     const b = randInt(2, 10);
     const product = a * b;
-    const useDivision = randInt(0, 1) === 0;
+    const variant3 = randInt(0, 2);
 
-    if (useDivision) {
+    if (variant3 === 2) {
+      // memory-pairs: match multiplication equations to their products
+      const pairCount = 3;
+      const pairs: [string, string][] = [];
+      const usedProducts = new Set<number>();
+      let attempts = 0;
+      while (pairs.length < pairCount && attempts < 30) {
+        attempts++;
+        const pa = randInt(2, 9);
+        const pb = randInt(2, 10);
+        const prod = pa * pb;
+        if (!usedProducts.has(prod)) {
+          usedProducts.add(prod);
+          pairs.push([`${pa} × ${pb}`, `${prod}`]);
+        }
+      }
+      return {
+        id: genId('k3-1x1m'),
+        topicId: 'k3-einmaleins-meister',
+        question: 'Memory: Ordne jede Aufgabe ihrem Ergebnis zu.',
+        answerType: 'matching',
+        exerciseType: 'memory-pairs',
+        correctAnswer: pairs.map(p => `${p[0]}→${p[1]}`).join('; '),
+        pairs,
+        hint: 'Berechne jede Aufgabe und suche das passende Ergebnis.',
+        explanation: pairs.map(p => `${p[0]} = ${p[1]}`).join(', '),
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 40,
+      };
+    }
+
+    if (variant3 === 1) {
+      // speed-quiz Division (Umkehraufgabe)
       return {
         id: genId('k3-1x1m'),
         topicId: 'k3-einmaleins-meister',
@@ -77,7 +110,7 @@ export const template: ExerciseTemplate = {
         answerType: 'number',
         exerciseType: 'speed-quiz',
         correctAnswer: b,
-        timeLimit: 10,
+        timeLimit: 8,
         hint: `${a} mal was ergibt ${product}?`,
         explanation: `${product} ÷ ${a} = ${b}, weil ${a} × ${b} = ${product}.`,
         difficulty,
@@ -86,6 +119,7 @@ export const template: ExerciseTemplate = {
       };
     }
 
+    // variant3 === 0: speed-quiz Multiplikation
     return {
       id: genId('k3-1x1m'),
       topicId: 'k3-einmaleins-meister',

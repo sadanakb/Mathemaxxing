@@ -1,4 +1,107 @@
 import type { CurriculumDelta } from '@/lib/curriculum/types';
 
 // Brandenburg: Grundschule goes to Klasse 6 (handled by getGrundschuleMaxKlasse)
-export const OVERRIDES: CurriculumDelta[] = [];
+// Quelle: Rahmenlehrplan 2017 Berlin-Brandenburg, Teil C Mathematik, Jahrgangsstufen 1–10
+// Identischer Rahmenlehrplan mit Berlin; gemeinsam entwickelt und verabschiedet
+// Kompetenzbereich "Daten und Zufall" ab Niveaustufe A (Klasse 1–2) verbindlich
+// Gültig: 2017–2026 (keine Revision seither)
+// https://bildungsserver.berlin-brandenburg.de/rlp-online/grundschule/mathematik/
+export const OVERRIDES: CurriculumDelta[] = [
+  {
+    bundesland: 'Brandenburg',
+    klasse: 1,
+    action: 'add',
+    topic: {
+      id: 'k1-bb-daten-wahrscheinlichkeit',
+      title: 'Daten sammeln, ordnen und darstellen',
+      lernbereich: 'Statistik',
+      klasse: 1,
+      schulformen: ['Grundschule'],
+      kmkStandard: false,
+      prerequisites: ['k1-zahlen-bis-10'],
+      estimatedMinutes: 80,
+      description:
+        'Schülerinnen und Schüler sammeln Daten aus konkreten Alltagssituationen, ' +
+        'ordnen diese nach Merkmalen und stellen sie in Strichlisten und einfachen Tabellen dar. ' +
+        'Sie lesen Informationen aus Darstellungen ab und beantworten einfache Fragen dazu. ' +
+        'Laut Rahmenlehrplan 2017 Berlin-Brandenburg (gemeinsamer Lehrplan) ist "Daten und Zufall" ' +
+        'ab Niveaustufe A (Klassen 1–2) als prozessbezogene und inhaltsbezogene Kompetenz verankert.',
+    },
+  },
+
+  // --- K2-Overrides (Rahmenlehrplan 2017, identisch mit Berlin) ---
+  {
+    bundesland: 'Brandenburg',
+    klasse: 2,
+    action: 'add',
+    topic: {
+      id: 'k2-bb-haeufigkeiten',
+      title: 'Häufigkeiten und Diagramme: Daten vertiefen',
+      lernbereich: 'Statistik',
+      klasse: 2,
+      schulformen: ['Grundschule'],
+      kmkStandard: false,
+      prerequisites: ['k2-daten-sammeln', 'k2-zahlen-bis-100'],
+      estimatedMinutes: 70,
+      description:
+        'Schülerinnen und Schüler erheben Daten zu selbst gewählten Fragestellungen, ' +
+        'ermitteln absolute Häufigkeiten und stellen Ergebnisse in Balkendiagrammen und ' +
+        'Piktogrammen dar. Sie lesen Diagramme aus, vergleichen Häufigkeiten und formulieren ' +
+        'Schlussfolgerungen in vollständigen Sätzen. ' +
+        'Der gemeinsame Rahmenlehrplan 2017 Berlin-Brandenburg vertieft in Niveaustufe B (Klasse 2) ' +
+        'den Kompetenzbereich "Daten und Wahrscheinlichkeit" durch intensivere Arbeit ' +
+        'mit Häufigkeiten und verschiedenen Diagrammtypen.',
+    },
+  },
+
+  // --- K3-Overrides (Rahmenlehrplan 2017, Niveaustufe B, identisch mit Berlin) ---
+  {
+    bundesland: 'Brandenburg',
+    klasse: 3,
+    action: 'add',
+    topic: {
+      id: 'k3-bb-daten-vertiefen',
+      title: 'Daten und Wahrscheinlichkeit vertiefen: statistische Analyse',
+      lernbereich: 'Statistik',
+      klasse: 3,
+      schulformen: ['Grundschule'],
+      kmkStandard: false,
+      prerequisites: [],
+      estimatedMinutes: 80,
+      description:
+        'Schülerinnen und Schüler planen und führen eigene statistische Erhebungen durch, ' +
+        'wählen geeignete Darstellungsformen (Balkendiagramm, Tabelle, Piktogramm) und ' +
+        'interpretieren Ergebnisse kritisch. Sie erkennen Zusammenhänge zwischen Daten und ' +
+        'formulieren Schlussfolgerungen, die über einfache Beschreibungen hinausgehen. ' +
+        'Der gemeinsame Rahmenlehrplan 2017 Berlin-Brandenburg vertieft in Niveaustufe B (Klassen 3–4) ' +
+        'den Kompetenzbereich „Daten und Wahrscheinlichkeit" durch umfassendere statistische ' +
+        'Analysen und den Aufbau eines kritischen Datenverständnisses.',
+    },
+  },
+
+  // --- K4-Overrides (Rahmenlehrplan 2017, Niveaustufe B erweitert, identisch mit Berlin) ---
+  {
+    bundesland: 'Brandenburg',
+    klasse: 4,
+    action: 'add',
+    topic: {
+      id: 'k4-bb-daten-wahrsch-b',
+      title: 'Daten und Wahrscheinlichkeit: Niveaustufe B vertieft',
+      lernbereich: 'Statistik',
+      klasse: 4,
+      schulformen: ['Grundschule'],
+      kmkStandard: false,
+      prerequisites: ['k3-bb-daten-vertiefen'],
+      estimatedMinutes: 85,
+      description:
+        'Schülerinnen und Schüler schließen den Kompetenzbereich „Daten und Wahrscheinlichkeit" ' +
+        'auf Niveaustufe B ab. Sie führen komplexere Datenerhebungen durch, erstellen und ' +
+        'vergleichen verschiedene Diagrammtypen und bewerten Darstellungen kritisch. ' +
+        'Einfache Wahrscheinlichkeiten werden als Verhältnis (z. B. 1 von 6) beschrieben ' +
+        'und durch Experimente überprüft. ' +
+        'Der gemeinsame Rahmenlehrplan 2017 Berlin-Brandenburg sieht in Niveaustufe B (Klassen 3–4) ' +
+        'eine abschließende Vertiefung des Kompetenzbereichs „Daten und Wahrscheinlichkeit" ' +
+        'mit erweiterter statistischer Analyse und Wahrscheinlichkeitsverständnis vor.',
+    },
+  },
+];

@@ -19,7 +19,7 @@ export const template: ExerciseTemplate = {
   generate(difficulty = 1): Exercise {
     if (difficulty === 1) {
       // cm only, simple comparisons and conversions
-      const variant = randInt(0, 2);
+      const variant = randInt(0, 4);
 
       if (variant === 0) {
         // "Was ist länger: X cm oder Y cm?" (true-false)
@@ -69,25 +69,85 @@ export const template: ExerciseTemplate = {
         };
       }
 
-      // Drag-sort: order lengths (all cm)
-      const lengths = new Set<number>();
-      while (lengths.size < 4) lengths.add(randInt(2, 50));
-      const sorted = [...lengths].sort((a, b) => a - b);
-      const shuffled = shuffle([...sorted]);
+      if (variant === 2) {
+        // Drag-sort: order lengths (all cm)
+        const lengths = new Set<number>();
+        while (lengths.size < 4) lengths.add(randInt(2, 50));
+        const sorted = [...lengths].sort((a, b) => a - b);
+        const shuffled = shuffle([...sorted]);
 
+        return {
+          id: genId(),
+          topicId: 'k2-laengen',
+          question: 'Ordne diese Längen von kurz nach lang!',
+          answerType: 'drag-drop',
+          exerciseType: 'drag-sort',
+          correctAnswer: sorted.map(l => `${l} cm`).join(', '),
+          items: shuffled.map(l => `${l} cm`),
+          hint: 'Schaue auf die Zahlen und ordne sie von der kleinsten zur größten.',
+          explanation: `Die richtige Reihenfolge ist: ${sorted.map(l => `${l} cm`).join(', ')}.`,
+          difficulty,
+          category: 'Konkret',
+          estimatedSeconds: 20,
+        };
+      }
+
+      if (variant === 3) {
+        // estimation: estimate which object is closer in length to a reference
+        const objectLengths: { name: string; cm: number }[] = [
+          { name: 'ein Bleistift', cm: 18 },
+          { name: 'ein Lineal', cm: 30 },
+          { name: 'ein Finger', cm: 5 },
+          { name: 'ein Schulheft', cm: 29 },
+          { name: 'ein Radiergummi', cm: 4 },
+          { name: 'ein Zollstock', cm: 100 },
+        ];
+        const obj = objectLengths[randInt(0, objectLengths.length - 1)];
+        const refA = randInt(1, obj.cm - 1);
+        const refB = obj.cm + randInt(1, 20);
+        const closerRef = Math.abs(obj.cm - refA) <= Math.abs(obj.cm - refB) ? refA : refB;
+        const options = [`${refA} cm`, `${refB} cm`];
+        return {
+          id: genId(),
+          topicId: 'k2-laengen',
+          question: `${obj.name} ist ungefähr ${obj.cm} cm lang. Welche Länge passt besser als Schätzung?`,
+          answerType: 'multiple-choice',
+          exerciseType: 'estimation',
+          correctAnswer: `${obj.cm} cm`,
+          distractors: options.filter(o => o !== `${obj.cm} cm`),
+          options: [`${obj.cm} cm`, ...options].filter((v, i, arr) => arr.indexOf(v) === i),
+          correctOptions: [`${obj.cm} cm`],
+          hint: `${obj.name} ist ungefähr ${obj.cm} cm. Welche der Angaben liegt am nächsten?`,
+          explanation: `${obj.name} ist ca. ${obj.cm} cm lang.`,
+          difficulty,
+          category: 'Konkret',
+          estimatedSeconds: 15,
+        };
+      }
+
+      // variant 4: true-false about real-world length
+      const objectFacts: { name: string; cm: number }[] = [
+        { name: 'ein Bleistift', cm: 18 },
+        { name: 'ein Radiergummi', cm: 4 },
+        { name: 'ein Lineal', cm: 30 },
+      ];
+      const obj2 = objectFacts[randInt(0, objectFacts.length - 1)];
+      const showCorrect = randInt(0, 1) === 0;
+      const shownLen = showCorrect ? obj2.cm : obj2.cm + randInt(10, 30);
       return {
         id: genId(),
         topicId: 'k2-laengen',
-        question: 'Ordne diese Längen von kurz nach lang!',
-        answerType: 'drag-drop',
-        exerciseType: 'drag-sort',
-        correctAnswer: sorted.map(l => `${l} cm`).join(', '),
-        items: shuffled.map(l => `${l} cm`),
-        hint: 'Schaue auf die Zahlen und ordne sie von der kleinsten zur größten.',
-        explanation: `Die richtige Reihenfolge ist: ${sorted.map(l => `${l} cm`).join(', ')}.`,
+        question: `Stimmt das? ${obj2.name} ist ungefähr ${shownLen} cm lang.`,
+        answerType: 'true-false',
+        exerciseType: 'true-false',
+        correctAnswer: showCorrect ? 'wahr' : 'falsch',
+        hint: `Stell dir ${obj2.name} vor. Wie lang ist das ungefähr?`,
+        explanation: showCorrect
+          ? `Ja, ${obj2.name} ist ungefähr ${obj2.cm} cm lang.`
+          : `Nein, ${obj2.name} ist ungefähr ${obj2.cm} cm lang, nicht ${shownLen} cm.`,
         difficulty,
         category: 'Konkret',
-        estimatedSeconds: 20,
+        estimatedSeconds: 12,
       };
     }
 

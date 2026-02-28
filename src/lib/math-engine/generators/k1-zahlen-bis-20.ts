@@ -91,8 +91,8 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Difficulty 3: "Welche Zahl liegt zwischen X und Y?" or Vorgänger
-    const variant = randInt(0, 1);
+    // Difficulty 3: "Welche Zahl liegt zwischen X und Y?", Vorgänger, or drag-onto-numberline
+    const variant = randInt(0, 2);
 
     if (variant === 0) {
       // Zahl zwischen X und Y
@@ -115,22 +115,42 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Vorgänger
-    const x = randInt(2, 20);
-    const answer = x - 1;
+    if (variant === 1) {
+      // Vorgänger
+      const x = randInt(2, 20);
+      const answer = x - 1;
+      return {
+        id: genId(),
+        topicId: 'k1-zahlen-bis-20',
+        question: `Was ist der Vorgänger von ${x}?`,
+        answerType: 'number',
+        exerciseType: 'number-input',
+        correctAnswer: answer,
+        distractors: [x, x + 1, answer - 1].filter(d => d !== answer && d >= 0 && d <= 20),
+        hint: `Der Vorgänger ist die Zahl, die direkt vor ${x} kommt.`,
+        explanation: `Der Vorgänger von ${x} ist ${answer}. Beim Rückwärtszählen kommt ${answer} direkt vor ${x}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 12,
+      };
+    }
+
+    // variant === 2: drag-onto-numberline (0–20)
+    const target = randInt(1, 19);
     return {
       id: genId(),
       topicId: 'k1-zahlen-bis-20',
-      question: `Was ist der Vorgänger von ${x}?`,
+      question: `Zeige die Zahl ${target} auf dem Zahlenstrahl!`,
       answerType: 'number',
-      exerciseType: 'number-input',
-      correctAnswer: answer,
-      distractors: [x, x + 1, answer - 1].filter(d => d !== answer && d >= 0 && d <= 20),
-      hint: `Der Vorgänger ist die Zahl, die direkt vor ${x} kommt.`,
-      explanation: `Der Vorgänger von ${x} ist ${answer}. Beim Rückwärtszählen kommt ${answer} direkt vor ${x}.`,
+      exerciseType: 'drag-onto-numberline',
+      correctAnswer: target,
+      numberlineConfig: { min: 0, max: 20, step: 1, targets: [target] },
+      hint: `Zähle vom Anfang bis zur ${target} auf dem Zahlenstrahl.`,
+      explanation: `Die Zahl ${target} liegt an Position ${target} auf dem Zahlenstrahl von 0 bis 20.`,
       difficulty,
-      category: 'Abstrakt',
-      estimatedSeconds: 12,
+      category: 'Repräsentational',
+      estimatedSeconds: 18,
+      visualConfig: { type: 'numberline' as const, props: { min: 0, max: 20 } },
     };
   },
 };

@@ -79,7 +79,76 @@ function generateVielfache(difficulty: 1 | 2 | 3): Exercise {
       estimatedSeconds: 40,
     };
   } else {
-    // D3: "Ist X durch Y teilbar?" with larger numbers + Teilbarkeitsregeln
+    // D3: variant 0 = true-false (Teilbarkeitsregeln), 1 = classify (Vielfache), 2 = true-false (ist X Vielfaches von Y)
+    const variant = randInt(0, 2);
+
+    if (variant === 1) {
+      // classify: sort numbers into Vielfache vs. Nicht-Vielfache of a base
+      const base = pick([3, 4, 5, 6]);
+      const multiples: number[] = [];
+      const nonMultiples: number[] = [];
+      let attempts = 0;
+      while ((multiples.length < 3 || nonMultiples.length < 3) && attempts < 50) {
+        attempts++;
+        const candidate = randInt(2, 60);
+        if (candidate % base === 0 && multiples.length < 3 && !multiples.includes(candidate)) {
+          multiples.push(candidate);
+        } else if (candidate % base !== 0 && nonMultiples.length < 3 && !nonMultiples.includes(candidate)) {
+          nonMultiples.push(candidate);
+        }
+      }
+      const allItems = [...multiples, ...nonMultiples].sort((a, b) => a - b).map(String);
+      return {
+        id: genId('k3-vt'),
+        topicId: 'k3-vielfache-teiler',
+        question: `Sortiere die Zahlen: Welche sind Vielfache von ${base}? ${allItems.join(', ')}`,
+        answerType: 'drag-drop',
+        exerciseType: 'classify',
+        correctAnswer: JSON.stringify({
+          [`Vielfache von ${base}`]: multiples.map(String),
+          [`Keine Vielfachen von ${base}`]: nonMultiples.map(String),
+        }),
+        classifyItems: allItems,
+        classifyCategories: [`Vielfache von ${base}`, `Keine Vielfachen von ${base}`],
+        classifyCorrect: {
+          [`Vielfache von ${base}`]: multiples.map(String),
+          [`Keine Vielfachen von ${base}`]: nonMultiples.map(String),
+        },
+        hint: `Prüfe jede Zahl: Lässt sie sich ohne Rest durch ${base} teilen?`,
+        explanation: `Vielfache von ${base}: ${multiples.join(', ')}. Keine Vielfachen: ${nonMultiples.join(', ')}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 40,
+      };
+    }
+
+    if (variant === 2) {
+      // true-false: is 12 a Vielfaches of 4? (simple specific true-false)
+      const base2 = pick([3, 4, 5, 6, 7]);
+      const isViel = randInt(0, 1) === 0;
+      const number2 = isViel
+        ? base2 * randInt(2, 10)
+        : base2 * randInt(2, 10) + randInt(1, base2 - 1);
+      const correct2 = number2 % base2 === 0;
+      return {
+        id: genId('k3-vt'),
+        topicId: 'k3-vielfache-teiler',
+        question: `Ist ${number2} ein Vielfaches von ${base2}?`,
+        answerType: 'true-false',
+        exerciseType: 'true-false',
+        correctAnswer: correct2 ? 'Ja' : 'Nein',
+        distractors: correct2 ? ['Nein'] : ['Ja'],
+        hint: `Prüfe: ${number2} ÷ ${base2} — geht das ohne Rest auf?`,
+        explanation: correct2
+          ? `Ja! ${number2} ÷ ${base2} = ${number2 / base2} (kein Rest).`
+          : `Nein. ${number2} ÷ ${base2} = ${Math.floor(number2 / base2)} Rest ${number2 % base2}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 20,
+      };
+    }
+
+    // variant === 0: original Teilbarkeitsregeln true-false
     const rules: { divisor: number; hint: string }[] = [
       { divisor: 2, hint: 'Eine Zahl ist durch 2 teilbar, wenn die letzte Ziffer gerade ist (0, 2, 4, 6, 8).' },
       { divisor: 3, hint: 'Eine Zahl ist durch 3 teilbar, wenn die Quersumme durch 3 teilbar ist.' },

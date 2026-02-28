@@ -11,138 +11,150 @@ export const K1_K3_THEORY: Record<string, TheoryBlock> = {
 
   'k1-zahlen-bis-10': {
     concepts: [
-      'Die Zahlen von 1 bis 10 kannst du zaehlen, lesen und schreiben. Jede Zahl hat ihren festen Platz.',
-      'Mit den Zeichen > (groesser) und < (kleiner) vergleichst du Zahlen: 3 < 7 bedeutet "3 ist kleiner als 7".',
-      'Ordnen heisst: Du legst die Zahlen der Reihe nach hin, zum Beispiel von der kleinsten zur groessten.',
+      'Die Zahlen von 1 bis 10 kannst du zählen, lesen und schreiben. Jede Zahl hat ihren festen Platz.',
+      'Du hast 10 Finger — für jede Zahl bis 10 einen Finger!',
+      'Mit den Zeichen > (größer) und < (kleiner) vergleichst du Zahlen: 3 < 7 bedeutet "3 ist kleiner als 7".',
+      'Ordnen heißt: Du legst die Zahlen der Reihe nach hin — von der kleinsten zur größten.',
     ],
     example: {
       question: 'Ordne die Zahlen: 5, 2, 8, 1',
       steps: [
-        'Finde die kleinste Zahl: 1.',
+        'Finde die kleinste Zahl: das ist die 1.',
         'Dann kommt die 2, dann die 5.',
-        'Die groesste Zahl ist die 8.',
+        'Die größte Zahl ist die 8.',
       ],
       answer: '1 < 2 < 5 < 8',
     },
     tips: [
-      'Denke an deine Finger: Du hast 10 Finger — fuer jede Zahl bis 10 einen!',
-      'Das Zeichen < sieht aus wie ein Schnabel. Der Schnabel zeigt immer zur groesseren Zahl.',
+      'Zähle mit den Fingern! Klappe für jede Zahl einen Finger auf.',
+      'Das Zeichen < sieht aus wie ein Schnabel. Der Schnabel zeigt immer zur größeren Zahl: 3 < 7.',
     ],
     pitfalls: [
-      'Verwechsle nicht < und >! Der offene Teil zeigt immer zur groesseren Zahl: 3 < 7, aber 7 > 3.',
+      'Verwechsle nicht < und >! Der offene Teil zeigt zur größeren Zahl: 3 < 7, aber 7 > 3.',
+      'Die Null (0) ist auch eine Zahl! Sie steht ganz links und bedeutet "nichts".',
     ],
   },
 
   'k1-addition-bis-20': {
     concepts: [
-      'Addition bedeutet "zusammenzaehlen". Das Plus-Zeichen (+) zeigt dir, dass du Zahlen zusammenrechnen sollst.',
+      'Addition bedeutet "zusammenzählen". Das Zeichen dafür ist das Plus (+).',
       'Im Zahlenraum bis 20 kannst du zum Beispiel 9 + 7 oder 14 + 3 rechnen.',
-      'Das Ergebnis einer Addition heisst "Summe".',
+      'Das Ergebnis einer Addition heißt "Summe".',
     ],
     example: {
       question: '7 + 6 = ?',
       steps: [
-        'Starte bei der groesseren Zahl: 7.',
-        'Zaehle 6 weiter: 8, 9, 10, 11, 12, 13.',
-        'Du landest bei 13.',
+        'Starte bei der größeren Zahl: 7.',
+        'Zähle 6 Schritte weiter: 8, 9, 10, 11, 12, 13.',
+        'Du landest bei 13!',
       ],
       answer: '7 + 6 = 13',
     },
     tips: [
-      'Faenge immer bei der groesseren Zahl an zu zaehlen — das spart Schritte!',
+      'Fange immer bei der größeren Zahl an zu zählen — das ist viel schneller!',
+      'Du kannst auch den Zahlenstrahl benutzen und Schritte nach rechts hüpfen.',
     ],
     pitfalls: [
-      'Vergiss nicht: Das Ergebnis darf bei diesen Aufgaben hoechstens 20 sein.',
+      'Vergiss nicht: Das Ergebnis darf bei diesen Aufgaben höchstens 20 sein.',
+      'Zähle sorgfältig — verzehl dich nicht beim Weiterzählen!',
     ],
   },
 
   'k1-addition-bis-20-ohne-uebergang': {
     concepts: [
-      'Addition ohne Zehneruebergang heisst: Du ueberschreitest die 10 nicht. Zum Beispiel 12 + 5 = 17.',
-      'Die Einer werden einfach zusammengezaehlt. Die Zehner bleiben gleich.',
-      'Du bleibst im gleichen Zehner: 11 + 3 = 14, beides liegt zwischen 10 und 20.',
+      'Hier rechnest du Plus, ohne die 10 zu überschreiten. Zum Beispiel: 12 + 5 = 17.',
+      'Schau auf die Einer: 2 + 5 = 7. Das ist weniger als 10 — kein Übergang!',
+      'Der Zehner bleibt gleich. Nur die Einer ändern sich.',
     ],
     example: {
       question: '12 + 5 = ?',
       steps: [
-        'Der Zehner bleibt: 1 Zehner (= 10).',
-        'Die Einer zusammenzaehlen: 2 + 5 = 7.',
+        'Der Zehner bleibt: 1 Zehner (das ist 10).',
+        'Die Einer zusammenzählen: 2 + 5 = 7.',
         'Zusammen: 10 + 7 = 17.',
       ],
       answer: '12 + 5 = 17',
     },
     tips: [
-      'Pruefe: Ergeben die Einer zusammen weniger als 10? Dann ist es ohne Uebergang.',
+      'Prüfe die Einer zuerst: Ergeben sie zusammen weniger als 10? Dann ist es einfach!',
+      'Stell dir vor, du hast einen Zehnerturm (10) und zählst einzelne Würfel dazu.',
     ],
     pitfalls: [
-      'Wenn die Einer zusammen 10 oder mehr ergeben, ist es ein Zehneruebergang — dann brauchst du eine andere Strategie!',
+      'Wenn die Einer zusammen 10 oder mehr ergeben, ist es ein Zehnerübergang — dann brauchst du einen anderen Trick!',
+      'Vergiss nicht, den Zehner (10) am Ende dazuzurechnen.',
     ],
   },
 
   'k1-addition-bis-20-mit-uebergang': {
     concepts: [
-      'Beim Zehneruebergang ueberschreitest du die 10. Zum Beispiel: 8 + 5 = 13.',
-      'Trick: Zerlege die zweite Zahl so, dass du zuerst auf 10 kommst. 8 + 5 → 8 + 2 + 3 → 10 + 3 = 13.',
-      'Diesen Trick nennt man "ueber die 10 rechnen" oder "Zehnerfreund nutzen".',
+      'Hier springst du beim Rechnen über die 10 — das ist der Zehnerübergang! Zum Beispiel: 8 + 5 = 13.',
+      'Der Trick: Zerlege die zweite Zahl, damit du zuerst genau auf die 10 kommst.',
+      '8 + 5 → erst 8 + 2 = 10, dann 10 + 3 = 13. So wird es einfacher!',
+      'Zehnerfreunde sind Paare, die zusammen 10 ergeben: 1+9, 2+8, 3+7, 4+6, 5+5.',
     ],
     example: {
       question: '8 + 5 = ?',
       steps: [
         'Wie viel fehlt von 8 bis 10? Es fehlen 2.',
-        'Zerlege die 5 in 2 + 3.',
-        '8 + 2 = 10, dann 10 + 3 = 13.',
+        'Zerlege die 5 in 2 und 3.',
+        '8 + 2 = 10, dann noch 3 dazu: 10 + 3 = 13.',
       ],
       answer: '8 + 5 = 13',
     },
     tips: [
-      'Merke dir die Zehnerfreunde: 1+9, 2+8, 3+7, 4+6, 5+5 — sie ergeben immer 10!',
-      'Rechne immer erst bis zur 10, dann den Rest dazu.',
+      'Lerne die Zehnerfreunde auswendig: 1+9, 2+8, 3+7, 4+6, 5+5 — sie ergeben immer 10!',
+      'Stell dir die 10 wie eine Brücke vor. Erst zur Brücke, dann weiter.',
     ],
     pitfalls: [
-      'Vergiss nicht den Rest! Wenn du die 5 in 2 + 3 zerlegst, musst du die 3 noch dazurechnen.',
+      'Vergiss den Rest nicht! Wenn du 5 in 2+3 zerlegst, musst du die 3 am Ende noch dazurechnen.',
+      'Übe zuerst die Zehnerfreunde gut — dann klappt der Übergang viel leichter!',
     ],
   },
 
   'k1-subtraktion-bis-20': {
     concepts: [
-      'Subtraktion heisst "wegnehmen" oder "abziehen". Das Minus-Zeichen (−) zeigt dir das an.',
-      'Im Zahlenraum bis 20 rechnest du zum Beispiel 15 − 8 oder 20 − 7.',
-      'Das Ergebnis einer Subtraktion heisst "Differenz".',
+      'Subtraktion heißt "wegnehmen" oder "abziehen". Das Zeichen dafür ist das Minus (−).',
+      'Stell dir vor, du hast Äpfel im Korb und nimmst einige heraus. Wie viele bleiben übrig?',
+      'Das Ergebnis einer Subtraktion heißt "Differenz".',
     ],
     example: {
       question: '15 − 8 = ?',
       steps: [
         'Du hast 15 und nimmst 8 weg.',
-        'Trick: Rechne erst bis zur 10 zurueck: 15 − 5 = 10.',
-        'Dann noch 3 abziehen (weil 8 = 5 + 3): 10 − 3 = 7.',
+        'Trick: Rechne erst bis zur 10 zurück: 15 − 5 = 10.',
+        'Jetzt noch 3 abziehen (weil 8 = 5 + 3): 10 − 3 = 7.',
       ],
       answer: '15 − 8 = 7',
     },
     tips: [
-      'Auch beim Minus hilft der Umweg ueber die 10!',
+      'Auch beim Minus hilft der Umweg über die 10!',
+      'Du kannst auch von der kleineren zur größeren Zahl hochzählen: Von 8 bis 15 sind es 7 Schritte.',
     ],
     pitfalls: [
-      'Bei der Subtraktion ist die Reihenfolge wichtig! 15 − 8 ist nicht das Gleiche wie 8 − 15.',
+      'Die Reihenfolge ist wichtig! 15 − 8 ist nicht das Gleiche wie 8 − 15.',
+      'Zähle beim Rückwärtszählen sorgfältig — verzehl dich nicht!',
     ],
   },
 
   'k1-tausch-umkehraufgaben': {
     concepts: [
-      'Tauschaufgaben: Du kannst beim Plus die Zahlen tauschen und das Ergebnis bleibt gleich. 3 + 4 = 4 + 3 = 7.',
-      'Umkehraufgaben: Plus und Minus gehoeren zusammen. Wenn 3 + 4 = 7, dann ist auch 7 − 4 = 3 und 7 − 3 = 4.',
-      'Jede Plus-Aufgabe hat also zwei passende Minus-Aufgaben!',
+      'Tauschaufgabe: Beim Plus kannst du die Zahlen tauschen — das Ergebnis bleibt gleich! 3 + 4 = 4 + 3 = 7.',
+      'Umkehraufgabe: Plus und Minus gehören zusammen wie Geschwister.',
+      'Wenn du 3 + 4 = 7 kennst, weißt du auch: 7 − 4 = 3 und 7 − 3 = 4.',
+      'Jede Plus-Aufgabe hat zwei passende Minus-Aufgaben!',
     ],
     example: {
-      question: 'Finde die Umkehraufgaben zu 5 + 3 = 8.',
+      question: 'Finde alle Aufgaben, die zu 5 + 3 = 8 gehören.',
       steps: [
-        'Die Tauschaufgabe ist: 3 + 5 = 8.',
+        'Die Tauschaufgabe: 3 + 5 = 8.',
         'Die erste Umkehraufgabe: 8 − 3 = 5.',
         'Die zweite Umkehraufgabe: 8 − 5 = 3.',
       ],
       answer: '3 + 5 = 8, 8 − 3 = 5, 8 − 5 = 3',
     },
     tips: [
-      'Mit Umkehraufgaben kannst du dein Ergebnis ueberpruefen: Wenn 6 + 3 = 9, dann muss 9 − 3 = 6 sein.',
+      'Nutze Umkehraufgaben zum Überprüfen: Wenn 6 + 3 = 9, dann muss 9 − 3 = 6 sein!',
+      'Aus einer Plus-Aufgabe bekommst du immer 3 weitere Aufgaben — das ist praktisch!',
     ],
     pitfalls: [
       'Tauschen geht nur bei Plus! Bei Minus darfst du NICHT tauschen: 8 − 3 ist nicht das Gleiche wie 3 − 8.',
@@ -151,116 +163,127 @@ export const K1_K3_THEORY: Record<string, TheoryBlock> = {
 
   'k1-rechengeschichten': {
     concepts: [
-      'Rechengeschichten sind kleine Geschichten, in denen eine Aufgabe versteckt ist.',
-      'Lies genau: "dazubekommen", "geschenkt", "mehr" bedeutet Plus (+). "Verloren", "weggegeben", "weniger" bedeutet Minus (−).',
+      'In Rechengeschichten ist eine Matheaufgabe in einer kleinen Geschichte versteckt!',
+      'Wörter wie "dazubekommen", "mehr" oder "geschenkt" bedeuten Plus (+).',
+      'Wörter wie "verloren", "weggegeben" oder "weniger" bedeuten Minus (−).',
       'Schreibe zuerst die Rechenaufgabe auf, dann rechne sie aus.',
     ],
     example: {
-      question: 'Tim hat 6 Aepfel. Er bekommt von Lena 5 dazu. Wie viele Aepfel hat Tim jetzt?',
+      question: 'Tim hat 6 Äpfel. Er bekommt von Lena 5 dazu. Wie viele Äpfel hat Tim jetzt?',
       steps: [
-        'Tim hat am Anfang 6 Aepfel.',
-        '"dazubekommen" heisst Plus: 6 + 5.',
+        'Tim hat am Anfang 6 Äpfel.',
+        '"Dazubekommen" heißt Plus: 6 + 5.',
         '6 + 5 = 11.',
       ],
-      answer: 'Tim hat jetzt 11 Aepfel.',
+      answer: 'Tim hat jetzt 11 Äpfel.',
     },
     tips: [
-      'Unterstreiche die wichtigen Woerter in der Geschichte: die Zahlen und ob es Plus oder Minus ist.',
+      'Unterstreiche die Zahlen und die wichtigen Wörter in der Geschichte.',
+      'Schreibe einen Antwortsatz: "Tim hat jetzt 11 Äpfel."',
     ],
     pitfalls: [
-      'Lies die Aufgabe bis zum Ende! Manchmal stecken zwei Schritte in einer Geschichte.',
+      'Lies die Aufgabe bis zum Ende durch — manchmal gibt es zwei Rechenschritte!',
+      'Vergiss den Antwortsatz nicht!',
     ],
   },
 
   'k1-lagebeziehungen': {
     concepts: [
       'Lagebeziehungen beschreiben, wo etwas ist: oben/unten, links/rechts, vor/hinter, neben.',
-      'Links ist die Seite, auf der bei den meisten die Hand ist, mit der sie NICHT schreiben.',
-      'Wichtig: Die Lage haengt davon ab, von wo du schaust! Was fuer dich links ist, kann fuer jemand anderes rechts sein.',
+      'Links ist die Seite, wo die meisten Kinder NICHT schreiben.',
+      'Rechts ist die Seite, wo die meisten Kinder schreiben.',
+      'Ob etwas links oder rechts ist, hängt davon ab, wo du stehst und hinschaust!',
     ],
     example: {
       question: 'Wo liegt der Ball? Er liegt unter dem Tisch, rechts neben dem Stuhl.',
       steps: [
-        'Zuerst: "unter dem Tisch" — der Ball ist tiefer als der Tisch.',
-        'Dann: "rechts neben dem Stuhl" — der Ball ist auf der rechten Seite vom Stuhl.',
-        'Du weisst jetzt genau, wo der Ball liegt!',
+        '"Unter dem Tisch" — der Ball ist tiefer als der Tisch.',
+        '"Rechts neben dem Stuhl" — der Ball ist auf der rechten Seite vom Stuhl.',
+        'Jetzt weißt du genau, wo der Ball liegt!',
       ],
       answer: 'Der Ball liegt unter dem Tisch und rechts neben dem Stuhl.',
     },
     tips: [
-      'Hebe deine Schreibhand hoch — das ist rechts (bei den meisten Kindern). Die andere Seite ist links.',
+      'Hebe deine Schreibhand hoch — das ist rechts! Die andere Seite ist links.',
+      'Benutze Wörter wie "neben", "zwischen", "über" und "unter", um Lagen genau zu beschreiben.',
     ],
     pitfalls: [
-      'Wenn du jemanden anschaust: Sein rechts ist DEIN links! Achte darauf, von welcher Seite du schaust.',
+      'Wenn du jemandem gegenüberstehst, ist sein Rechts dein Links! Achte darauf, von wo du schaust.',
     ],
   },
 
   'k1-muster-und-strukturen': {
     concepts: [
-      'Ein Muster ist etwas, das sich wiederholt. Zum Beispiel: rot, blau, rot, blau, rot, blau.',
-      'Du kannst Muster erkennen und weiterfuehren: Was kommt als Naechstes?',
-      'Muster gibt es ueberall: bei Farben, Formen, Zahlen oder Bewegungen.',
+      'Ein Muster ist etwas, das sich immer wieder wiederholt. Zum Beispiel: rot, blau, rot, blau, rot, blau.',
+      'Muster erkennst du und führst sie weiter: Was kommt als Nächstes?',
+      'Muster gibt es überall: bei Farben, Formen, Zahlen oder Klatschen.',
     ],
     example: {
       question: 'Wie geht das Muster weiter? Kreis, Dreieck, Kreis, Dreieck, Kreis, ...',
       steps: [
-        'Schau dir an, was sich wiederholt: Kreis, Dreieck.',
-        'Das Muster hat immer 2 Teile, die sich abwechseln.',
-        'Nach dem Kreis kommt wieder ein Dreieck.',
+        'Schau: Was wiederholt sich? Kreis und Dreieck wechseln sich ab.',
+        'Das Muster hat 2 Teile: Kreis, Dreieck.',
+        'Nach dem Kreis kommt wieder ein Dreieck!',
       ],
-      answer: 'Das naechste ist ein Dreieck.',
+      answer: 'Das Nächste ist ein Dreieck.',
     },
     tips: [
-      'Klatsche oder sprich das Muster laut — so faellt es leichter, die Wiederholung zu hoeren.',
+      'Sprich das Muster laut oder klatsche dazu — so hörst du die Wiederholung gut.',
+      'Schreibe das Muster auf und umrahme den Teil, der sich wiederholt.',
     ],
     pitfalls: [
-      'Manchmal wiederholen sich 3 oder mehr Dinge, nicht nur 2. Schau genau hin, wie lang der sich wiederholende Teil ist!',
+      'Manchmal wiederholen sich 3 oder mehr Dinge! Schau genau, wie lang der Teil ist, der sich wiederholt.',
     ],
   },
 
   'k1-geld-euro-cent': {
     concepts: [
-      'Wir bezahlen mit Euro und Cent. 1 Euro = 100 Cent.',
-      'Es gibt Muenzen: 1 ct, 2 ct, 5 ct, 10 ct, 20 ct, 50 ct, 1 EUR, 2 EUR. Und Scheine: 5 EUR, 10 EUR, 20 EUR und mehr.',
-      'Beim Bezahlen zaehle zuerst die Euro, dann die Cent zusammen.',
+      'Wir bezahlen mit Euro (€) und Cent (ct). 1 Euro = 100 Cent.',
+      'Münzen: 1 ct, 2 ct, 5 ct, 10 ct, 20 ct, 50 ct, 1 € und 2 €.',
+      'Scheine: 5 €, 10 €, 20 € und mehr.',
+      'Beim Bezahlen zähle zuerst die Euro, dann die Cent zusammen.',
     ],
     example: {
-      question: 'Du hast eine 2-Euro-Muenze und drei 10-Cent-Muenzen. Wie viel Geld hast du?',
+      question: 'Du hast eine 2-Euro-Münze und drei 10-Cent-Münzen. Wie viel Geld hast du?',
       steps: [
-        'Euro zaehlen: 2 EUR.',
-        'Cent zaehlen: 3 x 10 ct = 30 ct.',
-        'Zusammen: 2 EUR und 30 ct = 2,30 EUR.',
+        'Euro zählen: 2 €.',
+        'Cent zählen: 3 × 10 ct = 30 ct.',
+        'Zusammen: 2 € und 30 ct = 2,30 €.',
       ],
-      answer: 'Du hast 2,30 EUR.',
+      answer: 'Du hast 2,30 €.',
     },
     tips: [
-      'Sortiere die Muenzen nach Wert — erst die grossen, dann die kleinen. So zaehlt es sich leichter.',
+      'Sortiere die Münzen: erst die großen, dann die kleinen. So kannst du leichter zählen.',
+      'Lege die Münzen in eine Reihe und zähle sie der Reihe nach zusammen.',
     ],
     pitfalls: [
-      'Verwechsle nicht Euro und Cent! 2 Euro sind viel mehr als 2 Cent. Achte auf die Einheit.',
+      'Verwechsle nicht Euro und Cent! 2 Euro (= 200 Cent) ist viel mehr als 2 Cent.',
+      'Ein Komma trennt Euro und Cent: 1,50 € heißt 1 Euro und 50 Cent.',
     ],
   },
 
   'k1-uhrzeit-volle-stunden': {
     concepts: [
       'Die Uhr hat zwei Zeiger: Der kurze Zeiger zeigt die Stunde, der lange Zeiger zeigt die Minuten.',
-      'Wenn der lange Zeiger auf der 12 steht, ist es eine volle Stunde.',
-      'Der kurze Zeiger zeigt dann genau auf eine Zahl — das ist die Uhrzeit. Zum Beispiel: kurzer Zeiger auf 3, langer Zeiger auf 12 = 3 Uhr.',
+      'Wenn der lange Zeiger oben auf der 12 steht, ist es genau eine volle Stunde.',
+      'Dann schaust du, wo der kurze Zeiger steht — das ist die Uhrzeit!',
     ],
     example: {
-      question: 'Der kurze Zeiger zeigt auf die 8, der lange auf die 12. Wie spaet ist es?',
+      question: 'Der kurze Zeiger zeigt auf die 8, der lange auf die 12. Wie spät ist es?',
       steps: [
-        'Der lange Zeiger auf der 12 = volle Stunde.',
+        'Der lange Zeiger steht auf der 12 — das bedeutet: volle Stunde!',
         'Der kurze Zeiger zeigt auf die 8.',
         'Es ist 8 Uhr.',
       ],
       answer: 'Es ist 8 Uhr.',
     },
     tips: [
-      'Merke: Der KURZE Zeiger zeigt die Stunde, der LANGE die Minuten. Lang fuer die laengere Einteilung (60 Minuten).',
+      'Merke: Der KURZE Zeiger zeigt die Stunde — so wie ein kurzes Wort "Uhr".',
+      'Übe mit einer echten Uhr oder einer Basteluhre, die du selbst drehen kannst.',
     ],
     pitfalls: [
-      'Verwechsle nicht den kurzen und den langen Zeiger! Der kurze ist der Stundenzeiger.',
+      'Verwechsle nicht kurz und lang! Der kurze Zeiger = Stunden, der lange Zeiger = Minuten.',
+      'Bei vollen Stunden steht der lange Zeiger immer genau auf der 12.',
     ],
   },
 
@@ -588,6 +611,110 @@ export const K1_K3_THEORY: Record<string, TheoryBlock> = {
     ],
     pitfalls: [
       'Nicht jede Zahlenfolge hat die gleichen Abstaende! Manchmal verdoppelt sich die Zahl oder die Abstaende werden groesser.',
+    ],
+  },
+
+  'k2-addition-subtraktion-bis-100': {
+    concepts: [
+      'Im Zahlenraum bis 100 kannst du Plus und Minus rechnen — mit Zehnern und Einern.',
+      'Schrittweise rechnen: Erst die Zehner, dann die Einer. 34 + 25 = 34 + 20 + 5 = 54 + 5 = 59.',
+      'Beim Minus mit Zehneruebergang hilft der Umweg: 62 − 37 → 62 − 30 = 32, dann 32 − 7 = 25.',
+      'Plus und Minus sind Umkehrungen voneinander. Mit Plus kannst du ein Minus pruefen: 25 + 37 = 62.',
+    ],
+    example: {
+      question: '63 − 28 = ?',
+      steps: [
+        'Erst die Zehner abziehen: 63 − 20 = 43.',
+        'Dann die Einer abziehen: 43 − 8 = 35.',
+        'Probe mit Plus: 35 + 28 = 63. Stimmt!',
+      ],
+      answer: '63 − 28 = 35',
+    },
+    tips: [
+      'Rechne schrittweise und schreibe die Zwischenergebnisse auf — dann machst du weniger Fehler.',
+      'Pruefe dein Ergebnis mit der Umkehraufgabe: Minus pruefen mit Plus!',
+    ],
+    pitfalls: [
+      'Wenn die Einer nicht reichen (z.B. 3 − 8), darfst du nicht einfach 8 − 3 rechnen! Du musst einen Zehner aufbrechen.',
+      'Vergiss nicht: 63 − 28 ist nicht dasselbe wie 28 − 63. Die Reihenfolge ist wichtig!',
+    ],
+  },
+
+  'k2-einmaleins': {
+    concepts: [
+      'Das Einmaleins bedeutet: eine Zahl wird mehrmals hinzugezaehlt. 3 × 4 = 4 + 4 + 4 = 12.',
+      'Du lernst alle Reihen von 1 bis 10. Jede Reihe hat ein Muster — entdecke es!',
+      'Tauschaufgaben: 3 × 4 = 4 × 3. Die Reihenfolge der Faktoren aendert das Ergebnis nicht.',
+      'Wenn du eine Aufgabe nicht weisst, leite sie ab: 7 × 6 = 7 × 5 + 7 × 1 = 35 + 7 = 42.',
+    ],
+    example: {
+      question: '8 × 7 = ?',
+      steps: [
+        'Du kennst 8 × 5 = 40 (5er-Reihe).',
+        'Rechne noch 8 × 2 dazu: 8 × 2 = 16.',
+        '40 + 16 = 56.',
+      ],
+      answer: '8 × 7 = 56',
+    },
+    tips: [
+      'Lerne die Einmaleins-Reihen in kleinen Gruppen. Fange mit 2, 5 und 10 an — die sind am einfachsten!',
+      'Bastle Einmaleins-Karten und uebt taeglich ein paar Minuten. Wiederholung macht den Meister!',
+    ],
+    pitfalls: [
+      'Verwechsle nicht Mal und Plus: 4 × 3 = 12, aber 4 + 3 = 7. Das ist ein grosser Unterschied!',
+      'Nicht schummeln und raten — lieber langsam ableiten als schnell falsch raten.',
+    ],
+  },
+
+  'k2-uhrzeiten': {
+    concepts: [
+      'Die Uhr hat einen kurzen Stundenzeiger und einen langen Minutenzeiger.',
+      'Der lange Zeiger auf der 3 bedeutet 15 Minuten (Viertel nach). Auf der 6 bedeutet er 30 Minuten (halb). Auf der 9 bedeutet er 45 Minuten (Viertel vor).',
+      'Viertel nach 8 = 8:15 Uhr. Halb neun = 8:30 Uhr. Viertel vor neun = 8:45 Uhr.',
+      'Der kurze Zeiger wandert langsam. Bei "halb" steht er zwischen zwei Zahlen.',
+    ],
+    example: {
+      question: 'Der kurze Zeiger steht zwischen 3 und 4, der lange auf der 6. Wie spät ist es?',
+      steps: [
+        'Der lange Zeiger auf der 6 bedeutet: 30 Minuten (halb).',
+        'Der kurze Zeiger ist zwischen 3 und 4 — er hat die 3 schon passiert.',
+        'Es ist halb vier = 3:30 Uhr.',
+      ],
+      answer: 'Es ist halb vier (3:30 Uhr).',
+    },
+    tips: [
+      'Merke die vier Positionen des langen Zeigers: oben (12) = volle Stunde, rechts (3) = Viertel nach, unten (6) = halb, links (9) = Viertel vor.',
+      'Uebt mit einer echten Uhr zuhause — das macht am meisten Spass!',
+    ],
+    pitfalls: [
+      'Bei "halb" schaust du auf die Stunde, die ALS NAECHSTES kommt — nicht die, die gerade war! Halb vier = 3:30, nicht 4:30.',
+      'Verwechsle nicht den kurzen und den langen Zeiger! Kurz = Stunden, lang = Minuten.',
+    ],
+  },
+
+  'k2-laengen': {
+    concepts: [
+      'Laengen messen wir mit einem Lineal oder Meterstab. Die wichtigsten Einheiten sind Zentimeter (cm) und Meter (m).',
+      '1 Meter = 100 Zentimeter. Ein Meterstab ist genau 1 Meter lang.',
+      'Ein Finger ist ungefaehr 1 cm breit. Die Schultuer ist ungefaehr 2 m hoch.',
+      'Beim Messen legst du das Lineal genau an den Anfang des Gegenstands — Null muss genau am Rand sein!',
+    ],
+    example: {
+      question: 'Ein Bleistift ist 14 cm lang, ein Radiergummi ist 45 mm lang. Was ist laenger?',
+      steps: [
+        'Rechne alles in cm um: 45 mm = 4,5 cm (10 mm = 1 cm).',
+        'Vergleiche: 14 cm und 4,5 cm.',
+        '14 cm > 4,5 cm — der Bleistift ist laenger.',
+      ],
+      answer: 'Der Bleistift ist laenger (14 cm > 4,5 cm).',
+    },
+    tips: [
+      'Schaetze zuerst! Ist der Gegenstand kuerzer oder laenger als dein kleiner Finger? Das sind ungefaehr 5 cm.',
+      'Beim Addieren von Laengen: Immer zuerst in die gleiche Einheit umrechnen!',
+    ],
+    pitfalls: [
+      'Lege das Lineal immer bei der 0 an — nicht beim Rand des Lineals! Manche Lineale haben einen kleinen Abstand vor der 0.',
+      'Verwechsle nicht cm und mm! 10 mm = 1 cm. Ein Millimeter ist sehr klein.',
     ],
   },
 

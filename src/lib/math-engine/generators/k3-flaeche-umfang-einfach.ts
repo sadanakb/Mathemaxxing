@@ -105,6 +105,61 @@ export const template: ExerciseTemplate = {
       };
     }
 
+    // Variant selector for difficulty 3: 0 = number-input (umfang), 1 = area-count (grid), 2 = true-false (umfang check)
+    const variant = randInt(0, 2);
+
+    if (variant === 1) {
+      // area-count: irregular L-shape grid (remove one corner rectangle)
+      const removeRows = randInt(1, Math.min(2, b - 1));
+      const removeCols = randInt(1, Math.min(2, a - 1));
+      const grid: boolean[][] = [];
+      for (let r = 0; r < b; r++) {
+        const row: boolean[] = [];
+        for (let c = 0; c < a; c++) {
+          // Remove top-right corner to make L-shape
+          const inRemovedArea = r < removeRows && c >= a - removeCols;
+          row.push(!inRemovedArea);
+        }
+        grid.push(row);
+      }
+      const lShapeArea = b * a - removeRows * removeCols;
+      return {
+        id: genId('k3-flum'),
+        topicId: 'k3-flaeche-umfang-einfach',
+        question: `Wie viele Kästchen hat diese L-förmige Figur? (${a} breit, ${b} hoch, Ecke ${removeCols}×${removeRows} fehlt)`,
+        answerType: 'number',
+        exerciseType: 'area-count',
+        correctAnswer: lShapeArea,
+        areaGrid: grid,
+        hint: `Zähle alle Kästchen, oder rechne: ${a}×${b} − ${removeCols}×${removeRows}.`,
+        explanation: `${a}×${b} = ${a * b} minus ${removeCols}×${removeRows} = ${removeRows * removeCols} fehlende Kästchen → ${lShapeArea} Kästchen.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 30,
+      };
+    }
+
+    if (variant === 2) {
+      // true-false: is this the correct Umfang?
+      const wrongUmfang = umfang + (randInt(0, 1) === 0 ? randInt(1, 4) * 2 : -randInt(1, 4) * 2);
+      const isCorrect = randInt(0, 1) === 0;
+      const claimedUmfang = isCorrect ? umfang : wrongUmfang;
+      return {
+        id: genId('k3-flum'),
+        topicId: 'k3-flaeche-umfang-einfach',
+        question: `Ein Rechteck ist ${a} cm lang und ${b} cm breit. Stimmt es, dass der Umfang ${claimedUmfang} cm beträgt?`,
+        answerType: 'true-false',
+        exerciseType: 'true-false',
+        correctAnswer: isCorrect ? 'Ja' : 'Nein',
+        distractors: isCorrect ? ['Nein'] : ['Ja'],
+        hint: `Umfang = 2 × (${a} + ${b}) = ?`,
+        explanation: `Umfang = 2 × (${a} + ${b}) = 2 × ${a + b} = ${umfang} cm. Der angegebene Wert ${claimedUmfang} cm ist ${isCorrect ? 'richtig' : 'falsch'}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 25,
+      };
+    }
+
     return {
       id: genId('k3-flum'),
       topicId: 'k3-flaeche-umfang-einfach',

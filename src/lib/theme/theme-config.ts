@@ -1,5 +1,7 @@
 export type Theme = 'grundschule' | 'unterstufe';
 
+export { type WorldId, type WorldConfig, WORLDS, getWorldForKlasse, applyWorld } from './worlds';
+
 export const THEMES = {
   grundschule: {
     name: 'Grundschule',

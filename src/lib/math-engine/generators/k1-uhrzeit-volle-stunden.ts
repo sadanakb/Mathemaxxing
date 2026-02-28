@@ -9,7 +9,7 @@ function randInt(min: number, max: number) {
 export const template: ExerciseTemplate = {
   topicId: 'k1-uhrzeit-volle-stunden',
   generate(difficulty = 1): Exercise {
-    const variant = randInt(0, 2);
+    const variant = randInt(0, 3);
 
     if (variant === 0) {
       // clock-drag: "Stelle die Uhr auf X Uhr"
@@ -60,20 +60,47 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // number-input: "Wie viele Stunden zeigt die Uhr?"
-    const hour = randInt(1, 12);
+    if (variant === 2) {
+      // number-input: "Wie viele Stunden zeigt die Uhr?"
+      const hour = randInt(1, 12);
 
+      return {
+        id: genId(),
+        topicId: 'k1-uhrzeit-volle-stunden',
+        question: `Der kleine Zeiger zeigt auf ${hour}, der große Zeiger zeigt auf 12. Wie viel Uhr ist es? (Gib nur die Zahl ein)`,
+        answerType: 'number',
+        exerciseType: 'number-input',
+        correctAnswer: hour,
+        clockTarget: { hours: hour, minutes: 0 },
+        distractors: [hour - 1, hour + 1, hour + 2].filter(d => d >= 1 && d <= 12 && d !== hour),
+        hint: 'Schau auf den kleinen Zeiger. Auf welche Zahl zeigt er?',
+        explanation: `Der kleine Zeiger zeigt auf ${hour}. Es ist ${hour} Uhr.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 12,
+      };
+    }
+
+    // variant === 3: true-false — "Zeigt die Uhr X Uhr?"
+    const hour = randInt(1, 12);
+    const showCorrect = randInt(0, 1) === 0;
+    let shownHour = hour;
+    if (!showCorrect) {
+      shownHour = hour === 12 ? 1 : hour + randInt(1, 3);
+      if (shownHour > 12) shownHour = shownHour - 12;
+    }
     return {
       id: genId(),
       topicId: 'k1-uhrzeit-volle-stunden',
-      question: `Der kleine Zeiger zeigt auf ${hour}, der große Zeiger zeigt auf 12. Wie viel Uhr ist es? (Gib nur die Zahl ein)`,
-      answerType: 'number',
-      exerciseType: 'number-input',
-      correctAnswer: hour,
+      question: `Der kleine Zeiger zeigt auf ${hour}, der große auf 12. Stimmt das – es ist ${shownHour} Uhr?`,
+      answerType: 'true-false',
+      exerciseType: 'true-false',
+      correctAnswer: (hour === shownHour) ? 'wahr' : 'falsch',
       clockTarget: { hours: hour, minutes: 0 },
-      distractors: [hour - 1, hour + 1, hour + 2].filter(d => d >= 1 && d <= 12 && d !== hour),
-      hint: 'Schau auf den kleinen Zeiger. Auf welche Zahl zeigt er?',
-      explanation: `Der kleine Zeiger zeigt auf ${hour}. Es ist ${hour} Uhr.`,
+      hint: 'Schau genau: Auf welche Zahl zeigt der kleine Zeiger?',
+      explanation: (hour === shownHour)
+        ? `Ja, der kleine Zeiger auf ${hour} bedeutet ${hour} Uhr.`
+        : `Nein, der kleine Zeiger zeigt auf ${hour}, also ist es ${hour} Uhr, nicht ${shownHour} Uhr.`,
       difficulty,
       category: 'Repräsentational',
       estimatedSeconds: 12,

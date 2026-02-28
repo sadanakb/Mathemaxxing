@@ -126,6 +126,57 @@ export const template: ExerciseTemplate = {
       };
     }
 
+    // Variant selector for difficulty 3: 0 = number-input, 1 = step-by-step, 2 = true-false
+    const variant = randInt(0, 2);
+
+    if (variant === 1) {
+      // step-by-step: column subtraction with borrowing
+      const ones = ((aE + 10) - bE) % 10;
+      const tensAfterBorrow = aZ - 1;
+      const tens = tensAfterBorrow >= bZ ? tensAfterBorrow - bZ : (tensAfterBorrow + 10) - bZ;
+      const hundredsAdjust = tensAfterBorrow >= bZ ? aH : aH - 1;
+      return {
+        id: genId('k3-ssub'),
+        topicId: 'k3-schriftliche-subtraktion',
+        question: `Berechne schriftlich Schritt für Schritt: ${a} − ${b} = ?`,
+        answerType: 'number',
+        exerciseType: 'step-by-step',
+        correctAnswer: answer,
+        steps: [
+          `Einer: ${aE} < ${bE} → borge 1 Zehner. (${aE}+10) − ${bE} = ${ones}`,
+          `Zehner (nach Borgung): ${aZ}−1=${aZ - 1}. ${aZ - 1} ${aZ - 1 >= bZ ? '≥' : '<'} ${bZ}${aZ - 1 < bZ ? ' → borge 1 Hunderter. (' + (aZ - 1) + '+10)−' + bZ + '=' + tens : ' → ' + (aZ - 1) + '−' + bZ + '=' + tens}`,
+          `Hunderter: ${hundredsAdjust} − ${bH} = ${hundredsAdjust - bH}`,
+          `Ergebnis: ${answer}`,
+        ],
+        hint: 'Beginne bei den Einern. Wenn nötig, borge 1 von der nächsten Stelle.',
+        explanation: `${a} − ${b} = ${answer}. Es waren Überträge bei Einern und Zehnern nötig.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 75,
+      };
+    }
+
+    if (variant === 2) {
+      // true-false: is this subtraction result correct?
+      const wrongAnswer = answer + (randInt(0, 1) === 0 ? randInt(1, 9) : -randInt(1, 9));
+      const isCorrect = randInt(0, 1) === 0; // randomly show correct or wrong claim
+      const claimedAnswer = isCorrect ? answer : wrongAnswer;
+      return {
+        id: genId('k3-ssub'),
+        topicId: 'k3-schriftliche-subtraktion',
+        question: `Stimmt diese Rechnung? ${a} − ${b} = ${claimedAnswer}`,
+        answerType: 'true-false',
+        exerciseType: 'true-false',
+        correctAnswer: isCorrect ? 'Ja' : 'Nein',
+        distractors: isCorrect ? ['Nein'] : ['Ja'],
+        hint: 'Berechne die Subtraktion selbst und vergleiche das Ergebnis.',
+        explanation: `${a} − ${b} = ${answer}. Die gezeigte Antwort ${claimedAnswer} ist ${isCorrect ? 'richtig' : 'falsch'}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 35,
+      };
+    }
+
     return {
       id: genId('k3-ssub'),
       topicId: 'k3-schriftliche-subtraktion',

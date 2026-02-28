@@ -71,8 +71,8 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Difficulty 3: Differenz oder fehlender Wert
-    const variant = randInt(0, 1);
+    // Difficulty 3: variant 0 = Differenz, 1 = fehlender Wert, 2 = bar-chart-read (specific value), 3 = estimation (most)
+    const variant = randInt(0, 3);
 
     if (variant === 0) {
       // Differenz
@@ -98,7 +98,59 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Fehlender Wert: Gesamtzahl gegeben
+    if (variant === 2) {
+      // bar-chart-read: read a specific value from the bar chart
+      const labels3 = wochentage.slice(0, 5);
+      const data3 = labels3.map(label => ({ label, value: randInt(4, 30) }));
+      const targetIdx = randInt(0, labels3.length - 1);
+      const targetItem = data3[targetIdx];
+      const distractors3 = data3
+        .filter(d => d.label !== targetItem.label)
+        .map(d => d.value)
+        .slice(0, 3);
+      return {
+        id: genId('k3-diag'),
+        topicId: 'k3-diagramme',
+        question: `Besucher pro Tag in der Bücherei:\nWie viele Besucher kamen am ${targetItem.label}?`,
+        answerType: 'multiple-choice',
+        exerciseType: 'bar-chart-read',
+        correctAnswer: targetItem.value,
+        distractors: distractors3,
+        chartData: data3,
+        hint: `Suche den Balken für ${targetItem.label} und lies den Wert ab.`,
+        explanation: `Am ${targetItem.label} kamen ${targetItem.value} Besucher.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 25,
+      };
+    }
+
+    if (variant === 3) {
+      // estimation: which category has the most?
+      const labels4 = obstNamen.slice(0, 4);
+      const data4 = labels4.map(label => ({ label, value: randInt(3, 20) }));
+      const maxItem4 = data4.reduce((a, b) => a.value > b.value ? a : b);
+      const distractors4 = data4
+        .filter(d => d.label !== maxItem4.label)
+        .map(d => d.label);
+      return {
+        id: genId('k3-diag'),
+        topicId: 'k3-diagramme',
+        question: `Obstverkauf am Kiosk:\n${data4.map(d => `${d.label}: ${d.value}`).join(', ')}\nVon welchem Obst wurde am meisten verkauft? Schätze zuerst, bevor du nachschaust!`,
+        answerType: 'multiple-choice',
+        exerciseType: 'estimation',
+        correctAnswer: maxItem4.label,
+        distractors: distractors4,
+        chartData: data4,
+        hint: 'Vergleiche die Balken — welcher ist am höchsten?',
+        explanation: `${maxItem4.label} wurde mit ${maxItem4.value} Stück am häufigsten verkauft.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 20,
+      };
+    }
+
+    // variant === 1: Fehlender Wert: Gesamtzahl gegeben
     const labels = obstNamen.slice(0, 3);
     const values = labels.map(() => randInt(4, 15));
     const total = values.reduce((s, v) => s + v, 0) + randInt(3, 12);

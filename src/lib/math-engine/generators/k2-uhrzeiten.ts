@@ -25,6 +25,54 @@ export const template: ExerciseTemplate = {
       ];
       choices = [correct, ...wrong];
 
+      const variant = randInt(0, 2);
+
+      if (variant === 1) {
+        // clock-drag: student drags clock hands to match the written time
+        return {
+          id: genId('k2-uhr'),
+          topicId: 'k2-uhrzeiten',
+          question: `Stelle die Uhr auf ${correct} ein!`,
+          answerType: 'drag-drop',
+          exerciseType: 'clock-drag',
+          correctAnswer: correct,
+          clockTarget: { hours: hour, minutes: 0 },
+          hint: 'Der kleine Zeiger (Stundenzeiger) zeigt auf die Stunde. Der große Zeiger (Minutenzeiger) zeigt auf 12.',
+          explanation: `${correct}: Der kleine Zeiger zeigt auf ${hour}, der große Zeiger auf 12.`,
+          difficulty,
+          category: 'Repräsentational',
+          estimatedSeconds: 25,
+        };
+      }
+
+      if (variant === 2) {
+        // drag-match: match clock descriptions to written times
+        const hour2 = hour === 12 ? 1 : hour + 1;
+        const hour3 = hour === 1 ? 12 : hour - 1;
+        const time1 = formatTime(hour, 0);
+        const time2 = formatTime(hour2, 0);
+        const time3 = formatTime(hour3, 0);
+        return {
+          id: genId('k2-uhr'),
+          topicId: 'k2-uhrzeiten',
+          question: 'Verbinde jede Uhrbeschreibung mit der richtigen Uhrzeit!',
+          answerType: 'matching',
+          exerciseType: 'drag-match',
+          correctAnswer: `${hour}:${time1}|${hour2}:${time2}|${hour3}:${time3}`,
+          pairs: [
+            [`Kleiner Zeiger auf ${hour}`, time1],
+            [`Kleiner Zeiger auf ${hour2}`, time2],
+            [`Kleiner Zeiger auf ${hour3}`, time3],
+          ],
+          hint: 'Der kleine Zeiger (Stundenzeiger) zeigt die Stunde. Großer Zeiger auf 12 = volle Stunde.',
+          explanation: `Kleiner Zeiger auf ${hour} → ${time1}. Auf ${hour2} → ${time2}. Auf ${hour3} → ${time3}.`,
+          difficulty,
+          category: 'Repräsentational',
+          estimatedSeconds: 35,
+        };
+      }
+
+      // variant 0 — original multiple-choice
       return {
         id: genId('k2-uhr'),
         topicId: 'k2-uhrzeiten',
@@ -48,6 +96,27 @@ export const template: ExerciseTemplate = {
         formatTime(hour, 0),
         formatTime(hour === 1 ? 12 : hour - 1, 30),
       ];
+
+      const variant = randInt(0, 1);
+
+      if (variant === 1) {
+        // clock-drag for half hours
+        return {
+          id: genId('k2-uhr'),
+          topicId: 'k2-uhrzeiten',
+          question: `Stelle die Uhr auf ${correct} ein!`,
+          answerType: 'drag-drop',
+          exerciseType: 'clock-drag',
+          correctAnswer: correct,
+          clockTarget: { hours: hour, minutes: 30 },
+          hint: 'Wenn der große Zeiger auf 6 zeigt, sind 30 Minuten vergangen (halb).',
+          explanation: `${correct}: Der kleine Zeiger zwischen ${hour} und ${hour === 12 ? 1 : hour + 1}, der große Zeiger auf 6.`,
+          difficulty,
+          category: 'Repräsentational',
+          estimatedSeconds: 30,
+        };
+      }
+
       return {
         id: genId('k2-uhr'),
         topicId: 'k2-uhrzeiten',
@@ -73,6 +142,27 @@ export const template: ExerciseTemplate = {
         formatTime(hour, 30),
       ];
       const handPos = minute === 15 ? 3 : 9;
+
+      const variant = randInt(0, 1);
+
+      if (variant === 1) {
+        // clock-drag for quarter hours
+        return {
+          id: genId('k2-uhr'),
+          topicId: 'k2-uhrzeiten',
+          question: `Stelle die Uhr auf ${correct} ein!`,
+          answerType: 'drag-drop',
+          exerciseType: 'clock-drag',
+          correctAnswer: correct,
+          clockTarget: { hours: hour, minutes: minute },
+          hint: `Großer Zeiger auf ${handPos} = ${minute} Minuten. Kleiner Zeiger auf ${hour}.`,
+          explanation: `${correct}: Großer Zeiger auf ${handPos} (${minute} Min.), kleiner Zeiger auf ${hour}.`,
+          difficulty,
+          category: 'Repräsentational',
+          estimatedSeconds: 40,
+        };
+      }
+
       return {
         id: genId('k2-uhr'),
         topicId: 'k2-uhrzeiten',

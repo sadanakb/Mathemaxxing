@@ -80,7 +80,43 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // Difficulty 3: Mirror-draw — complete a simple pattern on a 6x6 grid
+    // Difficulty 3: variant — classify OR mirror-draw
+    const d3variant = randInt(0, 1);
+
+    if (d3variant === 0) {
+      // classify: sort symmetric and asymmetric shapes into two groups
+      const symmetricItems = SYMMETRY_ITEMS.filter(i => i.symmetric);
+      const asymmetricItems = SYMMETRY_ITEMS.filter(i => !i.symmetric);
+
+      // Pick 2 symmetric and 2 asymmetric items
+      const symPick = [...symmetricItems].sort(() => Math.random() - 0.5).slice(0, 2);
+      const asymPick = [...asymmetricItems].sort(() => Math.random() - 0.5).slice(0, 2);
+      const allItems = [...symPick, ...asymPick].sort(() => Math.random() - 0.5);
+
+      return {
+        id: genId(),
+        topicId: 'k2-symmetrie-erkennen',
+        question: 'Sortiere die Formen: Welche sind symmetrisch, welche nicht?',
+        answerType: 'drag-drop',
+        exerciseType: 'classify',
+        correctAnswer: JSON.stringify({
+          symmetrisch: symPick.map(i => i.name),
+          'nicht symmetrisch': asymPick.map(i => i.name),
+        }),
+        items: allItems.map(i => i.name),
+        categories: {
+          symmetrisch: symPick.map(i => i.name),
+          'nicht symmetrisch': asymPick.map(i => i.name),
+        },
+        hint: 'Stell dir vor, du faltest jede Form in der Mitte. Passen beide Hälften genau aufeinander?',
+        explanation: `Symmetrisch: ${symPick.map(i => i.name).join(', ')}. Nicht symmetrisch: ${asymPick.map(i => i.name).join(', ')}.`,
+        difficulty,
+        category: 'Repräsentational',
+        estimatedSeconds: 35,
+      };
+    }
+
+    // d3variant === 1: Mirror-draw — complete a simple pattern on a 6x6 grid
     const size = 6;
     const grid: boolean[][] = Array.from({ length: size }, () =>
       Array.from({ length: size }, () => false)

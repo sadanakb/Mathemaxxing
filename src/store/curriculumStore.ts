@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Bundesland, Klassenstufe, Schulform, Kurstyp } from '@/lib/curriculum/types';
+import { getWorldForKlasse, type WorldId } from '@/lib/theme/worlds';
 
 type CurriculumState = {
   bundesland: Bundesland | null;
@@ -98,4 +99,10 @@ export function useCurrentTheme(): 'grundschule' | 'unterstufe' {
   const { klasse, themePreference } = useCurriculumStore();
   if (themePreference !== 'auto') return themePreference;
   return (klasse ?? 1) <= 4 ? 'grundschule' : 'unterstufe';
+}
+
+// Derived: current world based on Klasse (null for K5+)
+export function useCurrentWorld(): WorldId | null {
+  const { klasse } = useCurriculumStore();
+  return getWorldForKlasse(klasse ?? 1);
 }

@@ -8,8 +8,16 @@ import { findTopicById } from '@/lib/curriculum/merge';
 import { generateExercise } from '@/lib/math-engine/generators';
 import { evaluateExerciseAnswer } from '@/lib/exercise/evaluator';
 import { useProgressStore } from '@/store/progressStore';
-import { useCurrentTheme } from '@/store/curriculumStore';
+import { useCurrentTheme, useCurrentWorld } from '@/store/curriculumStore';
 import { THEMES } from '@/lib/theme/theme-config';
+import { WORLDS } from '@/lib/theme/worlds';
+import RewardAnimation from '@/components/rewards/RewardAnimation';
+import { StoryBeatOverlay } from '@/components/story/StoryBeatOverlay';
+import { getNextStoryBeat } from '@/lib/story/story-engine';
+import '@/data/story/entdecker';
+import '@/data/story/abenteuer';
+import '@/data/story/forscher';
+import '@/data/story/weltraum';
 import { createCard, advanceCard, resetCard } from '@/lib/spaced-repetition/leitner';
 import { calculateXP, adaptDifficulty } from '@/lib/adaptive/mastery-tracker';
 import { calculateStars } from '@/lib/gamification/stars';
@@ -82,11 +90,12 @@ function QuizProgressBar({ current, total, results }: { current: number; total: 
 export default function LearnTopicPage() {
   const { topicId } = useParams<{ topicId: string }>();
   const router = useRouter();
-  const { updateTopicProgress, addXP, updateStreak, updateLeitnerCard, leitnerCards, progress, addMinutesToday } = useProgressStore();
+  const { updateTopicProgress, addXP, updateStreak, updateLeitnerCard, leitnerCards, progress, addMinutesToday, markStoryBeatSeen } = useProgressStore();
   const { startSession, recordExerciseCompleted, exercisesCompletedThisSession, xpEarnedThisSession, sessionStartTime } = useSessionStore();
 
   const topic = findTopicById(topicId);
   const theme = useCurrentTheme();
+  const world = useCurrentWorld();
   const showMascot = THEMES[theme].mascot;
   const [phase, setPhase] = useState<Phase>('theory');
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -99,6 +108,8 @@ export default function LearnTopicPage() {
   const [difficulty, setDifficulty] = useState<1 | 2 | 3>(1);
   const [recentResults, setRecentResults] = useState<boolean[]>([]);
   const [quizResults, setQuizResults] = useState<boolean[]>([]);
+  const [showReward, setShowReward] = useState<'correct' | 'mastered' | 'perfect' | null>(null);
+  const [pendingStoryBeat, setPendingStoryBeat] = useState<ReturnType<typeof getNextStoryBeat>>(null);
 
   useEffect(() => {
     if (phase === 'quiz') {
@@ -142,6 +153,9 @@ export default function LearnTopicPage() {
     const isCorrect = evaluateExerciseAnswer(answer, currentExercise);
     setFeedback(isCorrect ? 'correct' : 'wrong');
     setQuizResults((prev) => [...prev, isCorrect]);
+    if (isCorrect && world) {
+      setShowReward('correct');
+    }
 
     const xp = calculateXP({
       isCorrect,
@@ -187,6 +201,19 @@ export default function LearnTopicPage() {
         updateTopicProgress(topicId, { masteryLevel: 'practicing', postQuizScore: finalScore, stars });
       }
       updateStreak();
+
+      // Check for pending story beat after mastering
+      if (finalScore >= 0.8 && world) {
+        const masteredCount = Object.values(progress?.topicProgress ?? {}).filter(
+          (p) => p.masteryLevel === 'mastered'
+        ).length + 1; // +1 for the topic just mastered (not yet written to store)
+        const seenBeats = progress?.storyProgress?.seenBeats ?? [];
+        const beat = getNextStoryBeat(world, masteredCount, seenBeats);
+        if (beat) {
+          setPendingStoryBeat(beat);
+        }
+      }
+
       setPhase('results');
     } else {
       const recentRate = recentResults.length > 0
@@ -325,6 +352,15 @@ export default function LearnTopicPage() {
       <PageWrapper>
         <GamificationOverlay />
         <Confetti active={passed} duration={4000} />
+        {pendingStoryBeat && (
+          <StoryBeatOverlay
+            beat={pendingStoryBeat}
+            onClose={() => {
+              markStoryBeatSeen(pendingStoryBeat.id);
+              setPendingStoryBeat(null);
+            }}
+          />
+        )}
         <PageTransition>
           <Card className="text-center relative overflow-hidden">
             {/* Background gradient accent */}
@@ -338,6 +374,7 @@ export default function LearnTopicPage() {
                   <Finn
                     mood={passed ? 'celebrating' : resultStars >= 1 ? 'encouraging' : 'sad'}
                     size="lg"
+                    outfit={world ? WORLDS[world].finnOutfit : undefined}
                     message={passed ? 'Super gemacht!' : resultStars >= 1 ? 'Weiter so!' : 'Versuch es nochmal!'}
                   />
                 </div>
@@ -466,6 +503,13 @@ export default function LearnTopicPage() {
             />
           </Card>
 
+          {showReward && (
+            <RewardAnimation
+              worldId={world}
+              type={showReward}
+              onDone={() => setShowReward(null)}
+            />
+          )}
           {feedback === 'correct' && (
             <CorrectFeedback
               explanation={currentExercise.explanation}

@@ -18,7 +18,7 @@ function shuffle<T>(arr: T[]): T[] {
 export const template: ExerciseTemplate = {
   topicId: 'k1-zahlen-bis-10',
   generate(difficulty = 1): Exercise {
-    const variant = randInt(0, 2);
+    const variant = randInt(0, 3);
 
     if (variant === 0) {
       // "Welche Zahl kommt nach X?" (number-input)
@@ -68,26 +68,47 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // "Ist X größer als Y?" (true-false)
-    const x = randInt(1, 9);
-    let y = randInt(1, 10);
-    while (y === x) y = randInt(1, 10);
-    const isTrue = x > y;
+    if (variant === 2) {
+      // "Ist X größer als Y?" (true-false)
+      const x = randInt(1, 9);
+      let y = randInt(1, 10);
+      while (y === x) y = randInt(1, 10);
+      const isTrue = x > y;
 
+      return {
+        id: genId(),
+        topicId: 'k1-zahlen-bis-10',
+        question: `Stimmt das? ${x} ist größer als ${y}.`,
+        answerType: 'true-false',
+        exerciseType: 'true-false',
+        correctAnswer: isTrue ? 'wahr' : 'falsch',
+        hint: 'Denke an deine Finger: Welche Zahl braucht mehr Finger?',
+        explanation: isTrue
+          ? `Ja, ${x} ist größer als ${y}.`
+          : `Nein, ${x} ist nicht größer als ${y}. ${y} ist größer.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 10,
+      };
+    }
+
+    // variant === 3: drag-onto-numberline — place the number on the number line
+    const max = difficulty === 1 ? 5 : difficulty === 2 ? 8 : 10;
+    const target = randInt(1, max);
     return {
       id: genId(),
       topicId: 'k1-zahlen-bis-10',
-      question: `Stimmt das? ${x} ist größer als ${y}.`,
-      answerType: 'true-false',
-      exerciseType: 'true-false',
-      correctAnswer: isTrue ? 'wahr' : 'falsch',
-      hint: 'Denke an deine Finger: Welche Zahl braucht mehr Finger?',
-      explanation: isTrue
-        ? `Ja, ${x} ist größer als ${y}.`
-        : `Nein, ${x} ist nicht größer als ${y}. ${y} ist größer.`,
+      question: `Zeige die Zahl ${target} auf dem Zahlenstrahl!`,
+      answerType: 'number',
+      exerciseType: 'drag-onto-numberline',
+      correctAnswer: target,
+      numberlineConfig: { min: 0, max: 10, step: 1, targets: [target] },
+      hint: `Zähle vom Anfang: 0, 1, 2 ... bis zur ${target}.`,
+      explanation: `Die Zahl ${target} liegt an der ${target}. Stelle auf dem Zahlenstrahl.`,
       difficulty,
-      category: 'Abstrakt',
-      estimatedSeconds: 10,
+      category: 'Repräsentational',
+      estimatedSeconds: 15,
+      visualConfig: { type: 'numberline' as const, props: { min: 0, max: 10 } },
     };
   },
 };

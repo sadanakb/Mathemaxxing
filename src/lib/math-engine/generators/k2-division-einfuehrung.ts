@@ -42,7 +42,56 @@ export const template: ExerciseTemplate = {
       const divisor = randInt(2, 5);
       const result = randInt(2, 10);
       const dividend = divisor * result;
+      const variant = randInt(0, 2);
 
+      if (variant === 1) {
+        // equation-balance: fill in the division equation to balance both sides
+        const left = `${dividend} ÷ ${divisor}`;
+        const right = `?`;
+        return {
+          id: genId(),
+          topicId: 'k2-division-einfuehrung',
+          question: `Was muss in die Lücke, damit die Waage stimmt? ${dividend} ÷ ${divisor} = ?`,
+          questionLatex: `${dividend} \\div ${divisor} = \\square`,
+          answerType: 'number',
+          exerciseType: 'equation-balance',
+          correctAnswer: result,
+          equationConfig: { left, right, variable: '?', target: result },
+          distractors: [result + 1, result - 1, divisor].filter(d => d > 0 && d !== result).slice(0, 3),
+          hint: `Denke: ? × ${divisor} = ${dividend}. Welche Zahl passt?`,
+          explanation: `${dividend} ÷ ${divisor} = ${result}, denn ${result} × ${divisor} = ${dividend}.`,
+          difficulty,
+          category: 'Abstrakt',
+          estimatedSeconds: 20,
+        };
+      }
+
+      if (variant === 2) {
+        // multiple-choice: pick the correct quotient
+        const distractorsArr = [result + 1, result - 1, result + divisor, divisor]
+          .filter(d => d > 0 && d !== result)
+          .slice(0, 3);
+        const options = [result, ...distractorsArr].sort(() => Math.random() - 0.5).map(String);
+        return {
+          id: genId(),
+          topicId: 'k2-division-einfuehrung',
+          question: `${dividend} ÷ ${divisor} = ?`,
+          questionLatex: `${dividend} \\div ${divisor} = ?`,
+          answerType: 'multiple-choice',
+          exerciseType: 'multiple-choice',
+          correctAnswer: result,
+          distractors: distractorsArr,
+          options,
+          correctOptions: [String(result)],
+          hint: `Denke an die ${divisor}er-Reihe. Welches Ergebnis × ${divisor} = ${dividend}?`,
+          explanation: `${dividend} ÷ ${divisor} = ${result}.`,
+          difficulty,
+          category: 'Abstrakt',
+          estimatedSeconds: 15,
+        };
+      }
+
+      // variant 0 — original number-input
       const distractors = [result + 1, result - 1, result + divisor]
         .filter(d => d > 0 && d !== result)
         .slice(0, 3);

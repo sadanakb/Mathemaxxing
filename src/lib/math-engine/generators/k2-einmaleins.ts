@@ -31,12 +31,56 @@ export const template: ExerciseTemplate = {
       .filter(d => d > 0 && d !== answer)
       .slice(0, 3);
 
+    const variant = randInt(0, 2);
+
+    if (variant === 1) {
+      // speed-quiz: timed multiplication
+      return {
+        id: genId('k2-mal'),
+        topicId: 'k2-einmaleins',
+        question: `Schnell! ${a} × ${b} = ?`,
+        questionLatex: `${a} \\times ${b} = ?`,
+        answerType: 'number',
+        exerciseType: 'speed-quiz',
+        correctAnswer: answer,
+        timeLimit: 10,
+        hint: `${a} × ${b} — denk an die ${a}er-Reihe!`,
+        explanation: `${a} × ${b} = ${answer}`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 10,
+      };
+    }
+
+    if (variant === 2) {
+      // memory-pairs: match multiplication with its product
+      return {
+        id: genId('k2-mal'),
+        topicId: 'k2-einmaleins',
+        question: `Finde zusammengehörige Paare! Verbinde die Aufgabe mit ihrem Ergebnis.`,
+        answerType: 'matching',
+        exerciseType: 'memory-pairs',
+        correctAnswer: `${a}×${b}=${answer}`,
+        pairs: [
+          [`${a} × ${b}`, `${answer}`],
+          [`${a} × ${b + 1}`, `${a * (b + 1)}`],
+          [`${a} × ${b > 1 ? b - 1 : b + 2}`, `${a * (b > 1 ? b - 1 : b + 2)}`],
+        ],
+        hint: `Rechne jede Aufgabe aus und suche die passende Zahl.`,
+        explanation: `${a} × ${b} = ${answer}`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 30,
+      };
+    }
+
     return {
       id: genId('k2-mal'),
       topicId: 'k2-einmaleins',
       question: `Was ist ${a} × ${b}?`,
       questionLatex: `${a} \\times ${b} = ?`,
       answerType: 'number',
+      exerciseType: 'number-input',
       correctAnswer: answer,
       distractors,
       hint: `${a} × ${b} bedeutet: addiere ${a} genau ${b} Mal.`,

@@ -33,10 +33,10 @@ export const template: ExerciseTemplate = {
     // Choose exercise variant
     const variants =
       difficulty === 1
-        ? ['stellenwert', 'nachbar', 'runden', 'vergleich']
+        ? ['stellenwert', 'nachbar', 'runden', 'vergleich', 'stellenwert-tabelle', 'zahlenstrahl']
         : difficulty === 2
-          ? ['stellenwert', 'runden', 'ordnen', 'vergleich']
-          : ['runden', 'ordnen', 'vergleich', 'stellenwert'];
+          ? ['stellenwert', 'runden', 'ordnen', 'vergleich', 'stellenwert-tabelle', 'zahlenstrahl']
+          : ['runden', 'ordnen', 'vergleich', 'stellenwert', 'stellenwert-tabelle', 'zahlenstrahl'];
     const variant = variants[randInt(0, variants.length - 1)];
 
     if (variant === 'stellenwert') {
@@ -149,6 +149,76 @@ export const template: ExerciseTemplate = {
         difficulty,
         category: 'Abstrakt',
         estimatedSeconds: 35,
+      };
+    }
+
+    // ── Variant: place-value-table (Stellenwerttafel) ─────────────────────
+    if (variant === 'stellenwert-tabelle') {
+      const n = randInt(minNum, maxNum - 1);
+      const HT = Math.floor(n / 100_000);
+      const ZT = Math.floor((n % 100_000) / 10_000);
+      const T  = Math.floor((n % 10_000) / 1_000);
+      const H  = Math.floor((n % 1_000) / 100);
+      const Z  = Math.floor((n % 100) / 10);
+      const E  = n % 10;
+
+      const headers = ['HT', 'ZT', 'T', 'H', 'Z', 'E'];
+      const fullRow = [String(HT), String(ZT), String(T), String(H), String(Z), String(E)];
+      // Hide one cell
+      const hideIdx = randInt(0, 5);
+      const hiddenValue = Number(fullRow[hideIdx]);
+      const rowWithNull: (string | null)[] = fullRow.map((v, i) => i === hideIdx ? null : v);
+      const tableConfig = {
+        headers,
+        rows: [rowWithNull],
+        correctRows: [fullRow],
+      };
+
+      return {
+        id: genId('k4-z1m'),
+        topicId: 'k4-zahlen-bis-1million',
+        question: `Trage die Zahl ${formatDE(n)} in die Stellenwerttafel ein. Welche Ziffer fehlt in der Spalte „${headers[hideIdx]}"?`,
+        answerType: 'number',
+        exerciseType: 'place-value-table',
+        tableConfig,
+        correctAnswer: hiddenValue,
+        hint: `Zerlege ${formatDE(n)} in die Stellen: HT, ZT, T, H, Z, E.`,
+        explanation: `${formatDE(n)} hat: HT=${HT}, ZT=${ZT}, T=${T}, H=${H}, Z=${Z}, E=${E}. Fehlende Stelle (${headers[hideIdx]}): ${hiddenValue}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 25,
+      };
+    }
+
+    // ── Variant: drag-onto-numberline (number line to 1M) ─────────────────
+    if (variant === 'zahlenstrahl') {
+      const step = difficulty === 1 ? 1_000 : difficulty === 2 ? 10_000 : 100_000;
+      const lineMin = randInt(0, 8) * step;
+      const lineMax = lineMin + step * 10;
+      // Pick a target that lands on a tick
+      const tickCount = 10;
+      const tickStep = step;
+      const tickIdx = randInt(1, tickCount - 1);
+      const target = lineMin + tickIdx * tickStep;
+
+      return {
+        id: genId('k4-z1m'),
+        topicId: 'k4-zahlen-bis-1million',
+        question: `Lege die Zahl ${formatDE(target)} auf den Zahlenstrahl. Der Strahl geht von ${formatDE(lineMin)} bis ${formatDE(lineMax)}.`,
+        answerType: 'number',
+        exerciseType: 'drag-onto-numberline',
+        numberlineConfig: {
+          min: lineMin,
+          max: lineMax,
+          step: tickStep,
+          targets: [target],
+        },
+        correctAnswer: target,
+        hint: `Der Strahl hat ${tickCount} Abschnitte. Jeder Abschnitt entspricht ${formatDE(tickStep)}.`,
+        explanation: `${formatDE(target)} liegt genau ${tickIdx} Schritte (à ${formatDE(tickStep)}) nach ${formatDE(lineMin)}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 30,
       };
     }
 

@@ -108,7 +108,63 @@ export const template: ExerciseTemplate = {
       };
     }
 
-    // zweistellig × zweistellig
+    // difficulty === 3: mix of zweistellig × zweistellig, step-by-step, and estimation
+    const variantD3 = randInt(0, 2);
+
+    // ── Variant: step-by-step (multiplication steps) ─────────────────────
+    if (variantD3 === 1) {
+      const a = randInt(12, 35);
+      const b = randInt(11, 25);
+      const result = a * b;
+      const bOnes = b % 10;
+      const bTens = Math.floor(b / 10) * 10;
+      const partialOnes = a * bOnes;
+      const partialTens = a * bTens;
+
+      return {
+        id: genId('k4-smul'),
+        topicId: 'k4-schriftliche-multiplikation',
+        question: `Schriftliche Multiplikation Schritt für Schritt: ${a} × ${b} = ?`,
+        questionLatex: `${a} \\times ${b} = ?`,
+        answerType: 'number',
+        exerciseType: 'step-by-step',
+        correctAnswer: result,
+        steps: [
+          `${a} × ${bOnes} = ${partialOnes} (Einer-Teilprodukt)`,
+          `${a} × ${bTens} = ${partialTens} (Zehner-Teilprodukt)`,
+          `${partialOnes} + ${partialTens} = ${result} (Summe)`,
+        ],
+        hint: `Zerlege ${b} in Zehner (${bTens}) und Einer (${bOnes}). Berechne beide Teilprodukte und addiere.`,
+        explanation: `${a} × ${b} = ${a} × ${bOnes} + ${a} × ${bTens} = ${partialOnes} + ${partialTens} = ${result}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 75,
+      };
+    }
+
+    // ── Variant: estimation (is product > 10000?) ─────────────────────────
+    if (variantD3 === 2) {
+      const a = randInt(20, 99);
+      const b = randInt(20, 99);
+      const result = a * b;
+      const isAbove = result > 10000;
+
+      return {
+        id: genId('k4-smul'),
+        topicId: 'k4-schriftliche-multiplikation',
+        question: `Ist das Produkt von ${a} × ${b} größer als 10.000?`,
+        answerType: 'true-false',
+        exerciseType: 'estimation',
+        correctAnswer: isAbove ? 'wahr' : 'falsch',
+        hint: `Schätze: Runde beide Zahlen auf Zehner. ${Math.round(a / 10) * 10} × ${Math.round(b / 10) * 10} = ${Math.round(a / 10) * 10 * Math.round(b / 10) * 10}.`,
+        explanation: `${a} × ${b} = ${result}. ${result} ist ${isAbove ? 'größer' : 'nicht größer'} als 10.000, also ist die Aussage ${isAbove ? 'wahr' : 'falsch'}.`,
+        difficulty,
+        category: 'Abstrakt',
+        estimatedSeconds: 25,
+      };
+    }
+
+    // zweistellig × zweistellig (standard)
     const a = randInt(12, 35);
     const b = randInt(11, 25);
     const result = a * b;

@@ -140,15 +140,64 @@ function generateOrderFractions(difficulty: 1 | 2 | 3): Exercise {
   };
 }
 
-// ─── Main template ──────────────────────────────────────────
+// ─── D4: true-false (is 1/3 > 1/4?) ─────────────────────────
 
-const generators = [generateSameDenominator, generateDifferentDenominator, generateOrderFractions];
+function generateTrueFalseComparison(difficulty: 1 | 2 | 3): Exercise {
+  const pairs: [number, number, number, number][] = [
+    [1, 3, 1, 4],
+    [1, 2, 1, 3],
+    [2, 5, 3, 5],
+    [3, 4, 2, 3],
+    [1, 6, 1, 5],
+    [3, 8, 1, 3],
+    [2, 3, 3, 4],
+    [5, 6, 4, 5],
+  ];
+  const [n1, d1, n2, d2] = pairs[randInt(0, pairs.length - 1)];
+  const val1 = n1 / d1;
+  const val2 = n2 / d2;
+  const claimGreater = randInt(0, 1) === 0;
+  const isTrue = claimGreater ? val1 > val2 : val1 < val2;
+  const symbol = claimGreater ? '>' : '<';
+
+  return {
+    id: genId('k4-bv'),
+    topicId: 'k4-bruchvergleich',
+    question: `Stimmt es? ${n1}/${d1} ${symbol} ${n2}/${d2}`,
+    questionLatex: `\\frac{${n1}}{${d1}} ${symbol} \\frac{${n2}}{${d2}}`,
+    answerType: 'true-false',
+    exerciseType: 'true-false',
+    correctAnswer: isTrue ? 'wahr' : 'falsch',
+    hint: `Vergleiche die Brüche: Bringe ${n1}/${d1} und ${n2}/${d2} auf einen gemeinsamen Nenner.`,
+    explanation: `${n1}/${d1} = ${val1.toFixed(3)}, ${n2}/${d2} = ${val2.toFixed(3)}. ${n1}/${d1} ist ${val1 > val2 ? 'größer' : 'kleiner'} als ${n2}/${d2}, also ist die Aussage ${isTrue ? 'wahr' : 'falsch'}.`,
+    difficulty,
+    category: 'Abstrakt',
+    estimatedSeconds: 20,
+  };
+}
+
+// ─── Main template ──────────────────────────────────────────
 
 export const template: ExerciseTemplate = {
   topicId: 'k4-bruchvergleich',
   generate(difficulty = 1): Exercise {
-    if (difficulty === 1) return generateSameDenominator(1);
-    if (difficulty === 2) return generateDifferentDenominator(2);
-    return generateOrderFractions(3);
+    if (difficulty === 1) {
+      // Mix: same-denominator comparison and true-false
+      return randInt(0, 1) === 0
+        ? generateSameDenominator(1)
+        : generateTrueFalseComparison(1);
+    }
+    if (difficulty === 2) {
+      // Mix: different-denominator comparison, drag-sort, and true-false
+      const roll = randInt(0, 2);
+      if (roll === 0) return generateDifferentDenominator(2);
+      if (roll === 1) return generateOrderFractions(2);
+      return generateTrueFalseComparison(2);
+    }
+    // difficulty === 3: all four variants
+    const roll = randInt(0, 2);
+    if (roll === 0) return generateOrderFractions(3);
+    if (roll === 1) return generateTrueFalseComparison(3);
+    return generateDifferentDenominator(3);
   },
 };

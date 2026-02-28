@@ -3,14 +3,17 @@
 import { useMemo } from 'react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { useProgressStore } from '@/store/progressStore';
-import { useCurriculumStore } from '@/store/curriculumStore';
+import { useCurriculumStore, useCurrentWorld } from '@/store/curriculumStore';
 import { getCurriculum } from '@/lib/curriculum/merge';
 import { computeMapLayout } from '@/lib/curriculum/map-layout';
 import { LearningMap } from '@/components/map/LearningMap';
+import { WorldBackground } from '@/components/world/WorldBackground';
+import { WORLDS } from '@/lib/theme/worlds';
 
 export default function MapPage() {
   const progress = useProgressStore((s) => s.progress);
   const { bundesland, klasse, schulform, kurstyp } = useCurriculumStore();
+  const world = useCurrentWorld();
 
   const layout = useMemo(() => {
     if (!bundesland || !klasse || !schulform) return null;
@@ -46,11 +49,15 @@ export default function MapPage() {
 
   return (
     <PageWrapper>
+      <WorldBackground worldId={world} />
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-gray-800">Lernpfad</h1>
-            <p className="text-sm text-gray-500">Klasse {klasse} — {schulform}</p>
+            <p className="text-sm text-gray-500">
+              Klasse {klasse} — {schulform}
+              {world && WORLDS[world] ? ` · ${WORLDS[world].label}` : ''}
+            </p>
           </div>
           <div className="text-right">
             <div className="text-lg font-bold text-[var(--color-primary)]">

@@ -7,7 +7,8 @@ export type GamificationEvent =
   | { type: 'xp'; amount: number }
   | { type: 'level-up'; level: number }
   | { type: 'achievement'; achievement: Achievement }
-  | { type: 'streak'; days: number };
+  | { type: 'streak'; days: number }
+  | { type: 'story'; beatId: string };
 
 type GamificationStore = {
   pendingEvents: GamificationEvent[];
