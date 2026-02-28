@@ -6,7 +6,6 @@ function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/** Ensure the addition has a tens-crossing (Zehneruebergang). */
 function genWithCarry(aMin: number, aMax: number, bMax: number): { a: number; b: number } {
   let a: number, b: number;
   do {
@@ -19,77 +18,94 @@ function genWithCarry(aMin: number, aMax: number, bMax: number): { a: number; b:
 export const template: ExerciseTemplate = {
   topicId: 'k2-addition-mit-uebergang',
   generate(difficulty = 1): Exercise {
-    if (difficulty === 1) {
-      // Single-digit addend with carry
-      const { a, b } = genWithCarry(12, 89, 9);
-      const answer = a + b;
-      const onesA = a % 10;
-      const toNext10 = 10 - onesA;
+    const variant = randInt(0, 3);
 
+    const { a, b } = difficulty === 1
+      ? genWithCarry(12, 89, 9)
+      : difficulty === 2
+      ? genWithCarry(15, 70, 30)
+      : (() => {
+          let aa: number, bb: number, cc: number;
+          do {
+            aa = randInt(10, 50);
+            bb = randInt(5, 25);
+            cc = randInt(5, 25);
+          } while (aa + bb + cc > 100 || ((aa % 10) + (bb % 10) < 10 && (bb % 10) + (cc % 10) < 10));
+          return { a: aa, b: bb };
+        })();
+
+    const answer = a + b;
+    const onesA = a % 10;
+    const toNext10 = 10 - onesA;
+    const tensB = Math.floor(b / 10) * 10;
+    const onesB = b % 10;
+
+    const distractors = [answer - 1, answer + 1, answer - 10, answer + 10]
+      .filter(d => d >= 0 && d <= 100 && d !== answer).slice(0, 3);
+
+    if (variant === 0) {
       return {
-        id: genId(),
-        topicId: 'k2-addition-mit-uebergang',
+        id: genId(), topicId: 'k2-addition-mit-uebergang',
         question: `${a} + ${b} = ?`,
         questionLatex: `${a} + ${b} = ?`,
-        answerType: 'number',
-        exerciseType: 'number-input',
-        correctAnswer: answer,
-        distractors: [answer - 1, answer + 1, answer + 10].filter(d => d >= 0 && d <= 100 && d !== answer).slice(0, 3),
-        hint: `Zerlege ${b}: Erst +${toNext10} bis zum nächsten Zehner (${a + toNext10}), dann den Rest (+${b - toNext10}).`,
-        explanation: `${a} + ${toNext10} = ${a + toNext10}, dann + ${b - toNext10} = ${answer}.`,
-        difficulty,
-        category: 'Abstrakt',
-        estimatedSeconds: 25,
+        answerType: 'number', exerciseType: 'number-input',
+        correctAnswer: answer, distractors,
+        hint: difficulty === 1
+          ? `Zerlege ${b}: Erst +${toNext10} bis ${a + toNext10}, dann +${b - toNext10}.`
+          : `Zerlege ${b} in ${tensB} und ${onesB}. Rechne erst ${a} + ${tensB}, dann + ${onesB}.`,
+        explanation: difficulty === 1
+          ? `${a} + ${toNext10} = ${a + toNext10}, dann + ${b - toNext10} = ${answer}.`
+          : `${a} + ${tensB} = ${a + tensB}, dann + ${onesB} = ${answer}.`,
+        difficulty, category: 'Abstrakt',
+        estimatedSeconds: difficulty === 1 ? 25 : difficulty === 2 ? 30 : 40,
       };
     }
 
-    if (difficulty === 2) {
-      // Two-digit addend with carry
-      const { a, b } = genWithCarry(15, 70, 30);
-      const answer = a + b;
-      const tensB = Math.floor(b / 10) * 10;
-      const onesB = b % 10;
-
+    if (variant === 1) {
+      // true-false: ist diese Summe korrekt?
+      const showCorrect = randInt(0, 1) === 0;
+      const shownAnswer = showCorrect ? answer : answer + (randInt(0, 1) === 0 ? 10 : -1);
       return {
-        id: genId(),
-        topicId: 'k2-addition-mit-uebergang',
-        question: `${a} + ${b} = ?`,
-        questionLatex: `${a} + ${b} = ?`,
-        answerType: 'number',
-        exerciseType: 'number-input',
-        correctAnswer: answer,
-        distractors: [answer - 1, answer + 1, answer - 10, answer + 10].filter(d => d >= 0 && d <= 100 && d !== answer).slice(0, 3),
-        hint: `Zerlege ${b} in ${tensB} und ${onesB}. Rechne erst ${a} + ${tensB}, dann + ${onesB}.`,
-        explanation: `${a} + ${tensB} = ${a + tensB}, dann + ${onesB} = ${answer}.`,
-        difficulty,
-        category: 'Abstrakt',
-        estimatedSeconds: 30,
+        id: genId(), topicId: 'k2-addition-mit-uebergang',
+        question: `Stimmt das? ${a} + ${b} = ${shownAnswer}`,
+        answerType: 'true-false', exerciseType: 'true-false',
+        correctAnswer: (shownAnswer === answer) ? 'wahr' : 'falsch',
+        hint: `Rechne: Erst ${a} + ${toNext10} = ${a + toNext10}, dann weiter.`,
+        explanation: (shownAnswer === answer)
+          ? `Ja, ${a} + ${b} = ${answer}.`
+          : `Nein, ${a} + ${b} = ${answer}, nicht ${shownAnswer}.`,
+        difficulty, category: 'Abstrakt', estimatedSeconds: 20,
       };
     }
 
-    // Difficulty 3: Three numbers with carries
-    let a: number, b: number, c: number;
-    do {
-      a = randInt(10, 50);
-      b = randInt(5, 25);
-      c = randInt(5, 25);
-    } while (a + b + c > 100 || ((a % 10) + (b % 10) < 10 && (b % 10) + (c % 10) < 10));
-    const answer = a + b + c;
+    if (variant === 2) {
+      // equation-balance: ? + b = answer (find a)
+      const missing = a;
+      return {
+        id: genId(), topicId: 'k2-addition-mit-uebergang',
+        question: `Welche Zahl fehlt? ___ + ${b} = ${answer}`,
+        questionLatex: `\\square + ${b} = ${answer}`,
+        answerType: 'number', exerciseType: 'equation-balance',
+        correctAnswer: missing,
+        equationConfig: { left: `? + ${b}`, right: String(answer), variable: '?', target: missing },
+        distractors: [missing + 1, missing - 1, missing + 10].filter(d => d >= 0 && d !== missing).slice(0, 3),
+        hint: `Überlege: Was + ${b} ergibt ${answer}? Rechne ${answer} - ${b}.`,
+        explanation: `${missing} + ${b} = ${answer}. Probe: ${answer} - ${b} = ${missing}.`,
+        difficulty, category: 'Abstrakt', estimatedSeconds: 25,
+      };
+    }
 
+    // variant === 3: drag-onto-numberline (0-100)
     return {
-      id: genId(),
-      topicId: 'k2-addition-mit-uebergang',
-      question: `${a} + ${b} + ${c} = ?`,
-      questionLatex: `${a} + ${b} + ${c} = ?`,
-      answerType: 'number',
-      exerciseType: 'number-input',
+      id: genId(), topicId: 'k2-addition-mit-uebergang',
+      question: `${a} + ${b} = ? Zeige das Ergebnis auf dem Zahlenstrahl!`,
+      answerType: 'number', exerciseType: 'drag-onto-numberline',
       correctAnswer: answer,
-      distractors: [answer - 1, answer + 1, answer - 10].filter(d => d >= 0 && d <= 100 && d !== answer).slice(0, 3),
-      hint: `Rechne schrittweise: Erst ${a} + ${b} = ${a + b}, dann + ${c}.`,
-      explanation: `${a} + ${b} = ${a + b}, dann ${a + b} + ${c} = ${answer}.`,
-      difficulty,
-      category: 'Abstrakt',
-      estimatedSeconds: 40,
+      numberlineConfig: { min: 0, max: 100, step: 10, targets: [answer] },
+      hint: `Starte bei ${a} und mache ${b} Schritte. Du überquerst dabei einen Zehner!`,
+      explanation: `${a} + ${b} = ${answer}. Du gehst über die ${Math.floor(answer / 10) * 10}.`,
+      difficulty, category: 'Repräsentational', estimatedSeconds: 25,
+      visualConfig: { type: 'numberline' as const, props: { min: 0, max: 100 } },
     };
   },
 };

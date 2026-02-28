@@ -12,11 +12,9 @@ const SUB_ITEMS = ['Äpfel', 'Bonbons', 'Murmeln', 'Kekse', 'Aufkleber', 'Bälle
 
 function pick<T>(arr: T[]): T { return arr[randInt(0, arr.length - 1)]; }
 
-type StoryGen = (d: 1 | 2 | 3) => {
-  question: string; answer: number; hint: string; explanation: string;
-};
+type StoryData = { question: string; answer: number; hint: string; explanation: string; isAddition: boolean };
 
-const additionStory: StoryGen = (d) => {
+function makeAdditionStory(d: 1 | 2 | 3): StoryData {
   const maxN = d === 1 ? 5 : d === 2 ? 8 : 10;
   const name = pick(NAMES);
   const item = pick(ADD_ITEMS);
@@ -25,13 +23,13 @@ const additionStory: StoryGen = (d) => {
   const answer = a + b;
   return {
     question: `${name} hat ${a} ${item}. ${name} bekommt ${b} ${item} dazu. Wie viele ${item} hat ${name} jetzt?`,
-    answer,
+    answer, isAddition: true,
     hint: `${name} hatte ${a} und bekommt ${b} dazu. Rechne ${a} + ${b}.`,
     explanation: `${a} + ${b} = ${answer}. ${name} hat jetzt ${answer} ${item}.`,
   };
-};
+}
 
-const subtractionStory: StoryGen = (d) => {
+function makeSubtractionStory(d: 1 | 2 | 3): StoryData {
   const maxN = d === 1 ? 5 : d === 2 ? 8 : 10;
   const name = pick(NAMES);
   const item = pick(SUB_ITEMS);
@@ -40,13 +38,13 @@ const subtractionStory: StoryGen = (d) => {
   const answer = a - b;
   return {
     question: `${name} hat ${a} ${item}. ${name} gibt ${b} ${item} ab. Wie viele ${item} hat ${name} noch?`,
-    answer,
+    answer, isAddition: false,
     hint: `${name} hatte ${a} und gibt ${b} weg. Rechne ${a} - ${b}.`,
     explanation: `${a} - ${b} = ${answer}. ${name} hat noch ${answer} ${item}.`,
   };
-};
+}
 
-const combinedStory: StoryGen = (d) => {
+function makeCombinedStory(d: 1 | 2 | 3): StoryData {
   const maxN = d === 1 ? 5 : d === 2 ? 8 : 10;
   const name1 = pick(NAMES);
   let name2 = pick(NAMES);
@@ -57,62 +55,88 @@ const combinedStory: StoryGen = (d) => {
   const answer = a + b;
   return {
     question: `${name1} hat ${a} ${item} und ${name2} hat ${b} ${item}. Wie viele ${item} haben sie zusammen?`,
-    answer,
+    answer, isAddition: true,
     hint: `Zähle die ${item} von ${name1} und ${name2} zusammen: ${a} + ${b}.`,
     explanation: `${a} + ${b} = ${answer}. Zusammen haben sie ${answer} ${item}.`,
   };
-};
+}
 
 export const template: ExerciseTemplate = {
   topicId: 'k1-rechengeschichten',
   generate(difficulty = 1): Exercise {
-    const variant = randInt(0, 2);
-    const exerciseVariant = randInt(0, 1); // number-input vs multiple-choice
+    const storyType = randInt(0, 2);
+    const exerciseVariant = randInt(0, 3);
+    const d = difficulty as 1 | 2 | 3;
 
-    const storyGens = [additionStory, subtractionStory, combinedStory];
-    const story = storyGens[variant](difficulty as 1 | 2 | 3);
+    const storyFns = [makeAdditionStory, makeSubtractionStory, makeCombinedStory];
+    const story = storyFns[storyType](d);
 
     if (exerciseVariant === 0) {
-      // number-input
       return {
-        id: genId(),
-        topicId: 'k1-rechengeschichten',
+        id: genId(), topicId: 'k1-rechengeschichten',
         question: story.question,
-        answerType: 'number',
-        exerciseType: 'number-input',
+        answerType: 'number', exerciseType: 'number-input',
         correctAnswer: story.answer,
         distractors: [story.answer - 1, story.answer + 1, story.answer + 2].filter(
           d => d >= 0 && d <= 20 && d !== story.answer
         ),
-        hint: story.hint,
-        explanation: story.explanation,
-        difficulty,
-        category: 'Konkret',
-        estimatedSeconds: 20,
+        hint: story.hint, explanation: story.explanation,
+        difficulty, category: 'Konkret', estimatedSeconds: 20,
       };
     }
 
-    // multiple-choice
-    const wrong = new Set<number>();
-    while (wrong.size < 3) {
-      const d = story.answer + randInt(-2, 3);
-      if (d !== story.answer && d >= 0 && d <= 20) wrong.add(d);
+    if (exerciseVariant === 1) {
+      const wrong = new Set<number>();
+      while (wrong.size < 3) {
+        const d = story.answer + randInt(-2, 3);
+        if (d !== story.answer && d >= 0 && d <= 20) wrong.add(d);
+      }
+      return {
+        id: genId(), topicId: 'k1-rechengeschichten',
+        question: story.question,
+        answerType: 'multiple-choice', exerciseType: 'multiple-choice',
+        correctAnswer: story.answer,
+        distractors: [...wrong],
+        hint: story.hint, explanation: story.explanation,
+        difficulty, category: 'Konkret', estimatedSeconds: 25,
+      };
     }
 
+    if (exerciseVariant === 2) {
+      // true-false: Is this the right answer?
+      const showCorrect = randInt(0, 1) === 0;
+      const shownAnswer = showCorrect ? story.answer : story.answer + (randInt(0, 1) === 0 ? 1 : -1);
+      return {
+        id: genId(), topicId: 'k1-rechengeschichten',
+        question: `${story.question}\nStimmt das Ergebnis: ${shownAnswer}?`,
+        answerType: 'true-false', exerciseType: 'true-false',
+        correctAnswer: (shownAnswer === story.answer) ? 'wahr' : 'falsch',
+        hint: story.hint,
+        explanation: (shownAnswer === story.answer)
+          ? `Ja! Das Ergebnis ${story.answer} ist richtig. ${story.explanation}`
+          : `Nein, das Ergebnis ist ${story.answer}, nicht ${shownAnswer}. ${story.explanation}`,
+        difficulty, category: 'Konkret', estimatedSeconds: 20,
+      };
+    }
+
+    // exerciseVariant === 3: classify — Addieren oder Subtrahieren?
+    // Generate two stories (one add, one subtract) for classification
+    const addStory = makeAdditionStory(d);
+    const subStory = makeSubtractionStory(d);
     return {
-      id: genId(),
-      topicId: 'k1-rechengeschichten',
-      question: story.question,
-      answerType: 'multiple-choice',
-      exerciseType: 'multiple-choice',
-      correctAnswer: story.answer,
-      distractors: [...wrong],
-      options: [String(story.answer), ...[...wrong].map(String)],
-      hint: story.hint,
-      explanation: story.explanation,
-      difficulty,
-      category: 'Konkret',
-      estimatedSeconds: 25,
+      id: genId(), topicId: 'k1-rechengeschichten',
+      question: 'Sortiere: Addieren oder Subtrahieren?',
+      answerType: 'drag-drop', exerciseType: 'classify',
+      correctAnswer: 'ok',
+      classifyItems: [addStory.question.split('.')[0], subStory.question.split('.')[0]],
+      classifyCategories: ['Addieren (+)', 'Subtrahieren (−)'],
+      classifyCorrect: {
+        'Addieren (+)': [addStory.question.split('.')[0]],
+        'Subtrahieren (−)': [subStory.question.split('.')[0]],
+      },
+      hint: 'Bei "mehr", "zusammen", "dazu" → Addieren. Bei "weniger", "weggeben", "verbraucht" → Subtrahieren.',
+      explanation: 'Schlüsselwörter helfen: "dazu/zusammen" = +, "weg/weniger" = −.',
+      difficulty, category: 'Konkret', estimatedSeconds: 30,
     };
   },
 };

@@ -9,106 +9,82 @@ function randInt(min: number, max: number) {
 export const template: ExerciseTemplate = {
   topicId: 'k2-subtraktion-bis-100',
   generate(difficulty = 1): Exercise {
+    const variant = randInt(0, 3);
+
+    // Generate a and b appropriate for difficulty
+    let a: number, b: number;
     if (difficulty === 1) {
-      // Without borrowing: ones of a >= ones of b
-      let a: number, b: number;
-      do {
-        a = randInt(20, 99);
-        b = randInt(10, a - 1);
-      } while ((a % 10) < (b % 10)); // no borrowing
-      const answer = a - b;
-
-      return {
-        id: genId(),
-        topicId: 'k2-subtraktion-bis-100',
-        question: `${a} - ${b} = ?`,
-        questionLatex: `${a} - ${b} = ?`,
-        answerType: 'number',
-        exerciseType: 'number-input',
-        correctAnswer: answer,
-        distractors: [answer + 1, answer - 1, answer + 10].filter(d => d >= 0 && d !== answer).slice(0, 3),
-        hint: `Ziehe erst die Zehner ab, dann die Einer.`,
-        explanation: `${a} - ${b} = ${answer}. Zehner: ${Math.floor(a / 10) * 10} - ${Math.floor(b / 10) * 10} = ${(Math.floor(a / 10) - Math.floor(b / 10)) * 10}. Einer: ${a % 10} - ${b % 10} = ${(a % 10) - (b % 10)}.`,
-        difficulty,
-        category: 'Abstrakt',
-        estimatedSeconds: 20,
-      };
+      do { a = randInt(20, 99); b = randInt(10, a - 1); } while ((a % 10) < (b % 10));
+    } else if (difficulty === 2) {
+      do { a = randInt(21, 99); b = randInt(3, a - 1); } while ((a % 10) >= (b % 10) || b < 10);
+    } else {
+      a = randInt(70, 100);
+      b = randInt(25, a - 5);
     }
-
-    if (difficulty === 2) {
-      // With borrowing: ones of a < ones of b
-      let a: number, b: number;
-      do {
-        a = randInt(21, 99);
-        b = randInt(3, a - 1);
-      } while ((a % 10) >= (b % 10) || b < 10); // force borrowing
-      const answer = a - b;
-      const onesB = b % 10;
-      const aOnes = a % 10;
-      const toZero = aOnes;
-
-      return {
-        id: genId(),
-        topicId: 'k2-subtraktion-bis-100',
-        question: `${a} - ${b} = ?`,
-        questionLatex: `${a} - ${b} = ?`,
-        answerType: 'number',
-        exerciseType: 'number-input',
-        correctAnswer: answer,
-        distractors: [answer + 1, answer - 1, answer + 10, answer - 10].filter(d => d >= 0 && d !== answer).slice(0, 3),
-        hint: `Hier musst du entbündeln: Erst -${toZero} bis zum Zehner (${a - toZero}), dann noch -${onesB - toZero} weiter.`,
-        explanation: `${a} - ${b} = ${answer}. Über den Zehner: ${a} - ${toZero} = ${a - toZero}, dann - ${onesB - toZero} = ${answer}.`,
-        difficulty,
-        category: 'Abstrakt',
-        estimatedSeconds: 30,
-      };
-    }
-
-    // Difficulty 3: More complex subtraction or missing subtrahend
-    const variant = randInt(0, 1);
+    const answer = a - b;
+    const distractors = [answer + 1, answer - 1, answer + 10, answer - 10]
+      .filter(d => d >= 0 && d !== answer).slice(0, 3);
 
     if (variant === 0) {
-      // Subtraction from close to 100
-      const a = randInt(70, 100);
-      const b = randInt(25, a - 5);
-      const answer = a - b;
-
       return {
-        id: genId(),
-        topicId: 'k2-subtraktion-bis-100',
+        id: genId(), topicId: 'k2-subtraktion-bis-100',
         question: `${a} - ${b} = ?`,
         questionLatex: `${a} - ${b} = ?`,
-        answerType: 'number',
-        exerciseType: 'number-input',
-        correctAnswer: answer,
-        distractors: [answer + 1, answer - 1, answer + 10].filter(d => d >= 0 && d !== answer).slice(0, 3),
-        hint: `Rechne schrittweise: erst die Zehner, dann die Einer.`,
+        answerType: 'number', exerciseType: 'number-input',
+        correctAnswer: answer, distractors,
+        hint: difficulty === 1
+          ? `Ziehe erst die Zehner ab, dann die Einer.`
+          : `Entbündeln: Zähle von ${b} aufwärts bis ${a}.`,
         explanation: `${a} - ${b} = ${answer}.`,
-        difficulty,
-        category: 'Abstrakt',
-        estimatedSeconds: 35,
+        difficulty, category: 'Abstrakt',
+        estimatedSeconds: difficulty === 1 ? 20 : difficulty === 2 ? 30 : 35,
       };
     }
 
-    // Missing subtrahend
-    const a = randInt(40, 95);
-    const answer = randInt(5, a - 10);
-    const b = a - answer;
+    if (variant === 1) {
+      // true-false: stimmt diese Differenz?
+      const showCorrect = randInt(0, 1) === 0;
+      const shownAnswer = showCorrect ? answer : answer + (randInt(0, 1) === 0 ? 10 : 1);
+      return {
+        id: genId(), topicId: 'k2-subtraktion-bis-100',
+        question: `Stimmt das? ${a} - ${b} = ${shownAnswer}`,
+        answerType: 'true-false', exerciseType: 'true-false',
+        correctAnswer: (shownAnswer === answer) ? 'wahr' : 'falsch',
+        hint: `Rechne ${a} - ${b} selbst. Zähle von ${b} bis ${a} oder arbeite schrittweise.`,
+        explanation: (shownAnswer === answer)
+          ? `Ja, ${a} - ${b} = ${answer}.`
+          : `Nein, ${a} - ${b} = ${answer}, nicht ${shownAnswer}.`,
+        difficulty, category: 'Abstrakt', estimatedSeconds: 20,
+      };
+    }
 
+    if (variant === 2) {
+      // equation-balance: a - ? = answer (find b)
+      return {
+        id: genId(), topicId: 'k2-subtraktion-bis-100',
+        question: `Welche Zahl fehlt? ${a} - ___ = ${answer}`,
+        questionLatex: `${a} - \\square = ${answer}`,
+        answerType: 'number', exerciseType: 'equation-balance',
+        correctAnswer: b,
+        equationConfig: { left: `${a} - ?`, right: String(answer), variable: '?', target: b },
+        distractors: [b + 1, b - 1, b + 10].filter(d => d > 0 && d !== b).slice(0, 3),
+        hint: `Was musst du von ${a} abziehen, um ${answer} zu bekommen? Rechne ${a} - ${answer}.`,
+        explanation: `${a} - ${b} = ${answer}. Die fehlende Zahl ist ${b}.`,
+        difficulty, category: 'Abstrakt', estimatedSeconds: 25,
+      };
+    }
+
+    // variant === 3: drag-onto-numberline
     return {
-      id: genId(),
-      topicId: 'k2-subtraktion-bis-100',
-      question: `${a} - ? = ${answer}`,
-      questionLatex: `${a} - \\square = ${answer}`,
-      answerType: 'number',
-      exerciseType: 'number-input',
-      correctAnswer: b,
-      distractors: [b + 1, b - 1, b + 10].filter(d => d > 0 && d !== b).slice(0, 3),
-      hint: `Was musst du von ${a} abziehen, um ${answer} zu erhalten? Rechne ${a} - ${answer}.`,
-      explanation: `${a} - ${b} = ${answer}. Die fehlende Zahl ist ${b}.`,
-      difficulty,
-      category: 'Abstrakt',
-      estimatedSeconds: 40,
+      id: genId(), topicId: 'k2-subtraktion-bis-100',
+      question: `${a} - ${b} = ? Zeige das Ergebnis auf dem Zahlenstrahl!`,
+      answerType: 'number', exerciseType: 'drag-onto-numberline',
+      correctAnswer: answer,
+      numberlineConfig: { min: 0, max: 100, step: 10, targets: [answer] },
+      hint: `Starte bei ${a} auf dem Zahlenstrahl und gehe ${b} Schritte zurück.`,
+      explanation: `${a} - ${b} = ${answer}. Auf dem Zahlenstrahl von ${a} aus ${b} zurück.`,
+      difficulty, category: 'Repräsentational', estimatedSeconds: 25,
+      visualConfig: { type: 'numberline' as const, props: { min: 0, max: 100 } },
     };
   },
 };

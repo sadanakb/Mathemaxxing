@@ -1,83 +1,64 @@
-# Checkpoint — 2026-02-28 17:36
+# Checkpoint — 2026-02-28 18:37
 
 ## Ziel
-K1-4 Content-Qualität & Monetarisierungsvorbereitung: 4 individuelle Welten, Bundesland-Verifikation (2026), Animationen, Story-Elemente, Feature-Flags.
-
-## Status: PHASE 0-4 KOMPLETT IMPLEMENTIERT — NOCH NICHT COMMITTED
+Alle K1–K4 Exercise-Generatoren auf 3–4 verschiedene Exercise-Type-Varianten erweitern
+(ursprünglich viele Generatoren mit nur 1 Exercise-Type)
 
 ## Erledigt
+- [x] K1 Generatoren erweitert:
+  - k1-subtraktion-bis-20.ts: 4 Varianten (number-input, MC, drag-onto-numberline, true-false)
+  - k1-addition-bis-20-ohne-uebergang.ts: 4 Varianten (number-input, MC, true-false, calculation-pyramid)
+  - k1-addition-bis-20-mit-uebergang.ts: 4 Varianten (number-input, MC, true-false, drag-onto-numberline)
+  - k1-tausch-umkehraufgaben.ts: 4 Varianten (number-input, true-false, MC, drag-sort)
+  - k1-rechengeschichten.ts: 4 Varianten (number-input, MC, true-false, classify)
+  - k1-lagebeziehungen.ts: 4 Varianten (MC, true-false, classify, drag-sort)
+  - k1-zahlen-bis-20.ts: bereits 4 Typen ✓ (nicht geändert)
+  - k1-muster-und-strukturen.ts: bereits gut ✓ (nicht geändert)
 
-### Phase 0: Theme-Infrastruktur ✅
-- WorldId Typ + WORLDS Config (`src/lib/theme/worlds.ts` — NEU)
-- applyWorld() + re-exports (`src/lib/theme/theme-config.ts` — EDIT)
-- ThemeProvider: data-world Attribut (`src/components/layout/ThemeProvider.tsx` — EDIT)
-- 4x CSS World-Variablen (`src/app/globals.css` — EDIT, ~80 Zeilen)
-- useCurrentWorld() Hook (`src/store/curriculumStore.ts` — EDIT)
-- Story-System: types, engine, overlay (`src/lib/story/types.ts`, `src/lib/story/story-engine.ts`, `src/components/story/StoryBeatOverlay.tsx` — NEU)
-- storyProgress in UserProgress + markStoryBeatSeen (`src/store/progressStore.ts` — EDIT, `src/lib/curriculum/types.ts` — EDIT)
-- GamificationEvent 'story' Typ (`src/store/gamificationStore.ts` — EDIT)
-- Feature-Flag-System (`src/lib/features/flags.ts` — NEU)
-- Reward-Router + 4 Welt-Rewards (`src/components/rewards/RewardAnimation.tsx`, `EntdeckerReward.tsx`, `AbenteuerReward.tsx`, `ForscherReward.tsx`, `WeltraumReward.tsx` — NEU)
-- WorldBackground mit SVG-Deko (`src/components/world/WorldBackground.tsx` — NEU)
-- Finn Outfit-System (`src/components/gamification/Finn.tsx` — EDIT)
-- GamificationOverlay story support (`src/components/gamification/GamificationOverlay.tsx` — EDIT)
-- Asset-Verzeichnisse (`public/worlds/{entdecker,abenteuer,forscher,weltraum}/{decorations,rewards,story}`)
+- [x] K2 Generatoren erweitert:
+  - k2-addition-mit-uebergang.ts: 4 Varianten (number-input, true-false, equation-balance, drag-onto-numberline)
+  - k2-subtraktion-bis-100.ts: 4 Varianten (number-input, true-false, equation-balance, drag-onto-numberline)
+  - k2-addition-subtraktion-bis-100.ts: 4 Varianten (number-input, MC, true-false, drag-onto-numberline)
+  - k2-sachaufgaben.ts: 4 Varianten (number-input, MC, true-false, classify)
+  - k2-zahlenstrahl-bis-100.ts: 4 Varianten (drag-onto-numberline, number-input, true-false, MC)
+  - k2-gerade-ungerade.ts: bereits 3 Typen ✓
+  - k2-einmaleins-3-4.ts: bereits 3 Typen ✓
+  - k2-geometrie-ebene-figuren.ts: bereits viele Typen ✓
+  - k2-zahlen-bis-100.ts: bereits viele Typen ✓
+  - k2-zahlenfolgen.ts: OK ✓
 
-### Phase 1: K1 "Entdecker-Reise" ✅
-- 16 Bundesland-Overrides K1 befüllt (alle 16 Dateien in `src/data/curricula/overrides/`)
-- 8 K1-Generatoren erweitert auf 3-4 Aufgabentypen (numberline, equation-balance, classify, etc.)
-- K1 Theory verbessert (kindgerechter, Umlaute, erweiterte Tips/Pitfalls in `src/data/theory/k1-k3-theory.ts`)
-- 5 Entdecker Story-Beats (`src/data/story/entdecker.ts` — NEU)
-- WorldBackground + Finn Outfit integriert in Map/Dashboard/Learn Pages
-- RewardAnimation + StoryBeatOverlay in Learn Page (`src/app/learn/[topicId]/page.tsx` — EDIT)
+- [x] K3 Generatoren erweitert:
+  - k3-gewichte.ts: 4 Varianten (number-input, classify, true-false, fill-table)
+  - k3-zahlenstrahl-bis-1000.ts: 4 Varianten (drag-onto-numberline, true-false, estimation, MC)
+  - k3-einmaleins-vertiefen.ts: 4 Varianten (number-input, speed-quiz, memory-pairs, fill-table)
+  - k3-zahlen-bis-1000.ts: bereits 6 Varianten ✓
+  - k3-liter-milliliter.ts: bereits 3 Typen ✓
+  - k3-sachaufgaben-alle-ops.ts: mehrere Typen ✓
+  - k3-spiegeln-verschieben.ts: true-false + mirror-draw ✓
+  - k3-zeitspannen.ts: clock-drag + number-input ✓
+  - k3-halbschriftliche-division.ts: 3 Typen ✓
 
-### Phase 2: K2 "Abenteuer" ✅
-- 16 Bundesland-Overrides K2 (Kombinatorik, Wahrscheinlichkeit)
-- 8 K2-Generatoren erweitert (speed-quiz, memory-pairs, clock-drag, etc.)
-- 4 fehlende K2 Theory-Einträge ergänzt
-- 5 Abenteuer Story-Beats (`src/data/story/abenteuer.ts` — NEU)
-
-### Phase 3: K3 "Forscher-Station" ✅
-- 16 Bundesland-Overrides K3 (Rechter Winkel, Kombinatorik vertiefen)
-- 8 K3-Generatoren erweitert (step-by-step, classify, area-count, bar-chart-read)
-- classify-Felder zu Exercise-Typ hinzugefügt (steps, classifyItems, classifyCategories, classifyCorrect)
-- 5 Forscher Story-Beats (`src/data/story/forscher.ts` — NEU)
-
-### Phase 4: K4 "Weltraum-Expedition" ✅
-- 16 Bundesland-Overrides K4 (Massstab, Baumdiagramme, Rauminhalt)
-- 8 K4-Generatoren erweitert (fraction-visual, place-value-table, drag-onto-numberline)
-- 5 Weltraum Story-Beats (`src/data/story/weltraum.ts` — NEU)
-
-## Zahlen
-- 15 neue Dateien erstellt
-- 82 Bundesland-spezifische Topic-Overrides (16 Bundesländer × 4 Klassen)
-- 32 Generatoren um 1-2 neue Aufgabentypen erweitert
-- 20 Story-Beats (5 pro Welt)
-- 4 fehlende Theory-Einträge ergänzt
-
-## Offen
-- [ ] **COMMIT erstellen** — alle Änderungen sind unstaged! User muss committen.
-- [ ] Phase 5: Monetarisierung & Polish (späterer Zeitpunkt, nicht Teil dieser Session)
-- [ ] Echte Bild-Assets für Story-Illustrationen generieren (aktuell nur Pfade referenziert)
-- [ ] Echte Pattern-SVGs/Background-Images für public/worlds/ erstellen
-- [ ] Manueller Walkthrough: Onboarding → Map → Aufgabe → Story-Beat
-- [ ] PWA Service-Worker: World-Assets caching prüfen
-- [ ] Lighthouse Performance-Check (Ziel: >90)
-
-## Entscheidungen
-- data-world additiv zu data-theme (saubere Trennung Grundschule/Welt)
-- Side-effect imports für Story-Beat-Registration
-- Feature-Flags als simples Boolean-Map, alles freigeschaltet
-- Bundesland-Lehrpläne: Stand 2026 (User-Anweisung)
-- classify-Felder direkt im Exercise-Typ (classifyItems, classifyCategories, classifyCorrect)
+- [x] K4 Generatoren erweitert:
+  - k4-flaeche-und-umfang.ts: 4 Varianten (number-input, MC, true-false, fill-table)
+  - k4-sachaufgaben-komplex.ts: 4 Varianten (number-input, MC, true-false, drag-sort)
+  - k4-koordinaten-gitternetz.ts: 4 Varianten (number-input, drag-onto-grid, true-false, MC)
+  - k4-symmetrie.ts: bereits true-false, MC, mirror-draw ✓
+  - k4-rechengesetze.ts: bereits true-false, drag-match, MC ✓
+  - k4-dezimalzahlen-einfuehrung.ts: bereits 4+ Typen ✓
+  - k4-vierecke-dreiecke.ts: bereits classify, MC, true-false ✓
+  - k4-gewichte-tonnen.ts: bereits number-input, drag-sort, true-false ✓
+  - k4-wahrscheinlichkeit-einfuehrung.ts: bereits classify, true-false, MC ✓
+  - k4-geld-rechnen.ts: bereits number-input + MC ✓
 
 ## Build/Test-Status
-- Build: OK ✅
-- Tests: 93/93 bestanden ✅
-- TypeScript: 0 Fehler ✅
-- Letzter Commit: d596776 (vor dieser Session)
+- Build: OK (tsc --noEmit: keine Fehler)
+- Tests: 93/93 bestanden
+- Letzter Commit: 80717b9 (noch nicht committed)
 
-## Nächster Schritt
-1. `git add` + `git commit` für alle Änderungen
-2. Optional: Echte Assets (Bilder) generieren für die 4 Welten
-3. Optional: Phase 5 Monetarisierung starten
+## Entscheidungen
+- Dateien mit bereits ≥3 Exercise-Types wurden NICHT geändert (kein over-engineering)
+- Variant-Pattern: `const variant = randInt(0, 3)` → 4 Exercise-Types pro Generator
+- Difficulty-Scaling bleibt erhalten: schwerere Zahlen bei höherem difficulty, nicht schwerere Konzepte
+
+## Offen
+- [ ] Commit der 17 geänderten Generator-Dateien
