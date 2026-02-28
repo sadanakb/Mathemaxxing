@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from 'framer-motion';
 import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
 
 type WorldId = 'entdecker' | 'abenteuer' | 'forscher' | 'weltraum';
 
@@ -9,20 +10,49 @@ interface WorldBackgroundProps {
   worldId: WorldId | null;
 }
 
-// ─── World gradient definitions ──────────────────────────────
+// ─── Layer 1: Sky gradients per world ────────────────────────
 
-const WORLD_GRADIENTS: Record<WorldId, string> = {
+const SKY_GRADIENTS: Record<WorldId, string> = {
   entdecker:
-    'linear-gradient(135deg, #d4edda 0%, #a8d5b5 30%, #c8e6c9 60%, #e8f5e9 100%)',
+    'linear-gradient(180deg, #87CEEB 0%, #C8E6C9 50%, #4CAF50 100%)',
   abenteuer:
-    'linear-gradient(135deg, #fce4ec 0%, #f8bbd0 30%, #ffe0b2 60%, #fff3e0 100%)',
+    'linear-gradient(180deg, #FF6B6B 0%, #FFD93D 50%, #FF9800 100%)',
   forscher:
-    'linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 30%, #e8eaf6 60%, #ede7f6 100%)',
+    'linear-gradient(180deg, #E0F7FA 0%, #80DEEA 50%, #26A69A 100%)',
   weltraum:
-    'linear-gradient(135deg, #1a1a3e 0%, #2d1b69 30%, #1e3a5f 60%, #0d1b2a 100%)',
+    'linear-gradient(180deg, #0d1b2a 0%, #1a1a3e 50%, #2d1b69 100%)',
 };
 
-// ─── Float animation factory ──────────────────────────────────
+// ─── Layer 2: Terrain clip-paths per world ───────────────────
+
+const TERRAIN_CONFIG: Record<WorldId, { color: string; clipPath: string }> = {
+  entdecker: {
+    color: '#2E7D32',
+    // Rolling hills with tree-like bumps
+    clipPath:
+      'polygon(0% 70%, 5% 55%, 10% 60%, 15% 45%, 20% 50%, 25% 40%, 30% 48%, 35% 42%, 40% 50%, 45% 44%, 50% 55%, 55% 42%, 60% 48%, 65% 40%, 70% 50%, 75% 45%, 80% 55%, 85% 48%, 90% 58%, 95% 52%, 100% 65%, 100% 100%, 0% 100%)',
+  },
+  abenteuer: {
+    color: '#C2185B',
+    // Tent silhouettes / carnival triangular peaks
+    clipPath:
+      'polygon(0% 85%, 5% 80%, 10% 50%, 15% 80%, 20% 75%, 25% 45%, 30% 75%, 35% 80%, 40% 55%, 45% 80%, 50% 78%, 55% 40%, 60% 78%, 65% 82%, 70% 55%, 75% 80%, 80% 76%, 85% 48%, 90% 78%, 95% 82%, 100% 80%, 100% 100%, 0% 100%)',
+  },
+  forscher: {
+    color: '#00838F',
+    // City skyline with rectangular buildings of varying heights
+    clipPath:
+      'polygon(0% 80%, 0% 60%, 5% 60%, 5% 70%, 8% 70%, 8% 45%, 14% 45%, 14% 70%, 17% 70%, 17% 55%, 22% 55%, 22% 65%, 25% 65%, 25% 40%, 30% 40%, 30% 65%, 33% 65%, 33% 75%, 38% 75%, 38% 50%, 43% 50%, 43% 60%, 46% 60%, 46% 35%, 52% 35%, 52% 60%, 55% 60%, 55% 70%, 60% 70%, 60% 45%, 65% 45%, 65% 65%, 68% 65%, 68% 55%, 73% 55%, 73% 70%, 78% 70%, 78% 42%, 83% 42%, 83% 65%, 86% 65%, 86% 75%, 90% 75%, 90% 50%, 95% 50%, 95% 68%, 100% 68%, 100% 100%, 0% 100%)',
+  },
+  weltraum: {
+    color: '#1a0a30',
+    // Planet horizon — gentle arc
+    clipPath:
+      'polygon(0% 92%, 5% 90%, 10% 88%, 15% 87%, 20% 86%, 25% 85.5%, 30% 85%, 35% 84.8%, 40% 84.6%, 45% 84.5%, 50% 84.5%, 55% 84.5%, 60% 84.6%, 65% 84.8%, 70% 85%, 75% 85.5%, 80% 86%, 85% 87%, 90% 88%, 95% 90%, 100% 92%, 100% 100%, 0% 100%)',
+  },
+};
+
+// ─── Float animation factory ─────────────────────────────────
 
 function floatVariants(
   yRange: [number, number],
@@ -42,7 +72,206 @@ function floatVariants(
   };
 }
 
-// ─── Entdecker decorations (leaves, gems, acorns) ─────────────
+// ─── Layer 4: Particle component ─────────────────────────────
+
+interface ParticleConfig {
+  count: number;
+  type: 'leaf' | 'confetti' | 'bubble' | 'shootingStar';
+  colors: string[];
+}
+
+const PARTICLE_CONFIGS: Record<WorldId, ParticleConfig> = {
+  entdecker: {
+    count: 7,
+    type: 'leaf',
+    colors: ['#4caf50', '#66bb6a', '#81c784', '#388e3c', '#2e7d32', '#a5d6a7', '#43a047'],
+  },
+  abenteuer: {
+    count: 8,
+    type: 'confetti',
+    colors: ['#f06292', '#ffb74d', '#ff7043', '#ba68c8', '#4fc3f7', '#81c784', '#fff176', '#e57373'],
+  },
+  forscher: {
+    count: 7,
+    type: 'bubble',
+    colors: ['#4db6ac', '#80cbc4', '#b2dfdb', '#7e57c2', '#9575cd', '#4dd0e1', '#26c6da'],
+  },
+  weltraum: {
+    count: 8,
+    type: 'shootingStar',
+    colors: ['#ffffff', '#ffe082', '#e0e0e0', '#fff9c4', '#b3e5fc', '#ce93d8', '#ffffff', '#ffe082'],
+  },
+};
+
+// Stable seed-based pseudo-random for particle positioning
+function seededValues(worldId: WorldId): number[] {
+  const seeds: Record<WorldId, number[]> = {
+    entdecker: [0.12, 0.87, 0.34, 0.65, 0.48, 0.91, 0.23, 0.56],
+    abenteuer: [0.78, 0.15, 0.62, 0.39, 0.84, 0.27, 0.51, 0.93],
+    forscher:  [0.45, 0.72, 0.18, 0.56, 0.33, 0.89, 0.64, 0.07],
+    weltraum:  [0.91, 0.28, 0.53, 0.76, 0.14, 0.67, 0.42, 0.85],
+  };
+  return seeds[worldId];
+}
+
+function Particles({ worldId }: { worldId: WorldId }) {
+  const config = PARTICLE_CONFIGS[worldId];
+  const randoms = seededValues(worldId);
+
+  const particles = useMemo(() => {
+    return Array.from({ length: config.count }, (_, i) => {
+      const r = randoms[i % randoms.length];
+      const left = (r * 100);
+      const delay = r * 6;
+      const duration = 8 + (r * 7);
+      const size = 4 + (r * 6);
+      const color = config.colors[i % config.colors.length];
+
+      return { i, left, delay, duration, size, color };
+    });
+  }, [config, randoms]);
+
+  if (config.type === 'leaf') {
+    // Falling leaves: small green ovals drifting down
+    const keyframes = `
+      @keyframes particle-leaf {
+        0% { transform: translateY(-20px) rotate(0deg) translateX(0px); opacity: 0; }
+        10% { opacity: 0.7; }
+        90% { opacity: 0.7; }
+        100% { transform: translateY(105vh) rotate(360deg) translateX(40px); opacity: 0; }
+      }
+    `;
+    return (
+      <>
+        <style>{keyframes}</style>
+        {particles.map(({ i, left, delay, duration, size, color }) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${left}%`,
+              top: '-20px',
+              width: `${size}px`,
+              height: `${size * 1.4}px`,
+              borderRadius: '50% 50% 50% 0%',
+              backgroundColor: color,
+              opacity: 0,
+              animation: `particle-leaf ${duration}s ${delay}s linear infinite`,
+            }}
+          />
+        ))}
+      </>
+    );
+  }
+
+  if (config.type === 'confetti') {
+    // Confetti: small colored squares fluttering down
+    const keyframes = `
+      @keyframes particle-confetti {
+        0% { transform: translateY(-10px) rotate(0deg) translateX(0px); opacity: 0; }
+        10% { opacity: 0.8; }
+        50% { transform: translateY(50vh) rotate(180deg) translateX(30px); opacity: 0.8; }
+        90% { opacity: 0.6; }
+        100% { transform: translateY(105vh) rotate(360deg) translateX(-20px); opacity: 0; }
+      }
+    `;
+    return (
+      <>
+        <style>{keyframes}</style>
+        {particles.map(({ i, left, delay, duration, size, color }) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${left}%`,
+              top: '-10px',
+              width: `${size}px`,
+              height: `${size}px`,
+              borderRadius: '1px',
+              backgroundColor: color,
+              opacity: 0,
+              animation: `particle-confetti ${duration}s ${delay}s linear infinite`,
+            }}
+          />
+        ))}
+      </>
+    );
+  }
+
+  if (config.type === 'bubble') {
+    // Bubbles: small circles rising up
+    const keyframes = `
+      @keyframes particle-bubble {
+        0% { transform: translateY(0px) translateX(0px) scale(0.5); opacity: 0; }
+        10% { opacity: 0.6; }
+        50% { transform: translateY(-50vh) translateX(15px) scale(1); opacity: 0.7; }
+        90% { opacity: 0.3; }
+        100% { transform: translateY(-105vh) translateX(-10px) scale(1.2); opacity: 0; }
+      }
+    `;
+    return (
+      <>
+        <style>{keyframes}</style>
+        {particles.map(({ i, left, delay, duration, size, color }) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${left}%`,
+              bottom: '-10px',
+              width: `${size}px`,
+              height: `${size}px`,
+              borderRadius: '50%',
+              border: `1.5px solid ${color}`,
+              backgroundColor: 'transparent',
+              opacity: 0,
+              animation: `particle-bubble ${duration}s ${delay}s linear infinite`,
+            }}
+          />
+        ))}
+      </>
+    );
+  }
+
+  if (config.type === 'shootingStar') {
+    // Shooting stars: small white lines streaking diagonally
+    const keyframes = `
+      @keyframes particle-star {
+        0% { transform: translate(0px, 0px) rotate(-45deg); opacity: 0; }
+        5% { opacity: 1; }
+        15% { opacity: 0.9; }
+        20% { transform: translate(200px, 200px) rotate(-45deg); opacity: 0; }
+        100% { opacity: 0; }
+      }
+    `;
+    return (
+      <>
+        <style>{keyframes}</style>
+        {particles.map(({ i, left, delay, duration, color }) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${left}%`,
+              top: `${(i * 12) % 60}%`,
+              width: '2px',
+              height: '10px',
+              borderRadius: '1px',
+              backgroundColor: color,
+              boxShadow: `0 0 4px ${color}`,
+              opacity: 0,
+              animation: `particle-star ${duration * 0.6}s ${delay}s linear infinite`,
+            }}
+          />
+        ))}
+      </>
+    );
+  }
+
+  return null;
+}
+
+// ─── Layer 3: Entdecker decorations (leaves, gems, acorns) ───
 
 function EntdeckerDecorations({ reduced }: { reduced: boolean }) {
   return (
@@ -50,9 +279,9 @@ function EntdeckerDecorations({ reduced }: { reduced: boolean }) {
       {/* Leaf 1 — top left */}
       <motion.svg
         className="absolute"
-        style={{ top: '8%', left: '5%', opacity: 0.55 }}
-        width="60"
-        height="60"
+        style={{ top: '6%', left: '4%', opacity: 0.8 }}
+        width="100"
+        height="100"
         viewBox="0 0 60 60"
         variants={floatVariants([-8, 8], [-12, 12], 5.2)}
         animate={reduced ? undefined : 'animate'}
@@ -70,9 +299,9 @@ function EntdeckerDecorations({ reduced }: { reduced: boolean }) {
       {/* Gem — top right */}
       <motion.svg
         className="absolute"
-        style={{ top: '12%', right: '8%', opacity: 0.6 }}
-        width="40"
-        height="48"
+        style={{ top: '10%', right: '6%', opacity: 0.8 }}
+        width="90"
+        height="108"
         viewBox="0 0 40 48"
         variants={floatVariants([-10, 6], [-6, 6], 6.8)}
         animate={reduced ? undefined : 'animate'}
@@ -85,9 +314,9 @@ function EntdeckerDecorations({ reduced }: { reduced: boolean }) {
       {/* Leaf 2 — lower left */}
       <motion.svg
         className="absolute"
-        style={{ bottom: '15%', left: '10%', opacity: 0.45 }}
-        width="80"
-        height="80"
+        style={{ bottom: '20%', left: '8%', opacity: 0.7 }}
+        width="120"
+        height="120"
         viewBox="0 0 80 80"
         variants={floatVariants([-6, 10], [8, -8], 7.4)}
         animate={reduced ? undefined : 'animate'}
@@ -105,9 +334,9 @@ function EntdeckerDecorations({ reduced }: { reduced: boolean }) {
       {/* Acorn — lower right */}
       <motion.svg
         className="absolute"
-        style={{ bottom: '20%', right: '12%', opacity: 0.5 }}
-        width="44"
-        height="52"
+        style={{ bottom: '22%', right: '10%', opacity: 0.75 }}
+        width="88"
+        height="104"
         viewBox="0 0 44 52"
         variants={floatVariants([-7, 9], [-10, 5], 8.1)}
         animate={reduced ? undefined : 'animate'}
@@ -120,11 +349,31 @@ function EntdeckerDecorations({ reduced }: { reduced: boolean }) {
         <ellipse cx="22" cy="32" rx="14" ry="18" fill="#a1887f" opacity="0.85" />
         <ellipse cx="22" cy="30" rx="10" ry="5" fill="#bcaaa4" opacity="0.4" />
       </motion.svg>
+
+      {/* Extra leaf — mid right */}
+      <motion.svg
+        className="absolute"
+        style={{ top: '40%', right: '3%', opacity: 0.72 }}
+        width="80"
+        height="80"
+        viewBox="0 0 60 60"
+        variants={floatVariants([-9, 7], [10, -10], 6.0)}
+        animate={reduced ? undefined : 'animate'}
+      >
+        <path
+          d="M30 5 C10 5, 5 30, 30 55 C55 30, 50 5, 30 5 Z"
+          fill="#66bb6a"
+          opacity="0.75"
+        />
+        <line x1="30" y1="10" x2="30" y2="52" stroke="#388e3c" strokeWidth="1.5" />
+        <line x1="30" y1="30" x2="20" y2="22" stroke="#388e3c" strokeWidth="1" />
+        <line x1="30" y1="40" x2="40" y2="32" stroke="#388e3c" strokeWidth="1" />
+      </motion.svg>
     </>
   );
 }
 
-// ─── Abenteuer decorations (balloons, stars, streamers) ───────
+// ─── Layer 3: Abenteuer decorations (balloons, stars, streamers) ─
 
 function AbenteuerDecorations({ reduced }: { reduced: boolean }) {
   return (
@@ -132,9 +381,9 @@ function AbenteuerDecorations({ reduced }: { reduced: boolean }) {
       {/* Balloon 1 — top left */}
       <motion.svg
         className="absolute"
-        style={{ top: '6%', left: '7%', opacity: 0.65 }}
-        width="50"
-        height="70"
+        style={{ top: '5%', left: '5%', opacity: 0.8 }}
+        width="100"
+        height="140"
         viewBox="0 0 50 70"
         variants={floatVariants([-12, 8], [-5, 5], 4.8)}
         animate={reduced ? undefined : 'animate'}
@@ -148,9 +397,9 @@ function AbenteuerDecorations({ reduced }: { reduced: boolean }) {
       {/* Star — top right */}
       <motion.svg
         className="absolute"
-        style={{ top: '10%', right: '6%', opacity: 0.7 }}
-        width="48"
-        height="48"
+        style={{ top: '8%', right: '5%', opacity: 0.85 }}
+        width="96"
+        height="96"
         viewBox="0 0 48 48"
         variants={floatVariants([-8, 10], [-15, 15], 5.6)}
         animate={reduced ? undefined : 'animate'}
@@ -170,9 +419,9 @@ function AbenteuerDecorations({ reduced }: { reduced: boolean }) {
       {/* Balloon 2 — mid right */}
       <motion.svg
         className="absolute"
-        style={{ top: '35%', right: '4%', opacity: 0.55 }}
-        width="42"
-        height="60"
+        style={{ top: '32%', right: '3%', opacity: 0.78 }}
+        width="84"
+        height="120"
         viewBox="0 0 42 60"
         variants={floatVariants([-10, 6], [6, -6], 6.3)}
         animate={reduced ? undefined : 'animate'}
@@ -186,9 +435,9 @@ function AbenteuerDecorations({ reduced }: { reduced: boolean }) {
       {/* Streamer — lower left */}
       <motion.svg
         className="absolute"
-        style={{ bottom: '10%', left: '6%', opacity: 0.5 }}
-        width="70"
-        height="50"
+        style={{ bottom: '18%', left: '4%', opacity: 0.75 }}
+        width="120"
+        height="86"
         viewBox="0 0 70 50"
         variants={floatVariants([-5, 8], [-8, 8], 7.9)}
         animate={reduced ? undefined : 'animate'}
@@ -209,11 +458,33 @@ function AbenteuerDecorations({ reduced }: { reduced: boolean }) {
           opacity="0.7"
         />
       </motion.svg>
+
+      {/* Extra star — mid left */}
+      <motion.svg
+        className="absolute"
+        style={{ top: '45%', left: '3%', opacity: 0.7 }}
+        width="80"
+        height="80"
+        viewBox="0 0 48 48"
+        variants={floatVariants([-6, 10], [-10, 10], 7.2)}
+        animate={reduced ? undefined : 'animate'}
+      >
+        <polygon
+          points="24,4 29,18 44,18 32,27 37,42 24,33 11,42 16,27 4,18 19,18"
+          fill="#ba68c8"
+          opacity="0.85"
+        />
+        <polygon
+          points="24,10 27,20 36,20 29,25 32,36 24,30 16,36 19,25 12,20 21,20"
+          fill="#ce93d8"
+          opacity="0.5"
+        />
+      </motion.svg>
     </>
   );
 }
 
-// ─── Forscher decorations (bubbles, atoms, molecules) ─────────
+// ─── Layer 3: Forscher decorations (bubbles, atoms, molecules) ─
 
 function ForscherDecorations({ reduced }: { reduced: boolean }) {
   return (
@@ -221,9 +492,9 @@ function ForscherDecorations({ reduced }: { reduced: boolean }) {
       {/* Bubble 1 — top left */}
       <motion.svg
         className="absolute"
-        style={{ top: '8%', left: '6%', opacity: 0.5 }}
-        width="56"
-        height="56"
+        style={{ top: '6%', left: '5%', opacity: 0.75 }}
+        width="96"
+        height="96"
         viewBox="0 0 56 56"
         variants={floatVariants([-10, 8], [-5, 5], 5.5)}
         animate={reduced ? undefined : 'animate'}
@@ -235,9 +506,9 @@ function ForscherDecorations({ reduced }: { reduced: boolean }) {
       {/* Atom — top right */}
       <motion.svg
         className="absolute"
-        style={{ top: '5%', right: '7%', opacity: 0.6 }}
-        width="70"
-        height="70"
+        style={{ top: '4%', right: '5%', opacity: 0.8 }}
+        width="110"
+        height="110"
         viewBox="0 0 70 70"
         variants={floatVariants([-8, 10], [-20, 20], 6.2)}
         animate={reduced ? undefined : 'animate'}
@@ -251,9 +522,9 @@ function ForscherDecorations({ reduced }: { reduced: boolean }) {
       {/* Bubble 2 — mid left */}
       <motion.svg
         className="absolute"
-        style={{ top: '40%', left: '4%', opacity: 0.4 }}
-        width="38"
-        height="38"
+        style={{ top: '38%', left: '3%', opacity: 0.7 }}
+        width="80"
+        height="80"
         viewBox="0 0 38 38"
         variants={floatVariants([-12, 6], [5, -5], 7.1)}
         animate={reduced ? undefined : 'animate'}
@@ -265,9 +536,9 @@ function ForscherDecorations({ reduced }: { reduced: boolean }) {
       {/* Molecule — lower right */}
       <motion.svg
         className="absolute"
-        style={{ bottom: '12%', right: '8%', opacity: 0.55 }}
-        width="80"
-        height="70"
+        style={{ bottom: '18%', right: '6%', opacity: 0.78 }}
+        width="120"
+        height="105"
         viewBox="0 0 80 70"
         variants={floatVariants([-7, 9], [-10, 10], 8.4)}
         animate={reduced ? undefined : 'animate'}
@@ -283,11 +554,25 @@ function ForscherDecorations({ reduced }: { reduced: boolean }) {
         <circle cx="66" cy="18" r="6" fill="#7e57c2" opacity="0.8" />
         <circle cx="40" cy="62" r="6" fill="#7e57c2" opacity="0.8" />
       </motion.svg>
+
+      {/* Extra bubble — mid right */}
+      <motion.svg
+        className="absolute"
+        style={{ top: '30%', right: '4%', opacity: 0.72 }}
+        width="84"
+        height="84"
+        viewBox="0 0 56 56"
+        variants={floatVariants([-9, 7], [-6, 6], 6.6)}
+        animate={reduced ? undefined : 'animate'}
+      >
+        <circle cx="28" cy="28" r="22" fill="none" stroke="#4dd0e1" strokeWidth="2" />
+        <ellipse cx="21" cy="21" rx="5" ry="3.5" fill="white" opacity="0.3" transform="rotate(-25 21 21)" />
+      </motion.svg>
     </>
   );
 }
 
-// ─── Weltraum decorations (stars, planets, rockets) ───────────
+// ─── Layer 3: Weltraum decorations (stars, planets, rockets) ─
 
 function WeltraumDecorations({ reduced }: { reduced: boolean }) {
   return (
@@ -295,9 +580,9 @@ function WeltraumDecorations({ reduced }: { reduced: boolean }) {
       {/* Star cluster — top left */}
       <motion.svg
         className="absolute"
-        style={{ top: '7%', left: '8%', opacity: 0.7 }}
-        width="60"
-        height="60"
+        style={{ top: '5%', left: '6%', opacity: 0.85 }}
+        width="100"
+        height="100"
         viewBox="0 0 60 60"
         variants={floatVariants([-6, 8], [-8, 8], 6.0)}
         animate={reduced ? undefined : 'animate'}
@@ -314,9 +599,9 @@ function WeltraumDecorations({ reduced }: { reduced: boolean }) {
       {/* Planet — top right */}
       <motion.svg
         className="absolute"
-        style={{ top: '5%', right: '6%', opacity: 0.65 }}
-        width="70"
-        height="60"
+        style={{ top: '4%', right: '5%', opacity: 0.8 }}
+        width="120"
+        height="103"
         viewBox="0 0 70 60"
         variants={floatVariants([-10, 8], [-5, 5], 7.3)}
         animate={reduced ? undefined : 'animate'}
@@ -332,9 +617,9 @@ function WeltraumDecorations({ reduced }: { reduced: boolean }) {
       {/* Rocket — mid left */}
       <motion.svg
         className="absolute"
-        style={{ top: '38%', left: '5%', opacity: 0.6 }}
-        width="40"
-        height="70"
+        style={{ top: '35%', left: '4%', opacity: 0.8 }}
+        width="80"
+        height="140"
         viewBox="0 0 40 70"
         variants={floatVariants([-12, 8], [-6, 6], 5.8)}
         animate={reduced ? undefined : 'animate'}
@@ -356,9 +641,9 @@ function WeltraumDecorations({ reduced }: { reduced: boolean }) {
       {/* Small stars — lower right */}
       <motion.svg
         className="absolute"
-        style={{ bottom: '14%', right: '9%', opacity: 0.6 }}
-        width="70"
-        height="50"
+        style={{ bottom: '18%', right: '7%', opacity: 0.78 }}
+        width="110"
+        height="80"
         viewBox="0 0 70 50"
         variants={floatVariants([-8, 6], [-12, 12], 9.1)}
         animate={reduced ? undefined : 'animate'}
@@ -368,31 +653,56 @@ function WeltraumDecorations({ reduced }: { reduced: boolean }) {
         <circle cx="60" cy="34" r="2" fill="#ffe082" opacity="0.7" />
         <circle cx="44" cy="40" r="1.5" fill="white" opacity="0.6" />
       </motion.svg>
+
+      {/* Extra planet — mid right */}
+      <motion.svg
+        className="absolute"
+        style={{ top: '42%', right: '3%', opacity: 0.72 }}
+        width="80"
+        height="80"
+        viewBox="0 0 50 50"
+        variants={floatVariants([-8, 10], [5, -5], 7.8)}
+        animate={reduced ? undefined : 'animate'}
+      >
+        <circle cx="25" cy="25" r="16" fill="#ab47bc" opacity="0.85" />
+        <circle cx="20" cy="20" r="5" fill="#ce93d8" opacity="0.5" />
+        <circle cx="30" cy="30" r="3" fill="#7b1fa2" opacity="0.4" />
+      </motion.svg>
     </>
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────
+// ─── Main Component ──────────────────────────────────────────
 
 export function WorldBackground({ worldId }: WorldBackgroundProps) {
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   if (!worldId) return null;
 
-  const gradient = WORLD_GRADIENTS[worldId];
+  const skyGradient = SKY_GRADIENTS[worldId];
+  const terrain = TERRAIN_CONFIG[worldId];
 
   return (
     <div
       className="fixed inset-0 z-0 pointer-events-none overflow-hidden"
       aria-hidden="true"
     >
-      {/* Gradient base */}
+      {/* Layer 1: Sky gradient */}
       <div
         className="absolute inset-0"
-        style={{ background: gradient }}
+        style={{ background: skyGradient }}
       />
 
-      {/* World-specific decorations */}
+      {/* Layer 2: Terrain silhouette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: terrain.color,
+          clipPath: terrain.clipPath,
+        }}
+      />
+
+      {/* Layer 3: Decorative SVGs */}
       {worldId === 'entdecker' && (
         <EntdeckerDecorations reduced={prefersReducedMotion} />
       )}
@@ -405,6 +715,9 @@ export function WorldBackground({ worldId }: WorldBackgroundProps) {
       {worldId === 'weltraum' && (
         <WeltraumDecorations reduced={prefersReducedMotion} />
       )}
+
+      {/* Layer 4: CSS-animated particles (skip for reduced motion) */}
+      {!prefersReducedMotion && <Particles worldId={worldId} />}
     </div>
   );
 }

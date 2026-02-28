@@ -23,7 +23,7 @@ export function CorrectFeedback({ explanation, onNext }: CorrectFeedbackProps) {
       initial={{ opacity: 0, scale: 0.95, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className="mt-4 p-5 bg-gradient-to-br from-emerald-50 to-emerald-100/50 border-2 border-emerald-300 rounded-[var(--card-radius)]"
+      className="mt-4 p-5 bg-gradient-to-br from-emerald-50 to-[var(--primary-lighter)] border-2 border-emerald-400/60 rounded-[var(--card-radius)]"
       role="status"
       aria-live="polite"
     >

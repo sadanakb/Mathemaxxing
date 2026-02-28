@@ -1,10 +1,11 @@
 'use client';
 
-import { type HTMLAttributes } from 'react';
+import { type HTMLAttributes, type CSSProperties } from 'react';
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: 'default' | 'elevated' | 'outlined' | 'glass' | 'gradient' | 'interactive';
+  variant?: 'default' | 'elevated' | 'outlined' | 'glass' | 'gradient' | 'interactive' | 'world';
   padding?: 'sm' | 'md' | 'lg' | 'none';
+  themed?: boolean;
 };
 
 const variantClasses = {
@@ -18,6 +19,7 @@ const variantClasses = {
     'hover:-translate-y-1 hover:shadow-lg',
     'transition-all duration-200 cursor-pointer',
   ].join(' '),
+  world: 'bg-[var(--color-surface)] shadow-[var(--card-shadow)] border-[length:var(--world-border-width)] border-[var(--world-border-color)]',
 };
 
 const paddingClasses = {
@@ -27,7 +29,16 @@ const paddingClasses = {
   lg: 'p-8',
 };
 
-export function Card({ variant = 'default', padding = 'md', className = '', children, ...props }: CardProps) {
+export function Card({ variant = 'default', padding = 'md', themed = false, className = '', style, children, ...props }: CardProps) {
+  const themedStyle: CSSProperties | undefined = themed
+    ? {
+        backgroundImage: 'var(--world-card-bg)',
+        boxShadow: variant === 'interactive' ? 'var(--card-shadow), var(--world-glow)' : undefined,
+        borderColor: 'var(--world-border-color)',
+        ...style,
+      }
+    : style;
+
   return (
     <div
       className={[
@@ -36,6 +47,7 @@ export function Card({ variant = 'default', padding = 'md', className = '', chil
         paddingClasses[padding],
         className,
       ].join(' ')}
+      style={themedStyle}
       {...props}
     >
       {children}

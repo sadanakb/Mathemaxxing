@@ -53,7 +53,7 @@ export default function MapPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-800">Lernpfad</h1>
+            <h1 className="text-xl font-bold text-[var(--color-text)]">Lernpfad</h1>
             <p className="text-sm text-gray-500">
               Klasse {klasse} — {schulform}
               {world && WORLDS[world] ? ` · ${WORLDS[world].label}` : ''}
@@ -70,8 +70,8 @@ export default function MapPage() {
         {/* Progress bar */}
         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-emerald-500 rounded-full transition-all"
-            style={{ width: `${totalCount > 0 ? (masteredCount / totalCount) * 100 : 0}%` }}
+            className="h-full rounded-full transition-all"
+            style={{ backgroundColor: 'var(--color-primary)', width: `${totalCount > 0 ? (masteredCount / totalCount) * 100 : 0}%` }}
           />
         </div>
 

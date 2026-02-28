@@ -33,12 +33,12 @@ export function ShopItemCard({
         equipped
           ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-md'
           : owned
-            ? 'border-emerald-200 bg-white'
-            : 'border-gray-100 bg-white hover:shadow-md',
+            ? 'border-emerald-200 bg-[var(--color-surface)]'
+            : 'border-[var(--card-border)] bg-[var(--color-surface)] hover:shadow-md',
       ].join(' ')}
     >
       {/* Preview area */}
-      <div className="relative flex items-center justify-center py-4 bg-gray-50/50">
+      <div className="relative flex items-center justify-center py-4 bg-[var(--primary-lighter)]/50">
         <ItemPreview
           category={item.category}
           svgPreview={item.svgPreview}

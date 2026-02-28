@@ -25,7 +25,7 @@ export function WrongFeedback({ correctAnswer, correctAnswerLatex, explanation, 
       initial={{ opacity: 0, scale: 0.95, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className="mt-4 p-5 bg-gradient-to-br from-orange-50 to-red-50 border-2 border-red-200 rounded-[var(--card-radius)]"
+      className="mt-4 p-5 bg-gradient-to-br from-orange-50 to-red-50 border-2 border-red-300/60 rounded-[var(--card-radius)]"
       role="alert"
       aria-live="assertive"
     >

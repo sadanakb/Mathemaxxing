@@ -36,6 +36,7 @@ import { Stars } from '@/components/gamification/Stars';
 import { Finn } from '@/components/gamification/Finn';
 import { Confetti } from '@/components/gamification/Confetti';
 import { ExerciseVisual } from '@/components/exercises/ExerciseVisual';
+import { ExerciseFrame } from '@/components/exercises/ExerciseFrame';
 import { useSessionStore } from '@/store/sessionStore';
 import type { Exercise } from '@/lib/curriculum/types';
 
@@ -74,7 +75,7 @@ function QuizProgressBar({ current, total, results }: { current: number; total: 
         if (i < results.length) {
           color = results[i] ? 'bg-emerald-500' : 'bg-red-400';
         } else if (i === current) {
-          color = 'bg-[var(--color-primary)]';
+          color = 'bg-[var(--color-primary)] animate-pulse';
         }
         return (
           <div
@@ -244,7 +245,7 @@ export default function LearnTopicPage() {
             </Link>
           </div>
 
-          <Card className="mb-4">
+          <Card className="mb-4" themed>
             <h1 className="text-2xl font-[family-name:var(--font-heading)] font-extrabold text-gray-900 mb-2">
               {topic.title}
             </h1>
@@ -260,7 +261,7 @@ export default function LearnTopicPage() {
 
           {theory ? (
             <>
-              <Card className="mb-4">
+              <Card className="mb-4" themed>
                 <h2 className="font-[family-name:var(--font-heading)] font-bold text-gray-900 mb-3 flex items-center gap-2">
                   <Icon name="book" size={18} className="text-[var(--color-primary)]" />
                   Das Wichtigste
@@ -362,7 +363,7 @@ export default function LearnTopicPage() {
           />
         )}
         <PageTransition>
-          <Card className="text-center relative overflow-hidden">
+          <Card className="text-center relative overflow-hidden" themed>
             {/* Background gradient accent */}
             <div
               className="absolute inset-0 opacity-5"
@@ -420,19 +421,19 @@ export default function LearnTopicPage() {
 
               {/* Animated session stats */}
               <div className="grid grid-cols-3 gap-3 mt-6">
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                <div className="text-center p-3 bg-[var(--primary-lighter)] rounded-xl">
                   <div className="text-lg font-bold text-[var(--color-primary)]">
                     <AnimatedNumber value={exercisesCompletedThisSession} />
                   </div>
                   <div className="text-xs text-gray-500">Aufgaben</div>
                 </div>
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                <div className="text-center p-3 bg-[var(--primary-lighter)] rounded-xl">
                   <div className="text-lg font-bold text-amber-500">
                     +<AnimatedNumber value={xpEarnedThisSession} />
                   </div>
                   <div className="text-xs text-gray-500">XP verdient</div>
                 </div>
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                <div className="text-center p-3 bg-[var(--primary-lighter)] rounded-xl">
                   <div className="text-lg font-bold text-emerald-600">
                     <AnimatedNumber value={sessionStartTime ? Math.round((Date.now() - new Date(sessionStartTime).getTime()) / 60000) : 0} /> min
                   </div>
@@ -484,10 +485,20 @@ export default function LearnTopicPage() {
         <QuizProgressBar current={currentIndex} total={QUIZ_SIZE} results={quizResults} />
       </div>
 
+      {showMascot && (
+        <div className="flex justify-end mb-2">
+          <Finn
+            mood={feedback === 'correct' ? 'celebrating' : feedback === 'wrong' ? 'sad' : 'encouraging'}
+            size="sm"
+            outfit={world ? WORLDS[world].finnOutfit : undefined}
+          />
+        </div>
+      )}
+
       {currentExercise && (
         <div>
-          {/* Exercise container with colored left border */}
-          <Card className="border-l-4 border-l-[var(--color-primary)] mb-2">
+          {/* Exercise container with world-themed frame */}
+          <ExerciseFrame>
             {currentExercise.visualConfig && (
               <ExerciseVisual config={currentExercise.visualConfig} />
             )}
@@ -501,7 +512,7 @@ export default function LearnTopicPage() {
               showHint={showHint}
               onShowHint={() => { setShowHint(true); setHintsUsed((h) => h + 1); }}
             />
-          </Card>
+          </ExerciseFrame>
 
           {showReward && (
             <RewardAnimation

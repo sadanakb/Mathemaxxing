@@ -33,7 +33,7 @@ function SettingsSection({ title, icon, borderColor, children, delay = 0 }: Sett
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <Card className={`mb-4 border-l-4 overflow-hidden`} style={{ borderLeftColor: borderColor }}>
+      <Card themed className={`mb-4 border-l-4 overflow-hidden`} style={{ borderLeftColor: borderColor }}>
         <div className="flex items-center gap-2 mb-4">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -41,7 +41,7 @@ function SettingsSection({ title, icon, borderColor, children, delay = 0 }: Sett
           >
             <Icon name={icon} size={16} color={borderColor} />
           </div>
-          <h2 className="text-lg font-bold font-[family-name:var(--font-heading)] text-gray-900">{title}</h2>
+          <h2 className="text-lg font-bold font-[family-name:var(--font-heading)]">{title}</h2>
         </div>
         {children}
       </Card>
@@ -54,7 +54,7 @@ function DailyGoalSelector({ current, onChange }: { current: number; onChange: (
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-500">
-        Aktuell: <span className="font-semibold text-gray-900">{current} Minuten</span> pro Tag
+        Aktuell: <span className="font-semibold">{current} Minuten</span> pro Tag
       </p>
       <div className="flex gap-2">
         {DAILY_GOAL_PRESETS.map((minutes) => {
@@ -66,7 +66,7 @@ function DailyGoalSelector({ current, onChange }: { current: number; onChange: (
               className={`relative flex-1 py-3 rounded-xl border-2 font-bold text-sm font-[family-name:var(--font-heading)] transition-all ${
                 isActive
                   ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-lg scale-105'
-                  : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
+                  : 'border-[var(--card-border)] bg-[var(--primary-lighter)] text-gray-600 hover:border-gray-300 hover:bg-[var(--color-surface)]'
               }`}
             >
               {minutes}
@@ -133,7 +133,7 @@ export default function SettingsPage() {
       <PageWrapper>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center animate-pulse">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[var(--primary-lighter)] flex items-center justify-center animate-pulse">
               <Icon name="settings" size={24} className="text-gray-400" />
             </div>
             <p className="text-gray-500">Lade Einstellungen...</p>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
           >
             <Avatar size="lg" />
             <div>
-              <h1 className="text-2xl font-bold font-[family-name:var(--font-heading)] text-gray-900">
+              <h1 className="text-2xl font-bold font-[family-name:var(--font-heading)] text-[var(--color-primary)]">
                 Einstellungen
               </h1>
               <p className="text-sm text-gray-500">
@@ -192,18 +192,18 @@ export default function SettingsPage() {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Bundesland</span>
-                <span className="font-medium text-gray-900 flex items-center gap-2">
+                <span className="font-medium flex items-center gap-2">
                   <BundeslandWappen bundesland={bundesland} size="sm" />
                   {bundesland}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Klasse</span>
-                <span className="font-medium text-gray-900">{klasse}</span>
+                <span className="font-medium">{klasse}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Schulform</span>
-                <span className="font-medium text-gray-900">{schulform}</span>
+                <span className="font-medium">{schulform}</span>
               </div>
             </div>
             <Link href="/onboarding?edit=true">
@@ -244,7 +244,7 @@ export default function SettingsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-1.5">
                       <Icon name={option.icon} size={14} className="text-gray-600" />
-                      <span className="font-medium text-gray-900 text-sm">{option.label}</span>
+                      <span className="font-medium text-sm">{option.label}</span>
                     </div>
                     <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
                   </div>
@@ -302,7 +302,7 @@ export default function SettingsPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Version</span>
-                <span className="font-medium text-gray-900">3.0.0</span>
+                <span className="font-medium">3.0.0</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Fehler melden</span>

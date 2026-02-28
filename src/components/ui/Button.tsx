@@ -16,15 +16,15 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: [
     'bg-[var(--color-primary)] text-white',
     'shadow-[0_4px_0_var(--color-primary-dark)]',
-    'hover:brightness-110',
-    'active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-primary-dark)]',
+    'hover:brightness-110 hover:scale-[1.02]',
+    'active:translate-y-[2px] active:scale-100 active:shadow-[0_2px_0_var(--color-primary-dark)]',
     'focus-visible:ring-2 ring-[var(--color-primary)] ring-offset-2',
   ].join(' '),
   secondary: [
     'bg-[var(--color-secondary)] text-gray-900',
     'shadow-[0_4px_0_var(--color-secondary-dark)]',
-    'hover:brightness-110',
-    'active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-secondary-dark)]',
+    'hover:brightness-110 hover:scale-[1.02]',
+    'active:translate-y-[2px] active:scale-100 active:shadow-[0_2px_0_var(--color-secondary-dark)]',
   ].join(' '),
   ghost: [
     'bg-transparent text-[var(--color-primary)]',
@@ -60,7 +60,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={[
           'inline-flex items-center justify-center gap-2',
           'font-[family-name:var(--font-heading)] font-bold',
-          'transition-all duration-150',
+          'transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0',
           variantClasses[variant],
           sizeClasses[size],

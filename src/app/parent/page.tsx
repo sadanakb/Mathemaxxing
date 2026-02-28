@@ -27,10 +27,10 @@ function WeeklyActivityChart({ data }: { data: { date: string; dayName: string; 
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      <Card className="border-l-4" style={{ borderLeftColor: '#4A5BC7' }}>
+      <Card themed className="border-l-4" style={{ borderLeftColor: '#4A5BC7' }}>
         <div className="flex items-center gap-2 mb-3">
           <Icon name="calendar" size={16} className="text-indigo-500" />
-          <h2 className="text-sm font-bold font-[family-name:var(--font-heading)] text-gray-700">
+          <h2 className="text-sm font-bold font-[family-name:var(--font-heading)]">
             Aktivität diese Woche
           </h2>
         </div>
@@ -201,7 +201,7 @@ export default function ParentPage() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
                 <Icon name="chart" size={20} color="white" />
               </div>
-              <h1 className="text-xl font-bold font-[family-name:var(--font-heading)] text-gray-900">
+              <h1 className="text-xl font-bold font-[family-name:var(--font-heading)] text-[var(--color-primary)]">
                 Fortschrittsbericht
               </h1>
             </div>
@@ -250,7 +250,7 @@ export default function ParentPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
             >
-              <Card className="border-l-4" style={{ borderLeftColor: '#EF4444' }}>
+              <Card themed className="border-l-4" style={{ borderLeftColor: '#EF4444' }}>
                 <div className="flex items-center gap-2 mb-3">
                   <Icon name="target" size={16} className="text-red-500" />
                   <h2 className="text-sm font-bold font-[family-name:var(--font-heading)] text-red-700">
@@ -275,10 +275,10 @@ export default function ParentPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card>
+            <Card themed>
               <div className="flex items-center gap-2 mb-3">
                 <Icon name="book" size={16} className="text-gray-500" />
-                <h2 className="text-sm font-bold font-[family-name:var(--font-heading)] text-gray-600">Alle Themen</h2>
+                <h2 className="text-sm font-bold font-[family-name:var(--font-heading)]">Alle Themen</h2>
               </div>
               <div className="overflow-x-auto -mx-4">
                 <table className="w-full text-sm min-w-[480px]">

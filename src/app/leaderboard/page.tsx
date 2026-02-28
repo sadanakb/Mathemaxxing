@@ -141,7 +141,7 @@ function Podium({ players }: { players: { name: string; weeklyXP: number; isUser
               />
             )}
           </div>
-          <span className="text-xs font-semibold text-gray-700 truncate max-w-[72px] text-center mb-1">
+          <span className="text-xs font-semibold truncate max-w-[72px] text-center mb-1">
             {player.name}
           </span>
           <span className="text-[10px] text-gray-500 mb-1">{player.weeklyXP} XP</span>
@@ -193,7 +193,7 @@ export default function LeaderboardPage() {
             <div className="flex justify-center">
               <LeagueIcon league={league} size={56} />
             </div>
-            <h1 className="text-xl font-bold font-[family-name:var(--font-heading)] text-gray-900">
+            <h1 className="text-xl font-bold font-[family-name:var(--font-heading)] text-[var(--color-primary)]">
               {config.name}
             </h1>
             <p className="text-sm text-gray-500">
@@ -236,7 +236,7 @@ export default function LeaderboardPage() {
                       ? 'bg-emerald-50/80'
                       : player.rank > allPlayers.length - config.bottomN
                         ? 'bg-red-50/80'
-                        : 'bg-white'
+                        : 'bg-[var(--color-surface)]'
                 }`}
                 style={player.isUser ? { boxShadow: '0 0 12px var(--color-primary)' } : undefined}
               >
@@ -253,7 +253,7 @@ export default function LeaderboardPage() {
                   className={`flex-1 text-sm font-medium ${
                     player.isUser
                       ? 'text-[var(--color-primary)] font-bold'
-                      : 'text-gray-800'
+                      : ''
                   }`}
                 >
                   {player.name}

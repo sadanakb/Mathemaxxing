@@ -46,9 +46,9 @@ export default function ReviewPage() {
   if (!session || session.totalDue === 0) {
     return (
       <PageWrapper>
-        <Card className="text-center">
+        <Card themed className="text-center">
           <div className="text-5xl mb-4">🎉</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Alles wiederholt!</h1>
+          <h1 className="text-2xl font-bold mb-2">Alles wiederholt!</h1>
           <p className="text-gray-500 mb-6">
             Du hast keine fälligen Karten. Komm morgen wieder!
             {session?.nextReviewDate && (
@@ -66,9 +66,9 @@ export default function ReviewPage() {
   if (done) {
     return (
       <PageWrapper>
-        <Card className="text-center">
+        <Card themed className="text-center">
           <div className="text-5xl mb-4">✅</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Wiederholung abgeschlossen!</h1>
+          <h1 className="text-2xl font-bold mb-2">Wiederholung abgeschlossen!</h1>
           <p className="text-gray-500 mb-2">
             <strong className="text-emerald-600">{score.correct}</strong> von <strong>{score.total}</strong> richtig
           </p>
@@ -130,7 +130,7 @@ export default function ReviewPage() {
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-700">Wiederholung</span>
+            <span className="font-semibold">Wiederholung</span>
             <Badge variant={currentCard.box <= 2 ? 'warning' : 'success'}>
               Box {currentCard.box}
             </Badge>

@@ -16,7 +16,7 @@ const MASTERY_RING_COLORS = {
   'not-started': '#D1D5DB',
   introduced: '#93C5FD',
   practicing: '#FCD34D',
-  mastered: '#6EE7B7',
+  mastered: 'var(--color-primary)',
 } as const;
 
 function MasteryRing({ mastery, stars }: { mastery: string; stars: number }) {
@@ -79,6 +79,7 @@ export function MapNodeComponent({ node }: { node: MapNodeType }) {
     <Link
       href={`/learn/${node.topicId}`}
       className="relative w-16 h-16 rounded-full flex items-center justify-center transition hover:scale-110 hover:shadow-lg group"
+      style={!node.locked && node.mastery !== 'not-started' ? { boxShadow: 'var(--world-glow)' } : undefined}
       title={node.title}
       aria-label={`${node.title} — ${node.mastery}`}
     >

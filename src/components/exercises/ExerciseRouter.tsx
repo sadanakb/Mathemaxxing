@@ -35,8 +35,11 @@ const BarChartRead = lazy(() => import('./BarChartRead').then(m => ({ default: m
 
 function ExerciseFallback() {
   return (
-    <div className="flex items-center justify-center py-8">
-      <div className="animate-pulse text-gray-400 text-sm">Lädt...</div>
+    <div className="flex items-center justify-center p-8">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+        <span className="text-sm text-[var(--color-primary)]/60 font-medium">Lade Aufgabe...</span>
+      </div>
     </div>
   );
 }

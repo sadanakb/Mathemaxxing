@@ -55,7 +55,8 @@ export function Navbar() {
     <>
       {/* ── Desktop: Left Sidebar (≥ md) ─────────────────────── */}
       <nav
-        className="hidden md:flex fixed left-0 top-0 bottom-0 w-60 bg-[var(--color-surface)] border-r border-gray-100 flex-col z-40 shadow-sm"
+        className="hidden md:flex fixed left-0 top-0 bottom-0 w-60 border-r border-gray-100 flex-col z-40 shadow-sm"
+        style={{ background: 'var(--world-nav-bg, var(--color-surface))' }}
         aria-label="Hauptnavigation"
       >
         {/* Logo */}
@@ -74,8 +75,8 @@ export function Navbar() {
               className={[
                 'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150',
                 isActive(item.href)
-                  ? 'bg-[var(--primary-light)] text-[var(--color-primary)]'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                  ? 'bg-[var(--world-nav-active)] text-[var(--color-primary)]'
+                  : 'text-gray-600 hover:bg-white/20 hover:text-gray-900',
               ].join(' ')}
               aria-current={isActive(item.href) ? 'page' : undefined}
             >
@@ -113,9 +114,9 @@ export function Navbar() {
 
       {/* ── Mobile: Bottom Tab Bar (< md) ────────────────────── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--color-surface)] border-t border-gray-100 z-40 shadow-[var(--nav-shadow)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 border-t border-gray-100 z-40 shadow-[var(--nav-shadow)]"
         aria-label="Hauptnavigation"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        style={{ background: 'var(--world-nav-bg, var(--color-surface))', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         <div className="flex items-center justify-around px-2 py-1">
           {primaryNavItems.map((item) => (

@@ -15,8 +15,8 @@ export function StatPill({ icon, label, value, color, className = '' }: StatPill
     <div
       className={[
         'flex items-center gap-2.5 px-4 py-2.5',
-        'bg-white/80 backdrop-blur-sm rounded-full',
-        'border border-gray-100 shadow-sm',
+        'bg-[var(--color-surface)]/80 backdrop-blur-sm rounded-full',
+        'border border-[var(--card-border)] shadow-sm',
         'min-w-fit whitespace-nowrap',
         className,
       ].join(' ')}
@@ -25,8 +25,8 @@ export function StatPill({ icon, label, value, color, className = '' }: StatPill
         {icon}
       </span>
       <div className="flex flex-col leading-tight">
-        <span className="text-xs text-gray-500 font-medium">{label}</span>
-        <span className="text-sm font-bold text-gray-900">{value}</span>
+        <span className="text-xs text-[var(--color-primary)]/60 font-medium">{label}</span>
+        <span className="text-sm font-bold">{value}</span>
       </div>
     </div>
   );

@@ -131,7 +131,7 @@ export default function ShopPage() {
                   'flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-150',
                   activeTab === tab.key
                     ? 'bg-[var(--color-primary)] text-white shadow-md'
-                    : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-200',
+                    : 'bg-[var(--color-surface)] text-gray-500 hover:bg-[var(--primary-lighter)] border border-[var(--card-border)]',
                 ].join(' ')}
               >
                 <Icon name={tab.icon} size={16} />

@@ -19,6 +19,9 @@ import { Finn } from '@/components/gamification/Finn';
 import type { Bundesland, Klassenstufe, Schulform, Kurstyp } from '@/lib/curriculum/types';
 import { applyTheme } from '@/lib/theme/theme-config';
 import { Logo } from '@/components/layout/Logo';
+import { getWorldForKlasse, WORLDS } from '@/lib/theme/worlds';
+import { applyWorld } from '@/lib/theme/worlds';
+import { WorldBackground } from '@/components/world/WorldBackground';
 
 type Step = 'bundesland' | 'klasse' | 'schulform' | 'kurs' | 'done';
 
@@ -55,6 +58,8 @@ function OnboardingContent() {
   const [localKurstyp, setLocalKurstyp] = useState<Kurstyp>('keine');
   const [isLoading, setIsLoading] = useState(false);
 
+  const previewWorld = localKlasse ? getWorldForKlasse(localKlasse) : null;
+
   useEffect(() => {
     if (isEditMode && bundesland && klasse) {
       setLocalBundesland(bundesland);
@@ -72,6 +77,15 @@ function OnboardingContent() {
 
   useEffect(() => {
     applyTheme((localKlasse ?? 1) <= 4 ? 'grundschule' : 'unterstufe');
+  }, [localKlasse]);
+
+  useEffect(() => {
+    if (localKlasse) {
+      const w = getWorldForKlasse(localKlasse);
+      if (w) {
+        applyWorld(w);
+      }
+    }
   }, [localKlasse]);
 
   const needsKurs = localSchulform ? requiresKurstyp(localSchulform) : false;
@@ -125,9 +139,24 @@ function OnboardingContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col">
+    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col relative overflow-hidden">
+      {/* World preview background */}
+      <AnimatePresence>
+        {previewWorld && (
+          <motion.div
+            key={previewWorld}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <WorldBackground worldId={previewWorld} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
-      <div className="bg-[var(--color-surface)] border-b border-gray-100 px-4 py-4 shadow-sm">
+      <div className="relative z-10 bg-[var(--color-surface)]/90 backdrop-blur-sm border-b border-gray-100 px-4 py-4 shadow-sm">
         <div className="max-w-lg mx-auto">
           <div className="mb-3 flex items-center gap-3">
             <Logo size="md" showText={true} />
@@ -137,7 +166,7 @@ function OnboardingContent() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex items-start justify-center px-4 py-8">
+      <div className="relative z-10 flex-1 flex items-start justify-center px-4 py-8">
         <div className="w-full max-w-lg">
           {/* Finn greeting (only Grundschule theme) */}
           {showMascot && step === 'bundesland' && (
@@ -150,7 +179,29 @@ function OnboardingContent() {
             </motion.div>
           )}
 
-          <div className="bg-[var(--color-surface)] rounded-[var(--card-radius)] shadow-lg border border-gray-100 p-6 sm:p-8 overflow-hidden">
+          {/* Finn world-aware greeting for klasse step */}
+          {showMascot && step === 'klasse' && previewWorld && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-3 mb-4"
+            >
+              <Finn
+                mood="celebrating"
+                size="md"
+                outfit={WORLDS[previewWorld].finnOutfit}
+                message={previewWorld === 'entdecker' ? 'Der Wald ruft!'
+                  : previewWorld === 'abenteuer' ? 'Jahrmarkt-Zeit!'
+                  : previewWorld === 'forscher' ? 'Im Labor wird\'s spannend!'
+                  : 'Ab ins All!'}
+              />
+            </motion.div>
+          )}
+
+          <div className={[
+            'rounded-[var(--card-radius)] shadow-lg border border-gray-100 p-6 sm:p-8 overflow-hidden transition-all duration-500',
+            previewWorld ? 'bg-[var(--color-surface)]/90 backdrop-blur-md' : 'bg-[var(--color-surface)]',
+          ].join(' ')}>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={step}
@@ -206,6 +257,7 @@ function OnboardingContent() {
               disabled={!canProceed()}
               loading={isLoading}
               size={isFinalStep ? 'lg' : 'md'}
+              fullWidth={isFinalStep}
             >
               {isFinalStep
                 ? (isEditMode ? 'Speichern' : 'Los geht\'s!')

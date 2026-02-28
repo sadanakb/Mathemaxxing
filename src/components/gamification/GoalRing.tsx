@@ -33,7 +33,7 @@ export function GoalRing({ current, goal, size = 96 }: GoalRingProps) {
             cy={center}
             r={radius}
             fill="none"
-            stroke="#E5E7EB"
+            stroke="var(--primary-lighter, #E5E7EB)"
             strokeWidth="8"
           />
           {/* Fortschritts-Ring */}
@@ -56,14 +56,14 @@ export function GoalRing({ current, goal, size = 96 }: GoalRingProps) {
           className="absolute inset-0 flex flex-col items-center justify-center"
           aria-hidden="true"
         >
-          <span className="text-xl font-extrabold text-gray-800 leading-none">
+          <span className="text-xl font-extrabold leading-none">
             {current}
           </span>
-          <span className="text-xs text-gray-400">min</span>
+          <span className="text-xs opacity-60">min</span>
         </div>
       </div>
 
-      <div className="text-xs text-gray-500">
+      <div className="text-xs opacity-60">
         {completed ? (
           <span className="text-emerald-600 font-semibold">🎯 Ziel erreicht!</span>
         ) : (

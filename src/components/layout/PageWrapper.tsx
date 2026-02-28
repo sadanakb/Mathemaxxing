@@ -1,4 +1,8 @@
+'use client';
+
 import { Navbar } from './Navbar';
+import { WorldBackground } from '@/components/world/WorldBackground';
+import { useCurrentWorld } from '@/store/curriculumStore';
 
 type PageWrapperProps = {
   children: React.ReactNode;
@@ -7,6 +11,8 @@ type PageWrapperProps = {
 };
 
 export function PageWrapper({ children, showNav = true, className = '' }: PageWrapperProps) {
+  const worldId = useCurrentWorld();
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* Skip-Link for keyboard navigation */}
@@ -16,10 +22,11 @@ export function PageWrapper({ children, showNav = true, className = '' }: PageWr
       >
         Zum Hauptinhalt springen
       </a>
+      <WorldBackground worldId={worldId} />
       {showNav && <Navbar />}
       <main
         className={[
-          'max-w-4xl mx-auto px-4 py-6',
+          'relative z-10 max-w-4xl mx-auto px-4 py-6',
           showNav ? 'md:ml-60 pb-24 md:pb-6' : '',
           className,
         ].join(' ')}
