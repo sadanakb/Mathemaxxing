@@ -18,7 +18,7 @@ export function BundeslandPicker({ selected, onSelect }: BundeslandPickerProps) 
       </h2>
       <p className="text-gray-500 mb-6">Wir passen die Aufgaben an deinen Lehrplan an.</p>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Bundesland auswählen">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2" role="radiogroup" aria-label="Bundesland auswählen">
         {BUNDESLAENDER.map((bl, i) => (
           <motion.button
             key={bl.id}
@@ -30,7 +30,7 @@ export function BundeslandPicker({ selected, onSelect }: BundeslandPickerProps) 
             transition={{ delay: i * 0.02 }}
             whileTap={{ scale: 0.97 }}
             className={[
-              'flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all duration-150',
+              'flex flex-col items-center justify-center gap-1.5 py-3 px-1.5 rounded-xl border-2 text-center transition-all duration-150',
               'hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2',
               selected === bl.id
@@ -45,8 +45,8 @@ export function BundeslandPicker({ selected, onSelect }: BundeslandPickerProps) 
               <BundeslandWappen bundesland={bl.id} size="md" />
             </div>
             <span className={[
-              'text-sm font-medium',
-              selected === bl.id ? 'text-[var(--color-primary)] font-bold' : 'text-gray-900',
+              'text-[11px] font-medium leading-tight w-full',
+              selected === bl.id ? 'text-[var(--color-primary)] font-bold' : 'text-gray-700',
             ].join(' ')}>
               {bl.id}
             </span>

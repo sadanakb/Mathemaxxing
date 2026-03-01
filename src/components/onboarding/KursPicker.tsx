@@ -25,7 +25,7 @@ const KURSE: { value: Kurstyp; label: string; description: string; emoji: string
 export function KursPicker({ selected, onSelect }: KursPickerProps) {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">In welchem Kurs bist du?</h2>
+      <h2 className="text-2xl font-[family-name:var(--font-heading)] font-extrabold text-gray-900 mb-2">In welchem Kurs bist du?</h2>
       <p className="text-gray-500 mb-6">
         Deine Schule unterscheidet zwischen Grundkurs und Erweiterungskurs.
       </p>
