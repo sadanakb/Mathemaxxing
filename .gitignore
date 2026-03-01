@@ -25,6 +25,13 @@ test-results/
 *.log
 .turbo/
 
+# Claude Code session files
+.claude/CHECKPOINT.md
+.claude/HANDOFF.md
+.claude/.last-checkpoint.md
+.claude/session-count
+.claude/backups/
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
